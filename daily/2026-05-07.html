@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏行业 Top 10 话题日报 - 2026年5月7日</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --accent: #6c5ce7;
+            --accent2: #a29bfe;
+            --text: #e2e4ed;
+            --text-dim: #8a8d9a;
+            --green: #00b894;
+            --orange: #fdcb6e;
+            --red: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        .header .logo { font-size: 36px; margin-bottom: 8px; }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header .date { color: var(--text-dim); font-size: 14px; }
+        .header .stats {
+            display: flex; justify-content: center; gap: 32px;
+            margin-top: 20px;
+        }
+        .header .stat { text-align: center; }
+        .header .stat .num { font-size: 28px; font-weight: 700; color: var(--accent2); }
+        .header .stat .label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        /* Article Card */
+        .article {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .article:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .article .rank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            font-size: 14px; font-weight: 700;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .rank.top1 { background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: #fff; }
+        .rank.top2 { background: linear-gradient(135deg, #fdcb6e, #f39c12); color: #fff; }
+        .rank.top3 { background: linear-gradient(135deg, #00b894, #00cec9); color: #fff; }
+        .rank.normal { background: var(--border); color: var(--text-dim); }
+        .article .title-row { display: flex; align-items: flex-start; margin-bottom: 12px; }
+        .article h2 {
+            font-size: 18px; font-weight: 600; line-height: 1.5;
+            color: var(--text);
+        }
+        .article .summary {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.8;
+            padding-left: 44px;
+            margin-bottom: 16px;
+        }
+        .article .meta {
+            display: flex; gap: 16px; align-items: center;
+            padding-left: 44px;
+            flex-wrap: wrap;
+        }
+        .article .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .tag.source { background: rgba(108,92,231,0.15); color: var(--accent2); }
+        .article .link {
+            color: var(--green);
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .article .link:hover { text-decoration: underline; }
+
+        /* Trends */
+        .trends {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .trend-tag {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            background: rgba(108,92,231,0.1);
+            color: var(--accent2);
+            border: 1px solid var(--border);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 30px;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+        .footer a { color: var(--accent2); text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 12px; }
+            .header h1 { font-size: 22px; }
+            .article { padding: 16px; }
+            .article .summary, .article .meta { padding-left: 0; }
+            .article .title-row { flex-direction: column; }
+            .article .rank { margin-bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🧱</div>
+            <h1>游戏行业 Top 10 话题日报</h1>
+            <div class="date">2026 年 5 月 7 日 星期三</div>
+            <div class="stats">
+                <div class="stat"><div class="num">18</div><div class="label">今日新文章</div></div>
+                <div class="stat"><div class="num">9</div><div class="label">覆盖公众号</div></div>
+                <div class="stat"><div class="num">9</div><div class="label">监控公众号</div></div>
+            </div>
+            <div class="trends">
+                <span class="trend-tag">🤖 AI+游戏</span>
+                <span class="trend-tag">💰 并购投资</span>
+                <span class="trend-tag">📊 小游戏赛道</span>
+                <span class="trend-tag">🎮 新游爆发</span>
+                <span class="trend-tag">🌏 出海出海</span>
+            </div>
+        </div>
+
+        <!-- Articles -->
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank top1">1</span>
+                <h2>李飞飞押注 AI 游戏平台，Astrocade 完成 5600 万美元融资</h2>
+            </div>
+            <p class="summary">斯坦福 AI 学者李飞飞联合创办的 AI 社交平台 Astrocade 完成 5600 万美元 A+B 轮融资，B 轮由红杉资本领投，英伟达、谷歌 AI Futures Fund 参投。上线 8 个月月活数百万，月游玩超 1.4 亿次，创作者覆盖 80+ 国家。用户只需输入一句话，AI 便能自动生成场景、角色、玩法和基础交互，标志着 AI+游戏方向从"AI 辅助开发"转向"AI 原生平台"。</p>
+            <div class="meta">
+                <span class="tag source">游戏葡萄</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/V8uSugNkixpqSiow7JHRig" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank top2">2</span>
+                <h2>Supercell 7 亿美金收购 Metacore，正式杀入女性向休闲赛道</h2>
+            </div>
+            <p class="summary">5 月 5 日，Supercell 宣布收购芬兰同城游戏开发商 Metacore 剩余股份，《Merge Mansion》（累计营收超 7 亿美元）将正式纳入游戏组合。同时 Metacore 启动重组，芬兰最多 160 个岗位面临裁撤。这是 Supercell 投资超 20 家工作室后首次大规模全资收购，标志着其在 Merge-2 赛道的战略加码。</p>
+            <div class="meta">
+                <span class="tag source">罗斯基 / 游戏葡萄</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/rDIvWrRtOp4NevM8332EYw" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank top3">3</span>
+                <h2>DataEye 4 月小游戏月榜：黑马《掌上谈兵》空降畅销第二</h2>
+            </div>
+            <p class="summary">《无尽冬日》继续稳居月度榜首，新游《掌上谈兵》4 月 20 日首日登榜即空降日畅销第 6，上线 4 天登顶日榜，空降月度畅销第二。骰子元素赛道成新热点：海彼《六六英雄》位列第 41，飞鱼科技《逆转回合》位列第 49。100 款入榜产品中 33 款上升、45 款下滑，头部固化趋势明显。</p>
+            <div class="meta">
+                <span class="tag source">DataEye游戏观察</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/qnFumHHy6V0pJHTqvHlniQ" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">4</span>
+                <h2>散爆十周年：羽中曝光两款 UE5 射击新作，狠砸 5 亿开启二次创业</h2>
+            </div>
+            <p class="summary">《少女前线》十周年音乐嘉年华上，散爆 CEO 羽中正式公布公司未来产品战略，首次曝光两款"二次元射击"新作（其中一款为 UE5 引擎开发的 TPS）。此次曝光力度之大、野心之强，被评价为"仍是一代敢闯的制作人"。</p>
+            <div class="meta">
+                <span class="tag source">游戏研究社</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/Wcvzr9qo4AVkiivDDMcfzg" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">5</span>
+                <h2>微软叫停 Copilot for Gaming，AI+游戏遇冷</h2>
+            </div>
+            <p class="summary">当地时间 5 月 6 日，微软 Xbox CEO 夏尔玛宣布 AI 助手面向游戏玩家的功能 Copilot for Gaming 停止开发。该功能 2025 年 3 月公开，提供游戏搜索、心理辅导提升玩家水平等功能。这是 AI+游戏领域少有的大厂砍项目案例，可能是使用率低或技术落地不及预期。</p>
+            <div class="meta">
+                <span class="tag source">游戏研究社</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/ygAgsXZ2Y0huKcN-6sSW1w" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">6</span>
+                <h2>5 月 24 款新游混战：灵犀修仙放置、腾讯肉鸽、B 站三国卡牌</h2>
+            </div>
+            <p class="summary">5 月新游市场密集上线，灵犀互娱修仙放置类新游、腾讯 Roguelike 新作、B 站三国卡牌《三国：百将牌》，以及《宗师之上》《卡厄思梦境》《镭明闪击》等多款产品同期上线。新游数量明显多于去年同期，厂商对暑期档预期乐观。</p>
+            <div class="meta">
+                <span class="tag source">游戏陀螺</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/_uSpRUC4JXUd4ziyE-KC9w" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">7</span>
+                <h2>灵犀《灵魂面甲》过亿流水：非 SLG 赛道的突围</h2>
+            </div>
+            <p class="summary">灵犀互娱代理发行的国产生存沙盒建造游戏《灵魂面甲》正式版于 4 月 10 日发售，全球销量突破百万份，流水已过亿。此前经历了较长的 EA 阶段积累玩家口碑，正式版上线后顺利冲上 Steam 热销榜，验证了公司多品类发行的能力。</p>
+            <div class="meta">
+                <span class="tag source">游戏茶馆</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/SP016AkbSedapQBpMC8ggQ" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">8</span>
+                <h2>和平精英 7 年专访：策划总监揭秘 Top1 长青秘诀</h2>
+            </div>
+            <p class="summary">上线 7 年仍稳居战术竞技品类 Top1，策划总监透露核心策略是"让所有人玩在一起"：降低门槛让不同水平玩家参与、丰富社交玩法增强粘性、持续内容更新保持新鲜感。该游戏在 GDC 2026 上分享了 AI+Bot 的应用成果。</p>
+            <div class="meta">
+                <span class="tag source">游戏那点事Gamez</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/W6MwkNYjnXGAIC5Ba7AyBA" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">9</span>
+                <h2>《洛克王国：世界》体验拆解：精灵+战斗+社交三模块深度结合</h2>
+            </div>
+            <p class="summary">GameRes 游资网发布深度体验拆解，从精灵生态、战斗系统、社交玩法三大维度分析。该游戏在精灵捕捉养成、回合制战斗和社区互动方面做了深度设计，体现了腾讯在 IP 改编和长线运营上的方法论。</p>
+            <div class="meta">
+                <span class="tag source">GameRes游资网</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/NPsq7t6SJU7XgaNQlkwZNg" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">10</span>
+                <h2>北京 SLG 厂商利润下滑 43.9%，两款主力产品占 97% 流水</h2>
+            </div>
+            <p class="summary">某北京厂商 2026 年一季度利润同比下滑 43.9%，两款主力 SLG 产品贡献了公司 97% 的流水，产品线极度单一。该厂商计划推出多款新游卷土重来，折射出中小 SLG 厂商普遍面临的困境——依赖少数产品、抗风险能力弱。</p>
+            <div class="meta">
+                <span class="tag source">游戏那点事Gamez</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/F6cVz1dR_ihF4nL97OveRA" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>数据来源：游戏葡萄 · 游戏陀螺 · GameRes游资网 · 游戏那点事Gamez · 游戏研究社 · 白鲸出海 · DataEye游戏观察 · 罗斯基 · 游戏茶馆</p>
+            <p style="margin-top: 8px;">Powered by 小柱子 AI · WeWe RSS 自动抓取 · 每日更新</p>
+        </div>
+    </div>
+</body>
+</html>
