@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏行业 Top 10 话题日报 - 2026年5月8日</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --border: #2a2d3a;
+            --accent: #6c5ce7;
+            --accent2: #a29bfe;
+            --text: #e2e4ed;
+            --text-dim: #8a8d9a;
+            --green: #00b894;
+            --orange: #fdcb6e;
+            --red: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .nav {
+            background: #1a1d27;
+            border-bottom: 1px solid #2a2d3a;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav .brand {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .nav .links { display: flex; gap: 20px; }
+        .nav .links a {
+            color: #8a8d9a;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .nav .links a:hover { color: #a29bfe; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        .header .logo { font-size: 36px; margin-bottom: 8px; }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header .date { color: var(--text-dim); font-size: 14px; }
+        .header .stats {
+            display: flex; justify-content: center; gap: 32px;
+            margin-top: 20px;
+        }
+        .header .stat { text-align: center; }
+        .header .stat .num { font-size: 28px; font-weight: 700; color: var(--accent2); }
+        .header .stat .label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        /* Article Card */
+        .article {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .article:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .article .rank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            font-size: 14px; font-weight: 700;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .rank.top1 { background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: #fff; }
+        .rank.top2 { background: linear-gradient(135deg, #fdcb6e, #f39c12); color: #fff; }
+        .rank.top3 { background: linear-gradient(135deg, #00b894, #00cec9); color: #fff; }
+        .rank.normal { background: var(--border); color: var(--text-dim); }
+        .article .title-row { display: flex; align-items: flex-start; margin-bottom: 12px; }
+        .article h2 {
+            font-size: 18px; font-weight: 600; line-height: 1.5;
+            color: var(--text);
+        }
+        .article .summary {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.8;
+            padding-left: 44px;
+            margin-bottom: 16px;
+        }
+        .article .meta {
+            display: flex; gap: 16px; align-items: center;
+            padding-left: 44px;
+        }
+        .article .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .tag.source { background: rgba(108,92,231,0.15); color: var(--accent2); }
+        .article .link {
+            color: var(--green);
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .article .link:hover { text-decoration: underline; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 30px;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+        .footer a { color: var(--accent2); text-decoration: none; }
+
+        /* Trend Tags */
+        .trends {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .trend-tag {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            background: rgba(108,92,231,0.1);
+            color: var(--accent2);
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 12px; }
+            .header h1 { font-size: 22px; }
+            .article { padding: 16px; }
+            .article .summary, .article .meta { padding-left: 0; }
+            .article .title-row { flex-direction: column; }
+            .article .rank { margin-bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="brand">🧱 Republic Zhu</a>
+            <div class="links">
+                <a href="../index.html">← 返回列表</a>
+                <a href="https://republic-zhu.com" target="_blank">官网</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🧱</div>
+            <h1>游戏行业 Top 10 话题日报</h1>
+            <div class="date">2026年5月8日 星期四</div>
+            <div class="stats">
+                <div class="stat"><div class="num">14</div><div class="label">今日新文章</div></div>
+                <div class="stat"><div class="num">6</div><div class="label">覆盖公众号</div></div>
+                <div class="stat"><div class="num">9</div><div class="label">监控公众号</div></div>
+            </div>
+            <div class="trends">
+                <span class="trend-tag">《异环》爆款</span>
+                <span class="trend-tag">出海 SLG</span>
+                <span class="trend-tag">AI 陪伴</span>
+                <span class="trend-tag">二次元 ARPG</span>
+                <span class="trend-tag">游戏政策</span>
+            </div>
+        </div>
+
+        <!-- Articles -->
+        <div class="article">
+            <div class="title-row">
+                <span class="rank top1">1</span>
+                <h2>首日流水破亿，今日畅销榜Top 5，《异环》打破质疑</h2>
+            </div>
+            <p class="summary">完美世界旗舰二次元开放世界《异环》上线首日流水破亿，同时登顶国内畅销榜Top 5。更值得关注的是 PC+主机端流水占比超 65%，开发预算约 3 亿元，上线首日即收回近三分之一。这正在重新定义"跨端爆款"的衡量标准——传统 iOS 畅销榜已无法照出全貌。</p>
+            <div class="meta">
+                <span class="tag source">游戏葡萄</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/8lIetGQi1CywTjUNulShjw" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank top2">2</span>
+                <h2>三七《Last Asylum》月流水破亿，同类产品已经开测</h2>
+            </div>
+            <p class="summary">三七互娱 SLG《Last Asylum: Plague》3 月全球流水超 1.13 亿元，单日预估流水达 480 万，成为 2026 年首个 SLG 月度亿级爆款。Google Play 版本仍在增长期，iOS 版本在美国畅销榜 100 名左右平稳运营。同品类竞品已陆续开测，SLG 赛道竞争加剧。</p>
+            <div class="meta">
+                <span class="tag source">白鲸出海</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/yEmGhUW2g-vB0h-a1qGSQA" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank top3">3</span>
+                <h2>再登畅销Top 1：腾子的二游，后劲真大</h2>
+            </div>
+            <p class="summary">腾讯发行的 NIKKE 上线 3 年半累计营收超 70 亿元，3.5 周年系列活动开启后再次登顶日韩 Google Play 和 App Store 畅销 Top 1。3.5 周年并非新鲜事，偶像题材在日韩市场也不稀奇，但腾讯通过精准的版本节奏和长线运营，让这款"三年大关"产品保持持续爆发力。</p>
+            <div class="meta">
+                <span class="tag source">游戏葡萄</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/IN5QqemBwTXOs5GpYjFt5g" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">4</span>
+                <h2>4月全球收入榜：王者蝉联Top 1，奔奔王国国区收入创新高</h2>
+            </div>
+            <p class="summary">AppMagic 发布 4 月全球手游收入榜，整体市场环比下降 4.3%、同比下降 2.6%。《王者荣耀》内购收入 1.38 亿美元蝉联第一，《Last War: Survival》收入 1.14 亿美元但连续两月下滑，《无尽冬日》约 1.1 亿美元。奔奔王国国区收入创历史新高，排名前十。</p>
+            <div class="meta">
+                <span class="tag source">游戏葡萄</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/4uZHLqbOqSPU7j5vH0uDmA" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">5</span>
+                <h2>二次元 ARPG 卷不动了，大厂开始押注副玩法</h2>
+            </div>
+            <p class="summary">二次元 ARPG 赛道竞争白热化后，多家大厂开始将资源转向副玩法差异化路线——在核心战斗之外叠加模拟经营、社交、策略等模块来提升留存。这反映出纯 ARPG 的玩法红利正在消退，未来二次元产品的竞争力可能更取决于"主玩法+X"的组合创新能力。</p>
+            <div class="meta">
+                <span class="tag source">罗斯基</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/-OuFtURHeBdGsQ2ujemYnQ" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">6</span>
+                <h2>AI 陪伴在日本破冰，单市场月流水破百万美元</h2>
+            </div>
+            <p class="summary">AI 陪伴类应用在日本市场单月流水突破百万美元，成为出海新增长点。全球 AI 陪伴赛道年化收入有望突破 1.2 亿美元，目前活跃 App 337 款，Character.AI 年化收入约 3000 万美元。日本用户对二次元 AI 角色的高付费意愿，使该市场成为 AI 陪伴出海的首选。</p>
+            <div class="meta">
+                <span class="tag source">白鲸出海</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/iDf484nevpOfVnlldusKLg" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">7</span>
+                <h2>上架第一天就回本，但第二年我们放弃了那个市场</h2>
+            </div>
+            <p class="summary">独立团队分享的出海复盘案例：产品上线首日即回本，但在第二年选择放弃某个市场。这类"短期爆发 vs 长线可持续"的对比反思，揭示了出海选市场不能只看首日 ROI，还要评估用户留存、本地化成本、竞品密度和长期运营能力。</p>
+            <div class="meta">
+                <span class="tag source">罗斯基</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/11G0LFySGW30rNxTZVu_HQ" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">8</span>
+                <h2>下一个拉瑞安？曾经的俄罗斯小作坊，正用虚幻5把经典科幻美剧做成CRPG</h2>
+            </div>
+            <p class="summary">一家曾经的俄罗斯小团队用虚幻 5 将经典科幻美剧改编为 CRPG，引发关注。拉瑞安凭借《博德之门3》证明了 CRPG 的商业天花板，这条赛道正吸引更多中小团队入场。经典 IP+CRPG 的组合，有望复刻"小团队大爆款"的路径。</p>
+            <div class="meta">
+                <span class="tag source">游戏研究社</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/mETEIgrGTq5E3Y-Uyu7vLA" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">9</span>
+                <h2>上海闵行区发布2026年度游戏产业专项政策，原创游戏研发最高获200万</h2>
+            </div>
+            <p class="summary">上海闵行区发布 2026 年度游戏产业专项政策申报指南，原创游戏研发最高可获得 200 万元补贴。这是地方政府持续加码游戏产业扶持的又一信号，对中小研发团队是利好。各地政策竞争正在成为游戏企业选址的重要考量因素。</p>
+            <div class="meta">
+                <span class="tag source">游戏茶馆</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/GVy63efWYGRDsGr8LL0kJQ" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <div class="article">
+            <div class="title-row">
+                <span class="rank normal">10</span>
+                <h2>它"背叛"了肉鸽：游戏做得太爽，是种罪过吗？</h2>
+            </div>
+            <p class="summary">游戏陀螺对肉鸽（Roguelike）品类的深度讨论：当肉鸽游戏变得越来越"爽"，是否偏离了原本的核心设计哲学？肉鸽的"死亡惩罚"与"随机性"是其灵魂，过度追求爽快感可能导致品类同质化。这是关于"游戏设计边界"的有价值思考。</p>
+            <div class="meta">
+                <span class="tag source">游戏陀螺</span>
+                <a class="link" href="https://mp.weixin.qq.com/s/FuJ3t7Vk5S9SY9VbXXLkHw" target="_blank">阅读原文 →</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>数据来源：游戏葡萄 · 游戏陀螺 · GameRes游资网 · 游戏那点事Gamez · 游戏研究社 · 白鲸出海 · DataEye游戏观察 · 罗斯基 · 游戏茶馆</p>
+            <p style="margin-top: 8px;">Powered by <a href="#">小柱子 AI</a> · WeWe RSS 自动抓取 · 每日更新</p>
+        </div>
+    </div>
+</body>
+</html>
