@@ -3,328 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>买量 ROI 日报看板 - 2026-04-24 ~ 2026-04-28</title>
+    <title>买量 ROI 汇总报告 - 2026-04-24 ~ 04-28</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a;
-            --accent: #6c5ce7; --accent2: #a29bfe; --text: #e2e4ed;
-            --text-dim: #8a8d9a; --green: #00b894; --orange: #fdcb6e;
-            --red: #ff6b6b; --blue: #0984e3; --purple: #e84393;
+            --bg:#0f1117;--card:#1a1d27;--border:#2a2d3a;
+            --accent:#6c5ce7;--accent2:#a29bfe;--text:#e2e4ed;
+            --text-dim:#8a8d9a;--green:#00b894;--orange:#fdcb6e;
+            --red:#ff6b6b;--blue:#0984e3;--purple:#e84393;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-            background: var(--bg); color: var(--text); line-height: 1.7;
-        }
-        .nav {
-            background: #1a1d27; border-bottom: 1px solid #2a2d3a;
-            padding: 16px 0; position: sticky; top: 0; z-index: 100;
-        }
-        .nav-inner {
-            max-width: 1200px; margin: 0 auto; padding: 0 20px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .nav .brand {
-            font-size: 18px; font-weight: 700;
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-decoration: none;
-        }
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
-        .header { text-align: center; padding: 20px 0 30px; }
-        .header h1 {
-            font-size: 28px; font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-        .header .sub { color: var(--text-dim); font-size: 14px; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+        .nav{background:#1a1d27;border-bottom:1px solid #2a2d3a;padding:16px 0;position:sticky;top:0;z-index:100}
+        .nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center}
+        .nav .brand{font-size:18px;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+        .container{max-width:1200px;margin:0 auto;padding:30px 20px}
+        .header{text-align:center;padding:20px 0 30px}
+        .header h1{font-size:28px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+        .header .sub{color:var(--text-dim);font-size:14px}
 
-        .tabs { display: flex; gap: 8px; margin-bottom: 24px; justify-content: center; }
-        .tab-btn {
-            padding: 8px 24px; border-radius: 8px; border: 1px solid var(--border);
-            background: var(--card); color: var(--text-dim); font-size: 14px;
-            cursor: pointer; transition: all 0.2s; font-weight: 500;
-        }
-        .tab-btn:hover { border-color: var(--accent); color: var(--text); }
-        .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tabs{display:flex;gap:8px;margin-bottom:24px;justify-content:center}
+        .tab-btn{padding:8px 24px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text-dim);font-size:14px;cursor:pointer;transition:all .2s;font-weight:500}
+        .tab-btn:hover{border-color:var(--accent);color:var(--text)}
+        .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+        .tab-content{display:none}
+        .tab-content.active{display:block}
 
-        .kpi-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px; margin-bottom: 30px;
+        /* Period Summary Bar */
+        .summary-bar{
+            background:linear-gradient(135deg,rgba(108,92,231,0.15),rgba(162,155,254,0.1));
+            border:1px solid var(--border);border-radius:12px;padding:16px 24px;margin-bottom:24px;
+            display:flex;flex-wrap:wrap;gap:20px;align-items:center;
         }
-        .kpi-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 20px; text-align: center;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .kpi-card:hover { transform: translateY(-2px); border-color: var(--accent); }
-        .kpi-card .label { font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
-        .kpi-card .value { font-size: 28px; font-weight: 700; color: var(--accent2); }
-        .kpi-card .trend { font-size: 12px; margin-top: 4px; }
-        .kpi-card .trend.up { color: var(--green); }
-        .kpi-card .trend.down { color: var(--red); }
+        .summary-bar .item{font-size:13px}
+        .summary-bar .item .val{font-weight:700;color:var(--accent2);font-size:16px;margin-right:4px}
+        .summary-bar .item .lbl{color:var(--text-dim)}
 
-        .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .chart-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 20px;
-        }
-        .chart-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--text-dim); }
-        .chart-wrapper { position: relative; height: 300px; }
+        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px}
+        .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:transform .2s,border-color .2s}
+        .kpi-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+        .kpi-card .label{font-size:13px;color:var(--text-dim);margin-bottom:6px}
+        .kpi-card .value{font-size:26px;font-weight:700;color:var(--accent2)}
+        .kpi-card .unit{font-size:13px;color:var(--text-dim);margin-left:2px}
 
-        .section-title {
-            font-size: 16px; font-weight: 600; margin: 30px 0 16px;
-            padding-left: 12px; border-left: 3px solid var(--accent); color: var(--text);
-        }
+        .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(500px,1fr));gap:20px;margin-bottom:30px}
+        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+        .chart-card h3{font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text-dim)}
+        .chart-wrapper{position:relative;height:300px}
 
-        .table-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 20px; overflow-x: auto;
-        }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th {
-            padding: 10px 8px; text-align: left; color: var(--text-dim);
-            font-weight: 500; border-bottom: 2px solid var(--border); white-space: nowrap;
-        }
-        td { padding: 10px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-        tr:hover td { background: rgba(108,92,231,0.05); }
-        .td-good { color: var(--green); font-weight: 600; }
-        .td-bad { color: var(--red); font-weight: 600; }
-        .td-zero { color: var(--text-dim); }
+        .section-title{font-size:16px;font-weight:600;margin:30px 0 16px;padding-left:12px;border-left:3px solid var(--accent);color:var(--text)}
 
-        .footer {
-            text-align: center; padding: 30px 0;
-            border-top: 1px solid var(--border); color: var(--text-dim); font-size: 13px;
-        }
+        .table-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto}
+        table{width:100%;border-collapse:collapse;font-size:13px}
+        th{padding:10px 8px;text-align:left;color:var(--text-dim);font-weight:500;border-bottom:2px solid var(--border);white-space:nowrap}
+        td{padding:10px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+        tr:hover td{background:rgba(108,92,231,.05)}
+        .td-good{color:var(--green);font-weight:600}
+        .td-bad{color:var(--red);font-weight:600}
+        .td-zero{color:var(--text-dim)}
 
-        @media (max-width: 768px) {
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .chart-grid { grid-template-columns: 1fr; }
-            .chart-wrapper { height: 250px; }
-        }
+        .footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
+
+        @media(max-width:768px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.chart-grid{grid-template-columns:1fr}.chart-wrapper{height:250px}}
     </style>
 </head>
 <body>
     <nav class="nav">
         <div class="nav-inner">
             <a href="../index.html" class="brand">🧱 Republic Zhu</a>
-            <div style="display:flex;gap:20px;">
-                <a href="../index.html" style="color:#8a8d9a;text-decoration:none;font-size:14px;">← 日报</a>
-                <a href="https://republic-zhu.com" target="_blank" style="color:#8a8d9a;text-decoration:none;font-size:14px;">官网</a>
+            <div style="display:flex;gap:20px">
+                <a href="../index.html" style="color:#8a8d9a;text-decoration:none;font-size:14px">← 日报</a>
+                <a href="https://republic-zhu.com" target="_blank" style="color:#8a8d9a;text-decoration:none;font-size:14px">官网</a>
             </div>
         </div>
     </nav>
-
     <div class="container">
         <div class="header">
-            <h1>📊 买量 ROI 日报看板</h1>
-            <div class="sub">数据周期：2026-04-24 ~ 2026-04-28 · 按新增用户 cohort 分析</div>
+            <h1>📊 买量 ROI 汇总报告</h1>
+            <div class="sub">数据周期：2026-04-24 ~ 2026-04-28 · Cohort 分析 · 加权汇总</div>
         </div>
-
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('ov')">🌐 全量汇总</button>
             <button class="tab-btn" onclick="switchTab('id')">🇮🇩 印度尼西亚</button>
             <button class="tab-btn" onclick="switchTab('us')">🇺🇸 美国</button>
         </div>
-
         <div id="tab-ov" class="tab-content active"></div>
         <div id="tab-id" class="tab-content"></div>
         <div id="tab-us" class="tab-content"></div>
-
         <div class="footer">
             <p>数据来源：广告平台后台导出 · 自动生成</p>
-            <p style="margin-top:8px;">Powered by 小柱子 AI</p>
+            <p style="margin-top:8px">Powered by 小柱子 AI</p>
         </div>
     </div>
-
 <script>
-const DATA = {
-  dates: ['04-24','04-25','04-26','04-27','04-28'],
-  ov: [
-    {date:'04-24',installs:449,organic:111,paid:338,spend:633.73,cpi:1.41,ctr:1.89,cvr:26.09,cpm:6.97,roi_d0:3.77,roi_d1:11.80,roi_d3:35.46,ret_d1:27.39,ret_d3:12.47,ltv_d0:0.05,ltv_d1:0.17,ltv_d3:0.50,pay_d0:6,pay_d1:8},
-    {date:'04-25',installs:389,organic:39,paid:350,spend:662.00,cpi:1.70,ctr:1.06,cvr:16.73,cpm:3.01,roi_d0:1.35,roi_d1:1.35,roi_d3:1.50,ret_d1:18.51,ret_d3:4.11,ltv_d0:0.02,ltv_d1:0.02,ltv_d3:0.03,pay_d0:3,pay_d1:3},
-    {date:'04-26',installs:589,organic:37,paid:552,spend:830.94,cpi:1.41,ctr:1.60,cvr:22.12,cpm:5.01,roi_d0:0.60,roi_d1:0.71,roi_d3:0.71,ret_d1:18.68,ret_d3:6.79,ltv_d0:0.01,ltv_d1:0.01,ltv_d3:0.01,pay_d0:4,pay_d1:5},
-    {date:'04-27',installs:301,organic:42,paid:259,spend:159.81,cpi:0.53,ctr:1.45,cvr:10.26,cpm:0.89,roi_d0:336.93,roi_d1:565.73,roi_d3:690.67,ret_d1:25.91,ret_d3:10.30,ltv_d0:1.79,ltv_d1:3.00,ltv_d3:3.67,pay_d0:10,pay_d1:18},
-    {date:'04-28',installs:337,organic:36,paid:301,spend:179.84,cpi:0.53,ctr:1.88,cvr:6.56,cpm:0.66,roi_d0:3.33,roi_d1:17.20,roi_d3:39.42,ret_d1:16.32,ret_d3:4.15,ltv_d0:0.02,ltv_d1:0.09,ltv_d3:0.21,pay_d0:1,pay_d1:2},
-  ],
-  id: [
-    {date:'04-24',installs:183,organic:0,paid:183,spend:52.57,cpi:0.29,ctr:null,cvr:null,cpm:null,roi_d0:1.88,roi_d1:1.88,roi_d3:1.88,ret_d1:27.87,ret_d3:9.84,ltv_d0:0.01,ltv_d1:0.01,ltv_d3:0.01,pay_d0:0,pay_d1:0},
-    {date:'04-25',installs:131,organic:0,paid:131,spend:78.42,cpi:0.60,ctr:null,cvr:null,cpm:null,roi_d0:0.00,roi_d1:0.00,roi_d3:0.00,ret_d1:22.90,ret_d3:3.05,ltv_d0:0.00,ltv_d1:0.00,ltv_d3:0.00,pay_d0:0,pay_d1:0},
-    {date:'04-26',installs:181,organic:0,paid:181,spend:76.42,cpi:0.42,ctr:null,cvr:null,cpm:null,roi_d0:1.30,roi_d1:1.30,roi_d3:1.30,ret_d1:20.99,ret_d3:5.03,ltv_d0:0.01,ltv_d1:0.01,ltv_d3:0.01,pay_d0:0,pay_d1:0},
-    {date:'04-27',installs:243,organic:0,paid:243,spend:138.27,cpi:0.57,ctr:null,cvr:null,cpm:null,roi_d0:0.72,roi_d1:2.15,roi_d3:2.15,ret_d1:24.28,ret_d3:8.64,ltv_d0:0.00,ltv_d1:0.01,ltv_d3:0.01,pay_d0:0,pay_d1:0},
-    {date:'04-28',installs:312,organic:18,paid:294,spend:179.84,cpi:0.58,ctr:1.88,cvr:6.07,cpm:0.66,roi_d0:0.00,roi_d1:0.00,roi_d3:0.00,ret_d1:16.03,ret_d3:3.85,ltv_d0:0.00,ltv_d1:0.00,ltv_d3:0.00,pay_d0:0,pay_d1:0},
-  ],
-  us: [
-    {date:'04-24',installs:240,organic:41,paid:199,spend:581.16,cpi:2.42,ctr:0.90,cvr:33.66,cpm:22.15,roi_d0:1.54,roi_d1:8.41,roi_d3:17.86,ret_d1:27.50,ret_d3:12.92,ltv_d0:0.04,ltv_d1:0.20,ltv_d3:0.43,pay_d0:4,pay_d1:5},
-    {date:'04-25',installs:256,organic:35,paid:221,spend:583.58,cpi:2.28,ctr:1.14,cvr:9.73,cpm:10.01,roi_d0:1.53,roi_d1:1.53,roi_d3:1.70,ret_d1:16.41,ret_d3:4.69,ltv_d0:0.03,ltv_d1:0.03,ltv_d3:0.04,pay_d0:4,pay_d1:4},
-    {date:'04-26',installs:399,organic:33,paid:366,spend:754.52,cpi:1.89,ctr:1.81,cvr:22.87,cpm:9.93,roi_d0:0.52,roi_d1:0.66,roi_d3:0.66,ret_d1:17.54,ret_d3:7.52,ltv_d0:0.01,ltv_d1:0.01,ltv_d3:0.01,pay_d0:4,pay_d1:5},
-    {date:'04-27',installs:49,organic:20,paid:29,spend:21.54,cpi:0.44,ctr:2.25,cvr:10.38,cpm:9.58,roi_d0:2342.34,roi_d1:3891.69,roi_d3:4192.94,ret_d1:28.57,ret_d3:12.24,ltv_d0:10.30,ltv_d1:17.11,ltv_d3:18.43,pay_d0:4,pay_d1:5},
-    {date:'04-28',installs:20,organic:4,paid:16,spend:0.00,cpi:0.00,ctr:2.81,cvr:1.84,cpm:0.00,roi_d0:null,roi_d1:null,roi_d3:null,ret_d1:20.00,ret_d3:10.00,ltv_d0:0.30,ltv_d1:1.55,ltv_d3:3.54,pay_d0:0,pay_d1:0},
-  ]
-};
+const DATA={"dates":["04-24","04-25","04-26","04-27","04-28"],"ov":[{"date":"04-24","installs":449,"organic":111,"paid":338,"impressions":90943,"clicks":1721,"spend":633.73,"ctr":1.89,"cvr":26.09,"cpm":6.97,"roi_d0":3.77,"roi_d1":11.80,"roi_d3":35.46,"ret_d1":27.39,"ret_d3":12.47,"ltv_d0":0.05,"ltv_d1":0.17,"ltv_d3":0.50,"pay_d0":6,"pay_d1":8},{"date":"04-25","installs":389,"organic":39,"paid":350,"impressions":219667,"clicks":2325,"spend":662.00,"ctr":1.06,"cvr":16.73,"cpm":3.01,"roi_d0":1.35,"roi_d1":1.35,"roi_d3":1.50,"ret_d1":18.51,"ret_d3":4.11,"ltv_d0":0.02,"ltv_d1":0.02,"ltv_d3":0.03,"pay_d0":3,"pay_d1":3},{"date":"04-26","installs":589,"organic":37,"paid":552,"impressions":166008,"clicks":2663,"spend":830.94,"ctr":1.60,"cvr":22.12,"cpm":5.01,"roi_d0":0.60,"roi_d1":0.71,"roi_d3":0.71,"ret_d1":18.68,"ret_d3":6.79,"ltv_d0":0.01,"ltv_d1":0.01,"ltv_d3":0.01,"pay_d0":4,"pay_d1":5},{"date":"04-27","installs":301,"organic":32,"paid":269,"impressions":202236,"clicks":2933,"spend":159.81,"ctr":1.45,"cvr":10.26,"cpm":0.79,"roi_d0":336.93,"roi_d1":565.73,"roi_d3":690.67,"ret_d1":25.91,"ret_d3":10.30,"ltv_d0":1.79,"ltv_d1":3.00,"ltv_d3":3.67,"pay_d0":11,"pay_d1":14},{"date":"04-28","installs":337,"organic":36,"paid":301,"impressions":272959,"clicks":5136,"spend":179.84,"ctr":1.88,"cvr":6.56,"cpm":0.66,"roi_d0":3.33,"roi_d1":17.20,"roi_d3":39.42,"ret_d1":16.32,"ret_d3":4.15,"ltv_d0":0.02,"ltv_d1":0.09,"ltv_d3":0.21,"pay_d0":1,"pay_d1":2}],"id":[{"date":"04-24","installs":183,"organic":45,"paid":138,"impressions":64703,"clicks":1008,"spend":52.57,"ctr":1.56,"cvr":18.15,"cpm":0.81,"roi_d0":1.88,"roi_d1":1.88,"roi_d3":1.88,"ret_d1":27.87,"ret_d3":9.84,"ltv_d0":0.01,"ltv_d1":0.01,"ltv_d3":0.01,"pay_d0":1,"pay_d1":1},{"date":"04-25","installs":131,"organic":25,"paid":106,"impressions":185199,"clicks":1547,"spend":78.42,"ctr":0.84,"cvr":8.47,"cpm":0.42,"roi_d0":0.00,"roi_d1":0.00,"roi_d3":0.00,"ret_d1":22.90,"ret_d3":3.05,"ltv_d0":0.00,"ltv_d1":0.00,"ltv_d3":0.00,"pay_d0":0,"pay_d1":0},{"date":"04-26","installs":181,"organic":12,"paid":169,"impressions":112452,"clicks":1648,"spend":76.42,"ctr":1.47,"cvr":10.98,"cpm":0.68,"roi_d0":1.30,"roi_d1":1.30,"roi_d3":1.30,"ret_d1":20.99,"ret_d3":4.97,"ltv_d0":0.01,"ltv_d1":0.01,"ltv_d3":0.01,"pay_d0":1,"pay_d1":1},{"date":"04-27","installs":243,"organic":11,"paid":232,"impressions":200253,"clicks":2897,"spend":138.27,"ctr":1.45,"cvr":8.39,"cpm":0.69,"roi_d0":0.72,"roi_d1":2.15,"roi_d3":2.15,"ret_d1":24.28,"ret_d3":8.64,"ltv_d0":0.00,"ltv_d1":0.01,"ltv_d3":0.01,"pay_d0":1,"pay_d1":3},{"date":"04-28","installs":312,"organic":18,"paid":294,"impressions":272959,"clicks":5136,"spend":179.84,"ctr":1.88,"cvr":6.07,"cpm":0.66,"roi_d0":0.00,"roi_d1":0.00,"roi_d3":0.00,"ret_d1":16.03,"ret_d3":3.85,"ltv_d0":0.00,"ltv_d1":0.00,"ltv_d3":0.00,"pay_d0":0,"pay_d1":0}],"us":[{"date":"04-24","installs":240,"organic":41,"paid":199,"impressions":26240,"clicks":713,"spend":581.16,"ctr":2.72,"cvr":33.66,"cpm":22.15,"roi_d0":1.54,"roi_d1":8.41,"roi_d3":17.86,"ret_d1":27.50,"ret_d3":12.92,"ltv_d0":0.04,"ltv_d1":0.20,"ltv_d3":0.43,"pay_d0":4,"pay_d1":5},{"date":"04-25","installs":256,"organic":13,"paid":243,"impressions":34468,"clicks":778,"spend":583.58,"ctr":2.26,"cvr":32.90,"cpm":16.93,"roi_d0":1.53,"roi_d1":1.53,"roi_d3":1.70,"ret_d1":16.41,"ret_d3":4.69,"ltv_d0":0.03,"ltv_d1":0.03,"ltv_d3":0.04,"pay_d0":3,"pay_d1":3},{"date":"04-26","installs":399,"organic":19,"paid":380,"impressions":53556,"clicks":1015,"spend":754.52,"ctr":1.90,"cvr":39.31,"cpm":14.09,"roi_d0":0.52,"roi_d1":0.66,"roi_d3":0.66,"ret_d1":17.54,"ret_d3":7.52,"ltv_d0":0.01,"ltv_d1":0.01,"ltv_d3":0.01,"pay_d0":3,"pay_d1":4},{"date":"04-27","installs":49,"organic":12,"paid":37,"impressions":1983,"clicks":36,"spend":21.54,"ctr":1.82,"cvr":136.11,"cpm":10.86,"roi_d0":2342.34,"roi_d1":3891.69,"roi_d3":4192.94,"ret_d1":28.57,"ret_d3":12.24,"ltv_d0":10.30,"ltv_d1":17.11,"ltv_d3":18.43,"pay_d0":7,"pay_d1":7},{"date":"04-28","installs":20,"organic":15,"paid":5,"impressions":0,"clicks":0,"spend":0.00,"ctr":null,"cvr":null,"cpm":null,"roi_d0":null,"roi_d1":null,"roi_d3":null,"ret_d1":20.00,"ret_d3":10.00,"ltv_d0":0.30,"ltv_d1":1.55,"ltv_d3":3.54,"pay_d0":1,"pay_d1":2}],"ov_summary":{"installs":2065,"organic":255,"paid":1810,"spend":2466.32,"impressions":951813,"clicks":14778,"cpi":1.19,"ctr":1.55,"cvr":12.25,"cpm":2.59,"ltv_d0":0.282,"ltv_d1":0.496,"ltv_d3":0.686,"ret_d1":21.2,"ret_d3":7.6,"pay_d0":25,"pay_d1":32},"id_summary":{"installs":1050,"organic":111,"paid":939,"spend":525.52,"impressions":835566,"clicks":12236,"cpi":0.50,"ctr":1.46,"cvr":7.67,"cpm":0.63,"ltv_d0":0.003,"ltv_d1":0.006,"ltv_d3":0.006,"ret_d1":21.7,"ret_d3":6.1,"pay_d0":3,"pay_d1":5},"us_summary":{"installs":964,"organic":100,"paid":864,"spend":1940.80,"impressions":116247,"clicks":2542,"cpi":2.01,"ctr":2.19,"cvr":33.99,"cpm":16.70,"ltv_d0":0.552,"ltv_d1":0.964,"ltv_d3":1.132,"ret_d1":20.3,"ret_d3":8.4,"pay_d0":18,"pay_d1":21}};
 
-Chart.defaults.color = '#8a8d9a';
-Chart.defaults.borderColor = '#2a2d3a';
-Chart.defaults.font.size = 11;
+Chart.defaults.color='#8a8d9a';Chart.defaults.borderColor='#2a2d3a';Chart.defaults.font.size=11;
+function fmt(n,d=2){return n!=null?n.toFixed(d):'-'}
+function fmt3(n){return n!=null?n.toFixed(3):'-'}
+function roiCls(v){if(v==null)return'td-zero';return v>=100?'td-good':v>=0?'':'td-bad'}
 
-function fmt(n, d=2) { return n != null ? n.toFixed(d) : '-'; }
-function fmt3(n) { return n != null ? n.toFixed(3) : '-'; }
-function roiCls(v) { if (v == null) return 'td-zero'; return v >= 100 ? 'td-good' : v >= 0 ? '' : 'td-bad'; }
+function buildTab(key,flag){
+    const data=DATA[key];
+    const S=DATA[key+'_summary'];
+    const D=DATA.dates;
+    const p='c-'+key;
+    let h='';
 
-function buildTab(key, label, flag) {
-    const data = DATA[key];
-    const L = data.length;
-    const latest = data[L-1];
-    const prev = data[L-2];
-    const p = 'c-' + key;
+    // Period summary bar
+    h+=`<div class="summary-bar">
+        <div class="item"><span class="val">${S.installs}</span><span class="lbl"> 总安装</span></div>
+        <div class="item"><span class="val">$${fmt(S.spend)}</span><span class="lbl"> 总花费</span></div>
+        <div class="item"><span class="val">$${fmt(S.cpi)}</span><span class="lbl"> 加权 CPI</span></div>
+        <div class="item"><span class="val">${fmt(S.ctr)}%</span><span class="lbl"> 加权 CTR</span></div>
+        <div class="item"><span class="val">${fmt(S.cvr)}%</span><span class="lbl"> 加权 CVR</span></div>
+        <div class="item"><span class="val">${fmt(S.ret_d1)}%</span><span class="lbl"> D1 留存</span></div>
+        <div class="item"><span class="val">${fmt(S.ret_d3)}%</span><span class="lbl"> D3 留存</span></div>
+        <div class="item"><span class="val">$${fmt3(S.ltv_d3)}</span><span class="lbl"> D3 LTV</span></div>
+    </div>`;
 
-    // KPI cards
-    let h = '<div class="kpi-grid">';
-    const kpis = [
-        {l:'总安装',v:latest.installs,t:latest.installs-prev.installs,f:'int'},
-        {l:'广告花费',v:latest.spend,t:latest.spend-prev.spend,f:'usd'},
-        {l:'CPI',v:latest.cpi,t:prev.cpi!=null?(latest.cpi-prev.cpi):null,f:'usd',inv:1},
-        {l:'D0 ROI',v:latest.roi_d0,t:(latest.roi_d0!=null&&prev.roi_d0!=null)?(latest.roi_d0-prev.roi_d0):null,f:'pct'},
-        {l:'D1 留存',v:latest.ret_d1,t:latest.ret_d1-prev.ret_d1,f:'pct'},
-        {l:'D3 留存',v:latest.ret_d3,t:latest.ret_d3-prev.ret_d3,f:'pct'},
-        {l:'D3 LTV',v:latest.ltv_d3,t:latest.ltv_d3-prev.ltv_d3,f:'usd'},
-        {l:'CTR',v:latest.ctr,t:(latest.ctr!=null&&prev.ctr!=null)?(latest.ctr-prev.ctr):null,f:'pct'},
-        {l:'CVR',v:latest.cvr,t:(latest.cvr!=null&&prev.cvr!=null)?(latest.cvr-prev.cvr):null,f:'pct',inv:1},
-    ];
-    kpis.forEach(k => {
-        let v;
-        if (k.f === 'int') v = String(k.v);
-        else if (k.f === 'usd') v = k.v != null ? '$' + fmt(k.v) : '-';
-        else if (k.f === 'pct') v = k.v != null ? fmt(k.v) + '%' : '-';
-        const hasT = k.t != null;
-        const cls = hasT && k.t > 0 ? (k.inv ? 'down' : 'up') : (hasT && k.t < 0 ? (k.inv ? 'up' : 'down') : '');
-        const arrow = hasT ? (k.t > 0 ? '↑' : k.t < 0 ? '↓' : '—') : '—';
-        const tStr = hasT ? `${arrow} ${Math.abs(k.t).toFixed(k.f === 'pct' ? 2 : k.f === 'usd' ? 2 : 0)}${k.f === 'pct' ? '%' : k.f === 'usd' ? '$' : ''}` : '持平';
-        h += `<div class="kpi-card"><div class="label">${k.l}</div><div class="value">${v}</div><div class="trend ${cls}">${tStr}</div></div>`;
-    });
-    h += '</div>';
+    // KPI cards (period totals)
+    h+=`<div class="kpi-grid">
+        <div class="kpi-card"><div class="label">总安装</div><div class="value">${S.installs}</div></div>
+        <div class="kpi-card"><div class="label">买量安装</div><div class="value">${S.paid}</div></div>
+        <div class="kpi-card"><div class="label">广告总花费</div><div class="value">$${fmt(S.spend)}</div></div>
+        <div class="kpi-card"><div class="label">加权 CPI</div><div class="value">$${fmt(S.cpi)}</div></div>
+        <div class="kpi-card"><div class="label">加权 CTR</div><div class="value">${fmt(S.ctr)}%</div></div>
+        <div class="kpi-card"><div class="label">加权 CVR</div><div class="value">${fmt(S.cvr)}%</div></div>
+        <div class="kpi-card"><div class="label">D0 LTV</div><div class="value">$${fmt3(S.ltv_d0)}</div></div>
+        <div class="kpi-card"><div class="label">D3 LTV</div><div class="value">$${fmt3(S.ltv_d3)}</div></div>
+        <div class="kpi-card"><div class="label">付费用户(D0)</div><div class="value">${S.pay_d0}</div></div>
+        <div class="kpi-card"><div class="label">付费用户(D1)</div><div class="value">${S.pay_d1}</div></div>
+    </div>`;
 
     // Charts
-    h += `<div class="chart-grid">
+    h+=`<div class="chart-grid">
+        <div class="chart-card"><h3>📊 ROI 趋势（每条线 = 一个新增日期，横轴 = 老化天数）</h3><div class="chart-wrapper"><canvas id="${p}-roi"></canvas></div></div>
+        <div class="chart-card"><h3>💎 LTV 趋势（每条线 = 一个新增日期，横轴 = 老化天数）</h3><div class="chart-wrapper"><canvas id="${p}-ltv"></canvas></div></div>
         <div class="chart-card"><h3>📈 每日安装量</h3><div class="chart-wrapper"><canvas id="${p}-installs"></canvas></div></div>
         <div class="chart-card"><h3>💰 每日广告花费 & CPI</h3><div class="chart-wrapper"><canvas id="${p}-spend"></canvas></div></div>
-        <div class="chart-card"><h3>📊 每日 ROI（按新增日期 cohort）</h3><div class="chart-wrapper"><canvas id="${p}-roi"></canvas></div></div>
         <div class="chart-card"><h3>🔄 每日留存率</h3><div class="chart-wrapper"><canvas id="${p}-ret"></canvas></div></div>
-        <div class="chart-card"><h3>💎 每日 LTV（按新增日期 cohort）</h3><div class="chart-wrapper"><canvas id="${p}-ltv"></canvas></div></div>
-        <div class="chart-card"><h3>🎯 每日 CTR & CVR</h3><div class="chart-wrapper"><canvas id="${p}-ctr"></canvas></div></div>
+        <div class="chart-card"><h3>🎯 每日 CTR</h3><div class="chart-wrapper"><canvas id="${p}-ctr"></canvas></div></div>
+        <div class="chart-card"><h3>📉 每日 CVR</h3><div class="chart-wrapper"><canvas id="${p}-cvr"></canvas></div></div>
     </div>`;
 
     // Table
-    h += `<div class="table-section"><div class="section-title">${flag} 每日 Cohort 详细数据</div>
-    <div class="table-card"><table><thead><tr>
-        <th>新增日期</th><th>安装</th><th>自然量</th><th>买量安装</th>
-        <th>广告花费</th><th>CPI</th><th>CTR</th><th>CVR</th>
-        <th>D0 ROI</th><th>D1 ROI</th><th>D3 ROI</th>
-        <th>D1 留存</th><th>D3 留存</th>
-        <th>D0 LTV</th><th>D1 LTV</th><th>D3 LTV</th>
+    h+=`<div class="section-title">${flag} 每日 Cohort 详细数据</div><div class="table-card"><table><thead><tr>
+        <th>新增日期</th><th>安装</th><th>自然量</th><th>买量安装</th><th>广告花费</th><th>CPI</th>
+        <th>CTR</th><th>CVR</th><th>D0 ROI</th><th>D1 ROI</th><th>D3 ROI</th>
+        <th>D1 留存</th><th>D3 留存</th><th>D0 LTV</th><th>D1 LTV</th><th>D3 LTV</th>
     </tr></thead><tbody>`;
-    data.forEach(d => {
-        const dt = '2026-' + d.date.replace('-','-');
-        h += `<tr>
-            <td>${d.date}</td><td>${d.installs}</td><td>${d.organic}</td><td>${d.paid}</td>
+    data.forEach(d=>{
+        h+=`<tr><td>${d.date}</td><td>${d.installs}</td><td>${d.organic}</td><td>${d.paid}</td>
             <td>$${fmt(d.spend)}</td><td>${d.cpi!=null?'$'+fmt(d.cpi):'-'}</td>
-            <td>${d.ctr!=null?fmt(d.ctr,2)+'%':'-'}</td><td>${d.cvr!=null?fmt(d.cvr,2)+'%':'-'}</td>
-            <td class="${roiCls(d.roi_d0)}">${d.roi_d0!=null?fmt(d.roi_d0,2)+'%':'-'}</td>
-            <td class="${roiCls(d.roi_d1)}">${d.roi_d1!=null?fmt(d.roi_d1,2)+'%':'-'}</td>
-            <td class="${roiCls(d.roi_d3)}">${d.roi_d3!=null?fmt(d.roi_d3,2)+'%':'-'}</td>
-            <td>${fmt(d.ret_d1,1)}%</td><td>${fmt(d.ret_d3,1)}%</td>
-            <td>$${fmt3(d.ltv_d0)}</td><td>$${fmt3(d.ltv_d1)}</td><td>$${fmt3(d.ltv_d3)}</td>
-        </tr>`;
+            <td>${d.ctr!=null?fmt(d.ctr)+'%':'-'}</td><td>${d.cvr!=null?fmt(d.cvr)+'%':'-'}</td>
+            <td class="${roiCls(d.roi_d0)}">${d.roi_d0!=null?fmt(d.roi_d0)+'%':'-'}</td>
+            <td class="${roiCls(d.roi_d1)}">${d.roi_d1!=null?fmt(d.roi_d1)+'%':'-'}</td>
+            <td class="${roiCls(d.roi_d3)}">${d.roi_d3!=null?fmt(d.roi_d3)+'%':'-'}</td>
+            <td>${fmt(d.ret_d1)}%</td><td>${fmt(d.ret_d3)}%</td>
+            <td>$${fmt3(d.ltv_d0)}</td><td>$${fmt3(d.ltv_d1)}</td><td>$${fmt3(d.ltv_d3)}</td></tr>`;
     });
-    h += '</tbody></table></div></div>';
+    h+=`</tbody></table></div>`;
     return h;
 }
 
-// Render all tabs
-document.getElementById('tab-ov').innerHTML = buildTab('ov', '', '🌐');
-document.getElementById('tab-id').innerHTML = buildTab('id', '', '🇮🇩');
-document.getElementById('tab-us').innerHTML = buildTab('us', '', '🇺🇸');
+document.getElementById('tab-ov').innerHTML=buildTab('ov','🌐');
+document.getElementById('tab-id').innerHTML=buildTab('id','🇮🇩');
+document.getElementById('tab-us').innerHTML=buildTab('us','🇺🇸');
 
-function switchTab(key) {
-    document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-    document.getElementById('tab-' + key).classList.add('active');
+function switchTab(key){
+    document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+    document.getElementById('tab-'+key).classList.add('active');
     event.target.classList.add('active');
-    setTimeout(() => renderCharts(key), 50);
+    setTimeout(()=>renderCharts(key),50);
 }
 
-const DATES = DATA.dates;
-
-function mkChart(id, type, datasets, dualAxis) {
-    const el = document.getElementById(id);
-    if (!el || el._chartDone) return;
-    const cfg = {
-        type,
-        data: { labels: DATES, datasets },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#a29bfe', padding: 12, font: { size: 11 } } } },
-            scales: {
-                x: { ticks: { color: '#8a8d9a', maxRotation: 0 }, grid: { color: '#2a2d3a' }, title: { display: true, text: '新增日期', color: '#8a8d9a' } },
-                y: { ticks: { color: '#8a8d9a' }, grid: { color: '#2a2d3a' } }
-            }
-        }
+function mkChart(id,type,datasets,opts={}){
+    const el=document.getElementById(id);
+    if(!el||el._chartDone)return;
+    const scales={
+        x:{ticks:{color:'#8a8d9a',maxRotation:0},grid:{color:'#2a2d3a'}},
+        y:{ticks:{color:'#8a8d9a'},grid:{color:'#2a2d3a'}}
     };
-    if (dualAxis) {
-        cfg.options.scales.y1 = { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#fdcb6e' }, title: { display: true, text: 'CPI', color: '#fdcb6e' } };
-        cfg.options.scales.y.title = { display: true, text: '花费 ($)', color: '#a29bfe' };
+    if(opts.dualAxis){
+        scales.y1={position:'right',grid:{drawOnChartArea:false},ticks:{color:'#fdcb6e'},title:{display:true,text:opts.y1Label||'CPI',color:'#fdcb6e'}};
+        scales.y.title={display:true,text:opts.yLabel||'花费 ($)',color:'#a29bfe'};
     }
-    new Chart(el, cfg);
-    el._chartDone = true;
+    if(opts.yLabel&&!opts.dualAxis)scales.y.title={display:true,text:opts.yLabel,color:'#a29bfe'};
+    new Chart(el,{type,data:{labels:opts.labels||DATA.dates,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#a29bfe',padding:12,font:{size:11}}}},scales}});
+    el._chartDone=true;
 }
 
-function renderCharts(key) {
-    const data = DATA[key];
-    const p = 'c-' + key;
+const DATES=DATA.dates;
+const COLORS=['#00b894','#6c5ce7','#fdcb6e','#e84393','#0984e3','#a29bfe','#ff6b6b','#00cec9'];
 
-    mkChart(p + '-installs', 'bar', [
-        { label: '自然量', data: data.map(d => d.organic), backgroundColor: 'rgba(162,155,254,0.7)', borderRadius: 4 },
-        { label: '买量安装', data: data.map(d => d.paid), backgroundColor: 'rgba(108,92,231,0.7)', borderRadius: 4 },
-    ]);
+function renderCharts(key){
+    const data=DATA[key];
+    const p='c-'+key;
+    if(document.getElementById(p+'-roi')?.classList?.contains('rendered'))return;
+    document.getElementById(p+'-roi').classList.add('rendered');
 
-    mkChart(p + '-spend', 'line', [
-        { label: '广告花费 ($)', data: data.map(d => d.spend), borderColor: '#6c5ce7', backgroundColor: 'rgba(108,92,231,0.1)', fill: true, tension: 0.3, yAxisID: 'y' },
-        { label: 'CPI ($)', data: data.map(d => d.cpi), borderColor: '#fdcb6e', tension: 0.3, yAxisID: 'y1', borderDash: [5, 5] },
-    ], true);
+    // ROI: X=D0,D1,D3; each line=one date
+    mkChart(p+'-roi','line',data.map((d,i)=>({
+        label:d.date,data:[d.roi_d0,d.roi_d1,d.roi_d3],
+        borderColor:COLORS[i],tension:0.3,pointRadius:5,pointHoverRadius:7,fill:false,
+        spanGaps:true
+    })),{labels:['D0','D1','D3']});
 
-    // ROI: X = install date, lines = D0/D1/D3
-    mkChart(p + '-roi', 'line', [
-        { label: 'D0 ROI', data: data.map(d => d.roi_d0), borderColor: '#00b894', backgroundColor: 'rgba(0,184,148,0.1)', tension: 0.3, pointRadius: 5, pointHoverRadius: 7, fill: true },
-        { label: 'D1 ROI', data: data.map(d => d.roi_d1), borderColor: '#fdcb6e', tension: 0.3, pointRadius: 5, pointHoverRadius: 7 },
-        { label: 'D3 ROI', data: data.map(d => d.roi_d3), borderColor: '#e84393', tension: 0.3, pointRadius: 5, pointHoverRadius: 7 },
-    ]);
+    // LTV: X=D0,D1,D3; each line=one date
+    mkChart(p+'-ltv','line',data.map((d,i)=>({
+        label:d.date,data:[d.ltv_d0,d.ltv_d1,d.ltv_d3],
+        borderColor:COLORS[i],tension:0.3,pointRadius:5,pointHoverRadius:7,fill:false,
+        spanGaps:true
+    })),{labels:['D0','D1','D3']});
+
+    // Installs stacked bar
+    mkChart(p+'-installs','bar',[
+        {label:'自然量',data:data.map(d=>d.organic),backgroundColor:'rgba(162,155,254,0.7)',borderRadius:4},
+        {label:'买量安装',data:data.map(d=>d.paid),backgroundColor:'rgba(108,92,231,0.7)',borderRadius:4},
+    ],{labels:DATES});
+
+    // Spend & CPI dual axis
+    mkChart(p+'-spend','line',[
+        {label:'广告花费 ($)',data:data.map(d=>d.spend),borderColor:'#6c5ce7',backgroundColor:'rgba(108,92,231,0.1)',fill:true,tension:0.3,yAxisID:'y'},
+        {label:'CPI ($)',data:data.map(d=>d.cpi),borderColor:'#fdcb6e',tension:0.3,borderDash:[5,5],yAxisID:'y1'},
+    ],{labels:DATES,dualAxis:true});
 
     // Retention
-    mkChart(p + '-ret', 'line', [
-        { label: 'D1 留存率', data: data.map(d => d.ret_d1), borderColor: '#0984e3', tension: 0.3, pointRadius: 5 },
-        { label: 'D3 留存率', data: data.map(d => d.ret_d3), borderColor: '#00b894', tension: 0.3, pointRadius: 5 },
-    ]);
+    mkChart(p+'-ret','line',[
+        {label:'D1 留存',data:data.map(d=>d.ret_d1),borderColor:'#0984e3',tension:0.3,pointRadius:5},
+        {label:'D3 留存',data:data.map(d=>d.ret_d3),borderColor:'#00b894',tension:0.3,pointRadius:5},
+    ],{labels:DATES});
 
-    // LTV: X = install date, lines = D0/D1/D3
-    mkChart(p + '-ltv', 'line', [
-        { label: 'D0 LTV', data: data.map(d => d.ltv_d0), borderColor: '#6c5ce7', tension: 0.3, pointRadius: 5 },
-        { label: 'D1 LTV', data: data.map(d => d.ltv_d1), borderColor: '#a29bfe', tension: 0.3, pointRadius: 5 },
-        { label: 'D3 LTV', data: data.map(d => d.ltv_d3), borderColor: '#fdcb6e', tension: 0.3, pointRadius: 5 },
-    ]);
+    // CTR separate
+    mkChart(p+'-ctr','line',[
+        {label:'CTR (%)',data:data.map(d=>d.ctr),borderColor:'#00b894',tension:0.3,pointRadius:5,fill:true,backgroundColor:'rgba(0,184,148,0.1)'},
+    ],{labels:DATES,yLabel:'CTR (%)'});
 
-    // CTR & CVR
-    mkChart(p + '-ctr', 'bar', [
-        { label: 'CTR (%)', data: data.map(d => d.ctr), backgroundColor: 'rgba(0,184,148,0.7)', borderRadius: 4 },
-        { label: 'CVR (%)', data: data.map(d => d.cvr), backgroundColor: 'rgba(253,203,110,0.7)', borderRadius: 4 },
-    ]);
+    // CVR separate
+    mkChart(p+'-cvr','line',[
+        {label:'CVR (%)',data:data.map(d=>d.cvr),borderColor:'#fdcb6e',tension:0.3,pointRadius:5,fill:true,backgroundColor:'rgba(253,203,110,0.1)'},
+    ],{labels:DATES,yLabel:'CVR (%)'});
 }
 
-// Initial render
-setTimeout(() => renderCharts('ov'), 100);
+setTimeout(()=>renderCharts('ov'),100);
 </script>
 </body>
 </html>
