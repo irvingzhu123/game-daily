@@ -43,22 +43,12 @@
         }
         .hero p { color: #8a8d9a; font-size: 16px; }
 
-        .section-title {
-            font-size: 18px; font-weight: 600; margin-bottom: 16px;
-            padding-left: 12px; border-left: 3px solid #6c5ce7;
-        }
-        .section-title .badge {
-            display: inline-block; padding: 2px 10px; border-radius: 20px;
-            font-size: 12px; font-weight: 500; margin-left: 8px;
-            background: rgba(108,92,231,0.15); color: #a29bfe;
-        }
-
         .reports-grid { display: grid; gap: 16px; margin-bottom: 40px; }
         .report-card {
             background: #1a1d27; border: 1px solid #2a2d3a;
             border-radius: 12px; padding: 20px; text-decoration: none;
             color: inherit; transition: transform 0.2s, border-color 0.2s;
-            display: block;
+            display: block; cursor: pointer;
         }
         .report-card:hover { transform: translateY(-2px); border-color: #6c5ce7; }
         .report-card .date { color: #a29bfe; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
@@ -72,6 +62,9 @@
             padding: 2px 8px; border-radius: 4px; font-size: 11px;
             background: rgba(108,92,231,0.15); color: #a29bfe;
         }
+        .report-card .tag.locked {
+            background: rgba(255,107,107,0.15); color: #ff6b6b;
+        }
 
         .footer {
             text-align: center; padding: 40px 0; margin-top: 40px;
@@ -79,14 +72,14 @@
         }
         .footer a { color: #a29bfe; text-decoration: none; }
 
-        /* Password overlay */
+        /* Password modal */
         .pw-overlay {
             position: fixed; inset: 0; z-index: 9999;
             background: rgba(15,17,23,0.95);
-            display: flex; align-items: center; justify-content: center;
+            display: none; align-items: center; justify-content: center;
             backdrop-filter: blur(10px);
         }
-        .pw-overlay.hidden { display: none; }
+        .pw-overlay.show { display: flex; }
         .pw-box {
             background: #1a1d27; border: 1px solid #2a2d3a;
             border-radius: 16px; padding: 40px; text-align: center;
@@ -103,13 +96,16 @@
         }
         .pw-box input:focus { border-color: #6c5ce7; }
         .pw-box input.error { border-color: #ff6b6b; }
+        .pw-box .btns { display: flex; gap: 12px; }
         .pw-box button {
-            width: 100%; padding: 12px; border-radius: 8px;
-            border: none; background: #6c5ce7; color: #fff;
-            font-size: 16px; font-weight: 600; cursor: pointer;
+            flex: 1; padding: 12px; border-radius: 8px;
+            border: none; font-size: 15px; font-weight: 600; cursor: pointer;
             transition: background 0.2s;
         }
-        .pw-box button:hover { background: #5a4bd1; }
+        .pw-box .btn-ok { background: #6c5ce7; color: #fff; }
+        .pw-box .btn-ok:hover { background: #5a4bd1; }
+        .pw-box .btn-cancel { background: #2a2d3a; color: #8a8d9a; }
+        .pw-box .btn-cancel:hover { background: #3a3d4a; }
         .pw-box .err { color: #ff6b6b; font-size: 13px; margin-top: 8px; display: none; }
 
         @media (max-width: 600px) {
@@ -119,18 +115,6 @@
     </style>
 </head>
 <body>
-    <!-- Password Gate -->
-    <div class="pw-overlay" id="pwOverlay">
-        <div class="pw-box">
-            <div class="lock">🔒</div>
-            <h2>数据平台</h2>
-            <p>请输入访问密码查看内容</p>
-            <input type="password" id="pwInput" placeholder="输入密码" autocomplete="off">
-            <button onclick="checkPw()">进入</button>
-            <div class="err" id="pwErr">密码错误，请重试</div>
-        </div>
-    </div>
-
     <nav class="nav">
         <div class="nav-inner">
             <a href="index.html" class="brand">🧱 Republic Zhu</a>
@@ -142,7 +126,7 @@
         </div>
     </nav>
 
-    <div class="container" id="mainContent" style="display:none">
+    <div class="container">
         <!-- Daily Reports -->
         <div id="section-daily">
             <div class="hero">
@@ -182,7 +166,7 @@
                 <p>买量数据 · 运营指标 · Cohort 分析</p>
             </div>
             <div class="reports-grid">
-                <a href="dashboards/roi-daily-2026-04-28.html" class="report-card">
+                <div class="report-card" onclick="openReport('dashboards/roi-daily-2026-04-28.html')">
                     <div class="date">TD · 2026-04-24 ~ 04-28 🔥</div>
                     <h3>TD 买量 ROI 汇总报告</h3>
                     <div class="desc">5 天周期数据汇总。印尼（1050 安装，CPI $0.50，ROI 偏低）vs 美国（964 安装，CPI $2.01，付费转化强）。含 ROI/LTV cohort 曲线、CTR/CVR 趋势、各国对比。</div>
@@ -191,8 +175,9 @@
                         <span class="tag">印尼</span>
                         <span class="tag">美国</span>
                         <span class="tag">Cohort</span>
+                        <span class="tag locked">🔒 密码保护</span>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
 
@@ -202,17 +187,51 @@
         </div>
     </div>
 
+    <!-- Password Modal -->
+    <div class="pw-overlay" id="pwOverlay">
+        <div class="pw-box">
+            <div class="lock">🔒</div>
+            <h2>数据报告</h2>
+            <p>请输入访问密码</p>
+            <input type="password" id="pwInput" placeholder="输入密码" autocomplete="off">
+            <div class="btns">
+                <button class="btn-cancel" onclick="closePw()">取消</button>
+                <button class="btn-ok" onclick="submitPw()">进入</button>
+            </div>
+            <div class="err" id="pwErr">密码错误，请重试</div>
+        </div>
+    </div>
+
 <script>
-// Password gate
 const PW_HASH = -1107963894;
+let pendingUrl = '';
+
 function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; } return h; }
 
-function checkPw() {
+function openReport(url) {
+    // Already authenticated this session?
+    if (sessionStorage.getItem('td_report') === '1') {
+        window.location.href = url;
+        return;
+    }
+    pendingUrl = url;
+    document.getElementById('pwOverlay').classList.add('show');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwErr').style.display = 'none';
+    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+}
+
+function closePw() {
+    document.getElementById('pwOverlay').classList.remove('show');
+    pendingUrl = '';
+}
+
+function submitPw() {
     const v = document.getElementById('pwInput').value;
     if (hashStr(v) === PW_HASH) {
-        sessionStorage.setItem('td_auth', '1');
-        document.getElementById('pwOverlay').classList.add('hidden');
-        document.getElementById('mainContent').style.display = 'block';
+        sessionStorage.setItem('td_report', '1');
+        closePw();
+        window.location.href = pendingUrl;
     } else {
         document.getElementById('pwInput').classList.add('error');
         document.getElementById('pwErr').style.display = 'block';
@@ -220,15 +239,8 @@ function checkPw() {
         setTimeout(() => document.getElementById('pwInput').classList.remove('error'), 500);
     }
 }
-document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
+document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') submitPw(); });
 
-// Auto-check if already authenticated
-if (sessionStorage.getItem('td_auth') === '1') {
-    document.getElementById('pwOverlay').classList.add('hidden');
-    document.getElementById('mainContent').style.display = 'block';
-}
-
-// Tab switching
 function showSection(key) {
     document.getElementById('section-daily').style.display = key === 'daily' ? 'block' : 'none';
     document.getElementById('section-report').style.display = key === 'report' ? 'block' : 'none';
