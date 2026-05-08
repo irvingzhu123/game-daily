@@ -83,14 +83,18 @@
         .header .stat .num { font-size: 28px; font-weight: 700; color: var(--accent2); }
         .header .stat .label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
-        /* Article Card */
+        /* Article Card - 整个卡片可点击 */
         .article {
+            display: block;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 16px;
             transition: transform 0.2s, border-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
         }
         .article:hover {
             transform: translateY(-2px);
@@ -134,12 +138,11 @@
             font-weight: 500;
         }
         .tag.source { background: rgba(108,92,231,0.15); color: var(--accent2); }
-        .article .link {
+        .article .read-more {
             color: var(--green);
             font-size: 13px;
-            text-decoration: none;
+            font-weight: 500;
         }
-        .article .link:hover { text-decoration: underline; }
 
         /* Footer */
         .footer {
@@ -190,7 +193,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">🧱</div>
+            <div class="logo"></div>
             <h1>游戏行业 Top 10 话题日报</h1>
             <div class="date">2026年5月8日 星期四</div>
             <div class="stats">
@@ -208,7 +211,7 @@
         </div>
 
         <!-- Articles -->
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/8lIetGQi1CywTjUNulShjw" target="_blank">
             <div class="title-row">
                 <span class="rank top1">1</span>
                 <h2>首日流水破亿，今日畅销榜Top 5，《异环》打破质疑</h2>
@@ -216,11 +219,11 @@
             <p class="summary">完美世界旗舰二次元开放世界《异环》上线首日流水破亿，同时登顶国内畅销榜Top 5。更值得关注的是 PC+主机端流水占比超 65%，开发预算约 3 亿元，上线首日即收回近三分之一。这正在重新定义"跨端爆款"的衡量标准——传统 iOS 畅销榜已无法照出全貌。</p>
             <div class="meta">
                 <span class="tag source">游戏葡萄</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/8lIetGQi1CywTjUNulShjw" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/yEmGhUW2g-vB0h-a1qGSQA" target="_blank">
             <div class="title-row">
                 <span class="rank top2">2</span>
                 <h2>三七《Last Asylum》月流水破亿，同类产品已经开测</h2>
@@ -228,11 +231,11 @@
             <p class="summary">三七互娱 SLG《Last Asylum: Plague》3 月全球流水超 1.13 亿元，单日预估流水达 480 万，成为 2026 年首个 SLG 月度亿级爆款。Google Play 版本仍在增长期，iOS 版本在美国畅销榜 100 名左右平稳运营。同品类竞品已陆续开测，SLG 赛道竞争加剧。</p>
             <div class="meta">
                 <span class="tag source">白鲸出海</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/yEmGhUW2g-vB0h-a1qGSQA" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/IN5QqemBwTXOs5GpYjFt5g" target="_blank">
             <div class="title-row">
                 <span class="rank top3">3</span>
                 <h2>再登畅销Top 1：腾子的二游，后劲真大</h2>
@@ -240,11 +243,11 @@
             <p class="summary">腾讯发行的 NIKKE 上线 3 年半累计营收超 70 亿元，3.5 周年系列活动开启后再次登顶日韩 Google Play 和 App Store 畅销 Top 1。3.5 周年并非新鲜事，偶像题材在日韩市场也不稀奇，但腾讯通过精准的版本节奏和长线运营，让这款"三年大关"产品保持持续爆发力。</p>
             <div class="meta">
                 <span class="tag source">游戏葡萄</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/IN5QqemBwTXOs5GpYjFt5g" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/4uZHLqbOqSPU7j5vH0uDmA" target="_blank">
             <div class="title-row">
                 <span class="rank normal">4</span>
                 <h2>4月全球收入榜：王者蝉联Top 1，奔奔王国国区收入创新高</h2>
@@ -252,11 +255,11 @@
             <p class="summary">AppMagic 发布 4 月全球手游收入榜，整体市场环比下降 4.3%、同比下降 2.6%。《王者荣耀》内购收入 1.38 亿美元蝉联第一，《Last War: Survival》收入 1.14 亿美元但连续两月下滑，《无尽冬日》约 1.1 亿美元。奔奔王国国区收入创历史新高，排名前十。</p>
             <div class="meta">
                 <span class="tag source">游戏葡萄</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/4uZHLqbOqSPU7j5vH0uDmA" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/-OuFtURHeBdGsQ2ujemYnQ" target="_blank">
             <div class="title-row">
                 <span class="rank normal">5</span>
                 <h2>二次元 ARPG 卷不动了，大厂开始押注副玩法</h2>
@@ -264,11 +267,11 @@
             <p class="summary">二次元 ARPG 赛道竞争白热化后，多家大厂开始将资源转向副玩法差异化路线——在核心战斗之外叠加模拟经营、社交、策略等模块来提升留存。这反映出纯 ARPG 的玩法红利正在消退，未来二次元产品的竞争力可能更取决于"主玩法+X"的组合创新能力。</p>
             <div class="meta">
                 <span class="tag source">罗斯基</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/-OuFtURHeBdGsQ2ujemYnQ" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/iDf484nevpOfVnlldusKLg" target="_blank">
             <div class="title-row">
                 <span class="rank normal">6</span>
                 <h2>AI 陪伴在日本破冰，单市场月流水破百万美元</h2>
@@ -276,11 +279,11 @@
             <p class="summary">AI 陪伴类应用在日本市场单月流水突破百万美元，成为出海新增长点。全球 AI 陪伴赛道年化收入有望突破 1.2 亿美元，目前活跃 App 337 款，Character.AI 年化收入约 3000 万美元。日本用户对二次元 AI 角色的高付费意愿，使该市场成为 AI 陪伴出海的首选。</p>
             <div class="meta">
                 <span class="tag source">白鲸出海</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/iDf484nevpOfVnlldusKLg" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/11G0LFySGW30rNxTZVu_HQ" target="_blank">
             <div class="title-row">
                 <span class="rank normal">7</span>
                 <h2>上架第一天就回本，但第二年我们放弃了那个市场</h2>
@@ -288,11 +291,11 @@
             <p class="summary">独立团队分享的出海复盘案例：产品上线首日即回本，但在第二年选择放弃某个市场。这类"短期爆发 vs 长线可持续"的对比反思，揭示了出海选市场不能只看首日 ROI，还要评估用户留存、本地化成本、竞品密度和长期运营能力。</p>
             <div class="meta">
                 <span class="tag source">罗斯基</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/11G0LFySGW30rNxTZVu_HQ" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/mETEIgrGTq5E3Y-Uyu7vLA" target="_blank">
             <div class="title-row">
                 <span class="rank normal">8</span>
                 <h2>下一个拉瑞安？曾经的俄罗斯小作坊，正用虚幻5把经典科幻美剧做成CRPG</h2>
@@ -300,11 +303,11 @@
             <p class="summary">一家曾经的俄罗斯小团队用虚幻 5 将经典科幻美剧改编为 CRPG，引发关注。拉瑞安凭借《博德之门3》证明了 CRPG 的商业天花板，这条赛道正吸引更多中小团队入场。经典 IP+CRPG 的组合，有望复刻"小团队大爆款"的路径。</p>
             <div class="meta">
                 <span class="tag source">游戏研究社</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/mETEIgrGTq5E3Y-Uyu7vLA" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/GVy63efWYGRDsGr8LL0kJQ" target="_blank">
             <div class="title-row">
                 <span class="rank normal">9</span>
                 <h2>上海闵行区发布2026年度游戏产业专项政策，原创游戏研发最高获200万</h2>
@@ -312,11 +315,11 @@
             <p class="summary">上海闵行区发布 2026 年度游戏产业专项政策申报指南，原创游戏研发最高可获得 200 万元补贴。这是地方政府持续加码游戏产业扶持的又一信号，对中小研发团队是利好。各地政策竞争正在成为游戏企业选址的重要考量因素。</p>
             <div class="meta">
                 <span class="tag source">游戏茶馆</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/GVy63efWYGRDsGr8LL0kJQ" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
-        <div class="article">
+        <a class="article" href="https://mp.weixin.qq.com/s/FuJ3t7Vk5S9SY9VbXXLkHw" target="_blank">
             <div class="title-row">
                 <span class="rank normal">10</span>
                 <h2>它"背叛"了肉鸽：游戏做得太爽，是种罪过吗？</h2>
@@ -324,9 +327,9 @@
             <p class="summary">游戏陀螺对肉鸽（Roguelike）品类的深度讨论：当肉鸽游戏变得越来越"爽"，是否偏离了原本的核心设计哲学？肉鸽的"死亡惩罚"与"随机性"是其灵魂，过度追求爽快感可能导致品类同质化。这是关于"游戏设计边界"的有价值思考。</p>
             <div class="meta">
                 <span class="tag source">游戏陀螺</span>
-                <a class="link" href="https://mp.weixin.qq.com/s/FuJ3t7Vk5S9SY9VbXXLkHw" target="_blank">阅读原文 →</a>
+                <span class="read-more">阅读原文 →</span>
             </div>
-        </div>
+        </a>
 
         <!-- Footer -->
         <div class="footer">
