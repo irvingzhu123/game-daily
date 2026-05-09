@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 游戏行业日报 | 2026-05-09</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --hot: #f85149;
+      --ai: #bc8cff;
+      --industry: #ffa657;
+      --indie: #7ee787;
+      --overseas: #79c0ff;
+      --rogue: #ff7b72;
+      --design: #d2a8ff;
+      --weekly: #a5d6ff;
+      --event: #f2cc60;
+      --stock: #aff5b4;
+      --breakthrough: #f778ba;
+      --general: #79c0ff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 { font-size: 1.8rem; font-weight: 700; }
+    .date { color: var(--muted); font-size: 0.95rem; margin-top: 0.3rem; }
+    .summary {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .trend-overview { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .trend-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(88,166,255,0.1); color: var(--accent);
+      padding: 2px 10px; border-radius: 12px; font-size: 0.82rem;
+    }
+    a.card-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+    .article {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .article:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(88,166,255,0.15);
+    }
+    .rank {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); color: var(--bg);
+      font-size: 0.85rem; font-weight: 700;
+      margin-right: 0.6rem;
+    }
+    .rank.top3 { background: var(--hot); }
+    .article-header { display: flex; align-items: center; margin-bottom: 0.5rem; }
+    .article-title { font-size: 1.05rem; font-weight: 600; flex: 1; }
+    .article-meta {
+      display: flex; align-items: center; gap: 0.8rem;
+      font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;
+    }
+    .article-meta span { display: inline-flex; align-items: center; gap: 3px; }
+    .trend-badge {
+      display: inline-block; padding: 1px 8px; border-radius: 10px;
+      font-size: 0.78rem; font-weight: 500;
+    }
+    .badge-🔥 爆款 { background: rgba(248,81,73,0.15); color: var(--hot); }
+    .badge-🤖 AI { background: rgba(188,140,255,0.15); color: var(--ai); }
+    .badge-⚡ 行业 { background: rgba(255,166,87,0.15); color: var(--industry); }
+    .badge-🎮 独立游戏 { background: rgba(126,231,135,0.15); color: var(--indie); }
+    .badge-🌏 出海 { background: rgba(121,192,255,0.15); color: var(--overseas); }
+    .badge-🎲 肉鸽 { background: rgba(255,123,114,0.15); color: var(--rogue); }
+    .badge-📝 设计 { background: rgba(210,168,255,0.15); color: var(--design); }
+    .badge-📊 周报 { background: rgba(165,214,255,0.15); color: var(--weekly); }
+    .badge-📢 活动 { background: rgba(242,204,96,0.15); color: var(--event); }
+    .badge-💰 股票 { background: rgba(175,245,180,0.15); color: var(--stock); }
+    .badge-🏆 突破 { background: rgba(247,120,186,0.15); color: var(--breakthrough); }
+    .badge-📌 关注 { background: rgba(121,192,255,0.15); color: var(--general); }
+    .read-link {
+      display: inline-block; margin-top: 0.6rem;
+      color: var(--accent); font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .read-link:hover { text-decoration: underline; }
+    footer {
+      text-align: center; margin-top: 2rem; padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 游戏行业日报</h1>
+    <div class="date">2026 年 5 月 9 日 · 星期五</div>
+  </header>
+
+  <div class="summary">
+    今日 9 篇精选，覆盖：<br>
+    <div class="trend-overview">
+      <span class="trend-tag">🔥 爆款</span>
+      <span class="trend-tag">⚡ 行业</span>
+      <span class="trend-tag">🤖 AI</span>
+      <span class="trend-tag">🎮 独立游戏</span>
+      <span class="trend-tag">🎲 肉鸽</span>
+      <span class="trend-tag">📝 设计</span>
+      <span class="trend-tag">📢 活动</span>
+      <span class="trend-tag">💰 股票</span>
+      <span class="trend-tag">🏆 突破</span>
+    </div>
+  </div>
+
+  <main>
+    <a class="card-link" href="https://mp.weixin.qq.com/s/82S-PQoXF6D6GEkrsMnTWQ" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank top3">1</span>
+          <span class="article-title">一广州大厂新游即将公测上线；《异环》海外上线增投，首日流水破亿；莉莉丝重拳反腐，查处案件70余起｜周报</span>
+        </div>
+        <div class="article-meta">
+          <span>📊 周报</span><span>🔥 爆款</span><span>⚡ 行业</span>
+          <span>📰 DataEye游戏观察</span><span>🕐 5月9日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/0ljai7G92kurzfRyyirzXQ" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank top3">2</span>
+          <span class="article-title">我们看了几个AI原生游戏项目，发现它们可能比3A更激进</span>
+        </div>
+        <div class="article-meta">
+          <span>🤖 AI</span>
+          <span>📰 罗斯基</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/ahzwLwJQo8Ja7ABFaOdhMg" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank top3">3</span>
+          <span class="article-title">德州、推币、刮刮乐，"上头型概率游戏"正在统治Steam独游赛道</span>
+        </div>
+        <div class="article-meta">
+          <span>🎮 独立游戏</span>
+          <span>📰 罗斯基</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/rWyC3hKCHOzzc4_KnTUqrg" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank">4</span>
+          <span class="article-title">前无古人，灵犀竟然偷偷拿下了一个"国产第一"</span>
+        </div>
+        <div class="article-meta">
+          <span>🏆 突破</span>
+          <span>📰 游戏那点事Gamez</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/DqF1B4ZpnwrXGEV0UP2dyQ" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank">5</span>
+          <span class="article-title">腾讯最全能的游戏是它，谁赞成，谁反对？</span>
+        </div>
+        <div class="article-meta">
+          <span>⚡ 行业</span>
+          <span>📰 游戏葡萄</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/R4lUYrGmXilcXflcprTcEg" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank">6</span>
+          <span class="article-title">肉鸽爽游怎么做？前作坐拥2700万玩家后他带来了新的版本解答</span>
+        </div>
+        <div class="article-meta">
+          <span>🎲 肉鸽</span>
+          <span>📰 GameRes游资网</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/C_4CSyUY_nycFEPx2VL9Bw" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank">7</span>
+          <span class="article-title">"涟漪效应"——聊聊游戏角色/故事任务设计</span>
+        </div>
+        <div class="article-meta">
+          <span>📝 设计</span>
+          <span>📰 GameRes游资网</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/v5Poblav0vvWjFImgvo3pw" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank">8</span>
+          <span class="article-title">即将开启！350+企业已锁定席位，5.14广州游茶对接会等你上车</span>
+        </div>
+        <div class="article-meta">
+          <span>📢 活动</span>
+          <span>📰 游戏茶馆</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card-link" href="https://mp.weixin.qq.com/s/IT1z-PjVU1Dyxib9SEfdRA" target="_blank" rel="noopener">
+      <div class="article">
+        <div class="article-header">
+          <span class="rank">9</span>
+          <span class="article-title">你们游戏从业者炒游戏股，一定很赚钱……吧？</span>
+        </div>
+        <div class="article-meta">
+          <span>💰 股票</span>
+          <span>📰 游戏茶馆</span><span>🕐 5月8日</span>
+        </div>
+      </div>
+    </a>
+  </main>
+
+  <footer>
+    <p>数据来源：WeWe RSS · 自动生成 | <a href="https://daily.republic-zhu.com" style="color:var(--accent)">访问日报站</a></p>
+  </footer>
+</body>
+</html>
