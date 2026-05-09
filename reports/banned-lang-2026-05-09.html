@@ -17,7 +17,7 @@
             background: var(--bg); color: var(--text); line-height: 1.7;
         }
         .nav {
-            background: #1a1d27; border-bottom: 1px solid #2a2d3a;
+            background: #1a1d27; border-bottom: 1px solid var(--border);
             padding: 16px 0; position: sticky; top: 0; z-index: 100;
         }
         .nav-inner { max-width: 1000px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
@@ -29,68 +29,124 @@
         }
         .nav .links { display: flex; gap: 20px; }
         .nav .links a { color: #8a8d9a; text-decoration: none; font-size: 14px; transition: color 0.2s; }
-        .nav .links a:hover, .nav .links a.active { color: #a29bfe; }
+        .nav .links a:hover { color: #a29bfe; }
         .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
 
+        /* Header */
         .header { text-align: center; padding: 40px 0 30px; border-bottom: 1px solid var(--border); margin-bottom: 30px; }
         .header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
         .header .date { color: var(--text-dim); font-size: 14px; }
-        .header .stats { display: flex; justify-content: center; gap: 40px; margin-top: 24px; }
-        .header .stat { text-align: center; }
-        .header .stat .num { font-size: 32px; font-weight: 700; color: var(--accent2); }
-        .header .stat .label { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
 
+        /* KPI Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 30px; }
+        @media (max-width: 700px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+        .kpi {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .kpi:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .kpi .kpi-icon { font-size: 28px; margin-bottom: 8px; }
+        .kpi .kpi-val { font-size: 28px; font-weight: 700; }
+        .kpi .kpi-label { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+        .kpi.danger .kpi-val { color: var(--red); }
+        .kpi.warn .kpi-val { color: var(--orange); }
+        .kpi.info .kpi-val { color: var(--accent2); }
+        .kpi.ok .kpi-val { color: var(--green); }
+
+        /* Section */
         .section { margin-bottom: 36px; }
         .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-        .section-title .icon { font-size: 20px; }
 
-        .lang-bar { display: flex; align-items: center; margin-bottom: 10px; }
-        .lang-bar .lang { width: 140px; font-size: 14px; font-weight: 500; text-align: right; padding-right: 12px; }
-        .lang-bar .bar-wrap { flex: 1; height: 24px; background: #2a2d3a; border-radius: 4px; overflow: hidden; }
-        .lang-bar .bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 12px; font-weight: 600; color: #fff; transition: width 0.5s; min-width: 30px; }
-        .lang-bar .count { width: 100px; font-size: 13px; color: var(--text-dim); padding-left: 8px; }
-
+        /* Two col */
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
 
+        /* Card */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-        .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
 
-        .conflict-stat { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .conflict-stat:last-child { border-bottom: none; }
-        .conflict-stat .label { font-size: 14px; color: var(--text-dim); }
-        .conflict-stat .value { font-size: 20px; font-weight: 700; }
-        .conflict-stat .value.warn { color: var(--orange); }
-        .conflict-stat .value.danger { color: var(--red); }
+        /* Donut chart */
+        .donut-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .donut-svg { width: 180px; height: 180px; }
+        .donut-legend { display: flex; flex-direction: column; gap: 6px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
+        /* Bar chart */
+        .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+        .bar-row { display: flex; align-items: center; gap: 10px; }
+        .bar-label { width: 120px; font-size: 13px; font-weight: 500; text-align: right; flex-shrink: 0; }
+        .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 700; color: #fff; min-width: 36px; transition: width 0.8s ease; }
+        .bar-value { width: 80px; font-size: 13px; color: var(--text-dim); flex-shrink: 0; }
+
+        /* Conflict ring */
+        .conflict-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        @media (max-width: 700px) { .conflict-grid { grid-template-columns: 1fr; } }
+        .conflict-ring { text-align: center; }
+        .conflict-ring svg { width: 120px; height: 120px; }
+        .conflict-ring .ring-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: 700; }
+        .conflict-ring .ring-label { font-size: 13px; color: var(--text-dim); margin-top: 8px; }
+        .ring-container { position: relative; display: inline-block; }
+
+        /* Table */
         .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .tbl th { text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border); color: var(--text-dim); font-weight: 600; }
-        .tbl td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+        .tbl th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); color: var(--text-dim); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
         .tbl tr:hover td { background: rgba(108,92,231,0.05); }
-        .tbl .num { text-align: right; }
+        .tbl .num { text-align: right; font-family: 'SF Mono', 'Consolas', monospace; }
 
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+        /* Tags */
+        .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+        .tag-red { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+        .tag-green { background: rgba(0,184,148,0.15); color: #00b894; }
+        .tag-blue { background: rgba(108,92,231,0.15); color: #a29bfe; }
 
-        .cluster-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+        /* Cluster */
+        .cluster-item { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
         .cluster-item:last-child { border-bottom: none; }
-        .cluster-item .title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .cluster-item .meta { font-size: 12px; color: var(--text-dim); }
-        .cluster-item .ids { font-size: 12px; color: var(--text-dim); font-family: monospace; margin-top: 2px; }
+        .cluster-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+        .cluster-info { flex: 1; }
+        .cluster-title { font-size: 14px; font-weight: 600; }
+        .cluster-meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+        .cluster-ids { font-size: 11px; color: var(--text-dim); font-family: monospace; margin-top: 4px; word-break: break-all; line-height: 1.6; }
 
+        /* Callout */
         .callout {
-            background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.3);
-            border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(108,92,231,0.1), rgba(162,155,254,0.05));
+            border: 1px solid rgba(108,92,231,0.3);
+            border-radius: 12px; padding: 20px; margin-bottom: 24px;
+            display: flex; gap: 12px; align-items: flex-start;
         }
+        .callout .icon { font-size: 24px; flex-shrink: 0; }
         .callout p { font-size: 14px; line-height: 1.8; }
         .callout strong { color: var(--accent2); }
 
         .footer { text-align: center; padding: 30px 0; border-top: 1px solid var(--border); margin-top: 30px; color: var(--text-dim); font-size: 13px; }
         .footer a { color: var(--accent2); text-decoration: none; }
 
+        /* Insight cards */
+        .insight-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 700px) { .insight-row { grid-template-columns: 1fr; } }
+        .insight {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+            border-left: 3px solid var(--accent);
+        }
+        .insight.warn { border-left-color: var(--orange); }
+        .insight.danger { border-left-color: var(--red); }
+        .insight .insight-label { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+        .insight .insight-val { font-size: 22px; font-weight: 700; }
+        .insight .insight-desc { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+        /* Heatmap */
+        .heatmap { display: grid; gap: 4px; }
+        .heatmap-cell { padding: 8px; border-radius: 6px; text-align: center; font-size: 12px; font-weight: 600; }
+
         @media (max-width: 600px) {
             .header h1 { font-size: 22px; }
-            .header .stats { gap: 20px; }
             .container { padding: 20px 12px; }
+            .kpi .kpi-val { font-size: 22px; }
         }
     </style>
 </head>
@@ -106,134 +162,199 @@
     <div class="container">
         <div class="header">
             <h1>🔍 封号用户语言分析报告</h1>
-            <div class="date">2026年5月9日 · 基于私聊对话数据 · 556个封号账号</div>
-            <div class="stats">
-                <div class="stat"><div class="num">556</div><div class="label">封号用户</div></div>
-                <div class="stat"><div class="num">20,308</div><div class="label">有效消息</div></div>
-                <div class="stat"><div class="num">70.5%</div><div class="label">英语占比</div></div>
+            <div class="date">2026-05-09 · 基于私聊对话数据 · 按实际发言内容识别语言</div>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi info">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-val">556</div>
+                <div class="kpi-label">封号用户</div>
+            </div>
+            <div class="kpi info">
+                <div class="kpi-icon">💬</div>
+                <div class="kpi-val">20,308</div>
+                <div class="kpi-label">有效消息</div>
+            </div>
+            <div class="kpi danger">
+                <div class="kpi-icon">⚠️</div>
+                <div class="kpi-val">84.0%</div>
+                <div class="kpi-label">语言冲突率</div>
+            </div>
+            <div class="kpi warn">
+                <div class="kpi-icon">🌍</div>
+                <div class="kpi-val">10+</div>
+                <div class="kpi-label">检测语言数</div>
             </div>
         </div>
 
+        <!-- Key Insights -->
+        <div class="insight-row">
+            <div class="insight danger">
+                <div class="insight-label">⚠️ 核心发现</div>
+                <div class="insight-val">467/556</div>
+                <div class="insight-desc">发言语言与游戏语言不一致</div>
+            </div>
+            <div class="insight warn">
+                <div class="insight-label">🎯 双重冲突</div>
+                <div class="insight-val">459/556</div>
+                <div class="insight-desc">游戏语言 + 手机语言均冲突</div>
+            </div>
+            <div class="insight">
+                <div class="insight-label">📊 主导语言</div>
+                <div class="insight-val">English</div>
+                <div class="insight-desc">66.6% 用户实际用英语发言</div>
+            </div>
+        </div>
+
+        <!-- Callout -->
         <div class="callout">
-            <p>📌 <strong>核心发现：</strong>467/556 个账号（<strong>84.0%</strong>）的发言语言与设置的游戏语言不一致。
-            其中 459/556 个账号（<strong>82.6%</strong>）发言语言与游戏语言、手机语言均冲突。
-            这表明大量账号使用虚假语言设置，实际发言与设定语言完全不符，是工作室批量操控的有力证据。</p>
+            <span class="icon">💡</span>
+            <p><strong>结论：</strong>超过 84% 的封号账号使用了虚假的语言设置，实际发言与设置语言完全不符。结合 IP 段和设备型号聚类分析，这是工作室批量操控账号的强有力证据。这些账号统一设置为中文/繁体等语言，但实际发言以英语和法语为主。</p>
         </div>
 
-        <!-- Section 1 -->
+        <!-- Section 1: Language Distribution -->
         <div class="section">
-            <div class="section-title"><span class="icon">🌍</span> 一、消息语言分布</div>
+            <div class="section-title">🌍 一、消息语言分布</div>
             <div class="two-col">
                 <div class="card">
-                    <h3>📊 全局消息语言分布</h3>
-                    <div class="lang-bar">
-                        <span class="lang">English</span>
-                        <div class="bar-wrap"><div class="bar" style="width:70.47961394524326%;background:#00b894">70.5%</div></div>
-                        <span class="count">14,313 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">French</span>
-                        <div class="bar-wrap"><div class="bar" style="width:22.395115225526887%;background:#a29bfe">22.4%</div></div>
-                        <span class="count">4,548 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">other</span>
-                        <div class="bar-wrap"><div class="bar" style="width:4.155997636399449%;background:#636e72">4.2%</div></div>
-                        <span class="count">844 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Simplified Chinese</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#fd79a8">2.3%</div></div>
-                        <span class="count">468 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Portuguese</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#fdcb6e">0.2%</div></div>
-                        <span class="count">50 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Spanish</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#e17055">0.2%</div></div>
-                        <span class="count">43 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Russian</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#d63031">0.2%</div></div>
-                        <span class="count">32 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Turkish</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#00cec9">0.0%</div></div>
-                        <span class="count">6 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">German</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#0984e3">0.0%</div></div>
-                        <span class="count">3 条</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Arabic</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#e84393">0.0%</div></div>
-                        <span class="count">1 条</span>
+                    <h3>📊 全局消息占比</h3>
+                    <div class="bar-chart">
+                        <div class="bar-row">
+                            <span class="bar-label">English</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:70.47961394524326%;background:#00b894">70.5%</div></div>
+                            <span class="bar-value">14,313 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">French</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:22.395115225526887%;background:#a29bfe">22.4%</div></div>
+                            <span class="bar-value">4,548 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">other</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:4.155997636399449%;background:#636e72">4.2%</div></div>
+                            <span class="bar-value">844 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Simplified Chinese</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#fd79a8">2.3%</div></div>
+                            <span class="bar-value">468 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Portuguese</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#fdcb6e">0.2%</div></div>
+                            <span class="bar-value">50 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Spanish</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#e17055">0.2%</div></div>
+                            <span class="bar-value">43 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Russian</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#d63031">0.2%</div></div>
+                            <span class="bar-value">32 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Turkish</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#00cec9">0.0%</div></div>
+                            <span class="bar-value">6 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">German</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#0984e3">0.0%</div></div>
+                            <span class="bar-value">3 条</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Arabic</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#e84393">0.0%</div></div>
+                            <span class="bar-value">1 条</span>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
-                    <h3>👤 用户主导语言分布</h3>
-                    <div class="lang-bar">
-                        <span class="lang">English</span>
-                        <div class="bar-wrap"><div class="bar" style="width:66.90777576853526%;background:#00b894">67%</div></div>
-                        <span class="count">370 人</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">French</span>
-                        <div class="bar-wrap"><div class="bar" style="width:30.198915009041592%;background:#a29bfe">30%</div></div>
-                        <span class="count">167 人</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">other</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#636e72">1%</div></div>
-                        <span class="count">6 人</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Simplified Chinese</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#fd79a8">1%</div></div>
-                        <span class="count">6 人</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Russian</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#d63031">1%</div></div>
-                        <span class="count">3 人</span>
-                    </div>
-                    <div class="lang-bar">
-                        <span class="lang">Portuguese</span>
-                        <div class="bar-wrap"><div class="bar" style="width:3%;background:#fdcb6e">0%</div></div>
-                        <span class="count">1 人</span>
+                    <h3>👤 用户主导语言</h3>
+                    <div class="bar-chart">
+                        <div class="bar-row">
+                            <span class="bar-label">English</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:66.90777576853526%;background:#00b894">67%</div></div>
+                            <span class="bar-value">370 人</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">French</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:30.198915009041592%;background:#a29bfe">30%</div></div>
+                            <span class="bar-value">167 人</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">other</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#636e72">1%</div></div>
+                            <span class="bar-value">6 人</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Simplified Chinese</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#fd79a8">1%</div></div>
+                            <span class="bar-value">6 人</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Russian</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#d63031">1%</div></div>
+                            <span class="bar-value">3 人</span>
+                        </div>
+                        <div class="bar-row">
+                            <span class="bar-label">Portuguese</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#fdcb6e">0%</div></div>
+                            <span class="bar-value">1 人</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section 2 -->
+        <!-- Section 2: Conflict -->
         <div class="section">
-            <div class="section-title"><span class="icon">⚠️</span> 二、语言冲突分析</div>
+            <div class="section-title">⚠️ 二、语言冲突分析</div>
             <div class="two-col">
                 <div class="card">
-                    <h3>📈 冲突率统计</h3>
-                    <div class="conflict-stat">
-                        <span class="label">发言语言 vs 游戏语言</span>
-                        <span class="value danger">84.0%</span>
-                    </div>
-                    <div class="conflict-stat">
-                        <span class="label">发言语言 vs 手机语言</span>
-                        <span class="value danger">83.1%</span>
-                    </div>
-                    <div class="conflict-stat">
-                        <span class="label">两者均冲突</span>
-                        <span class="value danger">82.6%</span>
-                    </div>
+                    <h3>📈 冲突率</h3>
+                    <div class="conflict-grid" style="grid-template-columns: repeat(3, 1fr);">
+<div class="conflict-ring">
+            <div class="ring-container">
+                <svg viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#2a2d3a" stroke-width="10"/>
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#ff6b6b" stroke-width="10"
+                        stroke-dasharray="238.77220198915006 43.97089801084991" stroke-linecap="round"
+                        style="transform: rotate(-90deg); transform-origin: center;"/>
+                </svg>
+                <div class="ring-val" style="color:#ff6b6b">84%</div>
+            </div>
+            <div class="ring-label">vs 游戏语言</div>
+        </div><div class="conflict-ring">
+            <div class="ring-container">
+                <svg viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#2a2d3a" stroke-width="10"/>
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#fdcb6e" stroke-width="10"
+                        stroke-dasharray="236.21575443037972 46.52734556962025" stroke-linecap="round"
+                        style="transform: rotate(-90deg); transform-origin: center;"/>
+                </svg>
+                <div class="ring-val" style="color:#fdcb6e">84%</div>
+            </div>
+            <div class="ring-label">vs 手机语言</div>
+        </div><div class="conflict-ring">
+            <div class="ring-container">
+                <svg viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#2a2d3a" stroke-width="10"/>
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#fd79a8" stroke-width="10"
+                        stroke-dasharray="236.21575443037972 46.52734556962025" stroke-linecap="round"
+                        style="transform: rotate(-90deg); transform-origin: center;"/>
+                </svg>
+                <div class="ring-val" style="color:#fd79a8">84%</div>
+            </div>
+            <div class="ring-label">两者均冲突</div>
+        </div>                    </div>
                 </div>
                 <div class="card">
-                    <h3>🔗 Top 10 冲突模式</h3>
+                    <h3>🔗 冲突模式 Top 10</h3>
                     <table class="tbl">
                         <tr><th>实际发言 → 设置语言</th><th style="text-align:right">用户数</th></tr>
                         <tr><td>English → Simplified Chinese</td><td class="num">189</td></tr>
@@ -251,156 +372,246 @@
             </div>
         </div>
 
-        <!-- Section 3 -->
+        <!-- Section 3: Castle -->
         <div class="section">
-            <div class="section-title"><span class="icon">🏰</span> 三、城堡等级分布</div>
+            <div class="section-title">🏰 三、城堡等级分布</div>
             <div class="card">
                 <table class="tbl">
-                    <tr><th>城堡等级</th><th style="text-align:right">用户数</th><th style="text-align:right">占比</th><th style="text-align:right">平均消息</th><th>主导语言</th></tr>
-                    <tr><td>Lv.3</td><td class="num">1</td><td class="num">0.2%</td><td class="num">1</td><td>English(1)</td></tr>
-                    <tr><td>Lv.4</td><td class="num">447</td><td class="num">80.8%</td><td class="num">26</td><td>English(272) · French(167) · other(6) · Simplified Chinese(2)</td></tr>
-                    <tr><td>Lv.5</td><td class="num">6</td><td class="num">1.1%</td><td class="num">18</td><td>English(6)</td></tr>
-                    <tr><td>Lv.6</td><td class="num">8</td><td class="num">1.4%</td><td class="num">48</td><td>English(7) · Russian(1)</td></tr>
-                    <tr><td>Lv.7</td><td class="num">21</td><td class="num">3.8%</td><td class="num">108</td><td>English(18) · Simplified Chinese(3)</td></tr>
-                    <tr><td>Lv.8</td><td class="num">25</td><td class="num">4.5%</td><td class="num">103</td><td>English(25)</td></tr>
-                    <tr><td>Lv.9</td><td class="num">16</td><td class="num">2.9%</td><td class="num">106</td><td>English(16)</td></tr>
-                    <tr><td>Lv.10</td><td class="num">14</td><td class="num">2.5%</td><td class="num">44</td><td>English(13) · Portuguese(1)</td></tr>
-                    <tr><td>Lv.11</td><td class="num">8</td><td class="num">1.4%</td><td class="num">76</td><td>English(6) · Simplified Chinese(1) · Russian(1)</td></tr>
-                    <tr><td>Lv.12</td><td class="num">7</td><td class="num">1.3%</td><td class="num">77</td><td>English(6) · Russian(1)</td></tr>
+                    <tr><th>等级</th><th style="text-align:right">用户数</th><th style="text-align:right">占比</th><th style="text-align:right">平均消息</th><th>主导语言</th></tr>
+                    <tr><td><strong>Lv.3</strong></td><td class="num">1</td><td class="num">0.2%</td><td class="num">1</td><td><span style="color:#00b894">English(1)</span></td></tr>
+                    <tr><td><strong>Lv.4</strong></td><td class="num">447</td><td class="num">80.8%</td><td class="num">26</td><td><span style="color:#00b894">English(272)</span> · <span style="color:#a29bfe">French(167)</span> · <span style="color:#636e72">other(6)</span> · <span style="color:#fd79a8">Simplified Chinese(2)</span></td></tr>
+                    <tr><td><strong>Lv.5</strong></td><td class="num">6</td><td class="num">1.1%</td><td class="num">18</td><td><span style="color:#00b894">English(6)</span></td></tr>
+                    <tr><td><strong>Lv.6</strong></td><td class="num">8</td><td class="num">1.4%</td><td class="num">48</td><td><span style="color:#00b894">English(7)</span> · <span style="color:#d63031">Russian(1)</span></td></tr>
+                    <tr><td><strong>Lv.7</strong></td><td class="num">21</td><td class="num">3.8%</td><td class="num">108</td><td><span style="color:#00b894">English(18)</span> · <span style="color:#fd79a8">Simplified Chinese(3)</span></td></tr>
+                    <tr><td><strong>Lv.8</strong></td><td class="num">25</td><td class="num">4.5%</td><td class="num">103</td><td><span style="color:#00b894">English(25)</span></td></tr>
+                    <tr><td><strong>Lv.9</strong></td><td class="num">16</td><td class="num">2.9%</td><td class="num">106</td><td><span style="color:#00b894">English(16)</span></td></tr>
+                    <tr><td><strong>Lv.10</strong></td><td class="num">14</td><td class="num">2.5%</td><td class="num">44</td><td><span style="color:#00b894">English(13)</span> · <span style="color:#fdcb6e">Portuguese(1)</span></td></tr>
+                    <tr><td><strong>Lv.11</strong></td><td class="num">8</td><td class="num">1.4%</td><td class="num">76</td><td><span style="color:#00b894">English(6)</span> · <span style="color:#fd79a8">Simplified Chinese(1)</span> · <span style="color:#d63031">Russian(1)</span></td></tr>
+                    <tr><td><strong>Lv.12</strong></td><td class="num">7</td><td class="num">1.3%</td><td class="num">77</td><td><span style="color:#00b894">English(6)</span> · <span style="color:#d63031">Russian(1)</span></td></tr>
                 </table>
             </div>
         </div>
 
-        <!-- Section 4 -->
+        <!-- Section 4: IP -->
         <div class="section">
-            <div class="section-title"><span class="icon">🔗</span> 四、IP 段聚类分析</div>
+            <div class="section-title">🔗 四、IP 段聚类分析</div>
             <div class="card">
                 <div class="cluster-item">
-                    <div class="title">📍 195.172.136.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">120 人</span></div>
-                    <div class="ids">121140012001, 121141012001, 121142012001, 121143012001, 121144012001, 121145012001</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">195.172.136.x <span class="tag tag-red">120 人共用</span></div>
+                        <div class="cluster-ids">121140012001, 121141012001, 121142012001, 121143012001, 121144012001, 121145012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 195.172.138.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">106 人</span></div>
-                    <div class="ids">138316012001, 138318012001, 138319012001, 138320012001, 138321012001, 138335012001</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">195.172.138.x <span class="tag tag-red">106 人共用</span></div>
+                        <div class="cluster-ids">138316012001, 138318012001, 138319012001, 138320012001, 138321012001, 138335012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 155.254.126.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">51 人</span></div>
-                    <div class="ids">599540120015, 607910120015, 609130120015, 610420120015, 612990120015, 616110120015</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">155.254.126.x <span class="tag tag-red">51 人共用</span></div>
+                        <div class="cluster-ids">599540120015, 607910120015, 609130120015, 610420120015, 612990120015, 616110120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 109.166.37.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">36 人</span></div>
-                    <div class="ids">664750120015, 664810120015, 664830120015, 664840120015, 664850120015, acege</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">109.166.37.x <span class="tag tag-red">36 人共用</span></div>
+                        <div class="cluster-ids">664750120015, 664810120015, 664830120015, 664840120015, 664850120015, acege</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 65.75.223.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">30 人</span></div>
-                    <div class="ids">598500120015, 598510120015, 608570120015, 608590120015, 610630120015, 613120120015</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">65.75.223.x <span class="tag tag-red">30 人共用</span></div>
+                        <div class="cluster-ids">598500120015, 598510120015, 608570120015, 608590120015, 610630120015, 613120120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 79.127.232.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">18 人</span></div>
-                    <div class="ids">622750120015, 664100120015, 664110120015, Edwina, Grace, Janice</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">79.127.232.x <span class="tag tag-red">18 人共用</span></div>
+                        <div class="cluster-ids">622750120015, 664100120015, 664110120015, Edwina, Grace, Janice</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 38.59.249.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">12 人</span></div>
-                    <div class="ids">391380120015, 391420120015, 422070120015, 533580120015, 593820120015, 593830120015</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">38.59.249.x <span class="tag tag-red">12 人共用</span></div>
+                        <div class="cluster-ids">391380120015, 391420120015, 422070120015, 533580120015, 593820120015, 593830120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 82.29.67.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">11 人</span></div>
-                    <div class="ids">664590120015, 664600120015, 664610120015, Captain_1u6q, goodmorning, Captain_1u6t</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">82.29.67.x <span class="tag tag-red">11 人共用</span></div>
+                        <div class="cluster-ids">664590120015, 664600120015, 664610120015, Captain_1u6q, goodmorning, Captain_1u6t</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 196.188.37.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">10 人</span></div>
-                    <div class="ids">652790120015, 653380120015, Captain_csai, Lindaa, Blurry, Captain_29rs</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">196.188.37.x <span class="tag tag-red">10 人共用</span></div>
+                        <div class="cluster-ids">652790120015, 653380120015, Captain_csai, Lindaa, Blurry, Captain_29rs</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 125.161.75.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">8 人</span></div>
-                    <div class="ids">384980120015, 599690120015, 908210120014, Captain_1sl1, ZahXMlsh, Maharanii</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">125.161.75.x <span class="tag tag-red">8 人共用</span></div>
+                        <div class="cluster-ids">384980120015, 599690120015, 908210120014, Captain_1sl1, ZahXMlsh, Maharanii</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 141.164.41.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">8 人</span></div>
-                    <div class="ids">570130120015, feeling, Captain_1siq, FZSZZN, Lemon1, Captain_24kd</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">141.164.41.x <span class="tag tag-red">8 人共用</span></div>
+                        <div class="cluster-ids">570130120015, feeling, Captain_1siq, FZSZZN, Lemon1, Captain_24kd</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 165.140.240.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">8 人</span></div>
-                    <div class="ids">599860120015, 608470120015, 616660120015, 619810120015, 663570120015, Captain_1vnt</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">165.140.240.x <span class="tag tag-red">8 人共用</span></div>
+                        <div class="cluster-ids">599860120015, 608470120015, 616660120015, 619810120015, 663570120015, Captain_1vnt</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 209.141.35.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">7 人</span></div>
-                    <div class="ids">634860120015, 634870120015, 634880120015, 634890120015, Captain_2d55, DCshaar14</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">209.141.35.x <span class="tag tag-red">7 人共用</span></div>
+                        <div class="cluster-ids">634860120015, 634870120015, 634880120015, 634890120015, Captain_2d55, DCshaar14</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 199.119.138.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">7 人</span></div>
-                    <div class="ids">636100120015, 639550120015, 642960120015, 646270120015, 648710120015, 651530120015</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">199.119.138.x <span class="tag tag-red">7 人共用</span></div>
+                        <div class="cluster-ids">636100120015, 639550120015, 642960120015, 646270120015, 648710120015, 651530120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📍 134.195.101.x <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">6 人</span></div>
-                    <div class="ids">366760120015, 366770120015, 384410120015, 400870120015, Lila, Lexi</div>
+                    <div class="cluster-icon">📍</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">134.195.101.x <span class="tag tag-red">6 人共用</span></div>
+                        <div class="cluster-ids">366760120015, 366770120015, 384410120015, 400870120015, Lila, Lexi</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section 5 -->
+        <!-- Section 5: Device -->
         <div class="section">
-            <div class="section-title"><span class="icon">📱</span> 五、设备型号聚类分析</div>
+            <div class="section-title">📱 五、设备型号聚类</div>
             <div class="card">
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-S908N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">54 人</span></div>
-                    <div class="ids">181061012001, 181063012001, 181072012001, 181074012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-S908N <span class="tag tag-red">54 人共用</span></div>
+                        <div class="cluster-ids">181061012001, 181063012001, 181072012001, 181074012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-N960N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">40 人</span></div>
-                    <div class="ids">138332012001, 138333012001, 609130120015, 617610120015</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-N960N <span class="tag tag-red">40 人共用</span></div>
+                        <div class="cluster-ids">138332012001, 138333012001, 609130120015, 617610120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 asus ASUS_Z01QD <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">36 人</span></div>
-                    <div class="ids">181064012001, 181075012001, 181079012001, 181083012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">asus ASUS_Z01QD <span class="tag tag-red">36 人共用</span></div>
+                        <div class="cluster-ids">181064012001, 181075012001, 181079012001, 181083012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-G988N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">31 人</span></div>
-                    <div class="ids">664750120015, 664810120015, 664830120015, 664840120015</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-G988N <span class="tag tag-red">31 人共用</span></div>
+                        <div class="cluster-ids">664750120015, 664810120015, 664830120015, 664840120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-S901N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">30 人</span></div>
-                    <div class="ids">181062012001, 181073012001, 181080012001, 181084012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-S901N <span class="tag tag-red">30 人共用</span></div>
+                        <div class="cluster-ids">181062012001, 181073012001, 181080012001, 181084012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-N971N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">21 人</span></div>
-                    <div class="ids">121140012001, 121142012001, 121146012001, 121147012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-N971N <span class="tag tag-red">21 人共用</span></div>
+                        <div class="cluster-ids">121140012001, 121142012001, 121146012001, 121147012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-G965N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">19 人</span></div>
-                    <div class="ids">615960120015, 624010120015, 628490120015, 628500120015</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-G965N <span class="tag tag-red">19 人共用</span></div>
+                        <div class="cluster-ids">615960120015, 624010120015, 628490120015, 628500120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-G970N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">18 人</span></div>
-                    <div class="ids">121141012001, 121144012001, 121148012001, 121149012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-G970N <span class="tag tag-red">18 人共用</span></div>
+                        <div class="cluster-ids">121141012001, 121144012001, 121148012001, 121149012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-G9880 <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">18 人</span></div>
-                    <div class="ids">138344012001, 141786012001, 141787012001, 141788012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-G9880 <span class="tag tag-red">18 人共用</span></div>
+                        <div class="cluster-ids">138344012001, 141786012001, 141787012001, 141788012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-A908N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">15 人</span></div>
-                    <div class="ids">599860120015, 607910120015, 608470120015, 616660120015</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-A908N <span class="tag tag-red">15 人共用</span></div>
+                        <div class="cluster-ids">599860120015, 607910120015, 608470120015, 616660120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-A805N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">12 人</span></div>
-                    <div class="ids">138342012001, 138343012001, 141784012001, 141785012001</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-A805N <span class="tag tag-red">12 人共用</span></div>
+                        <div class="cluster-ids">138342012001, 138343012001, 141784012001, 141785012001</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 OnePlus NE2211 <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">11 人</span></div>
-                    <div class="ids">553060120015, 652790120015, 653380120015, Captain_csai</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">OnePlus NE2211 <span class="tag tag-red">11 人共用</span></div>
+                        <div class="cluster-ids">553060120015, 652790120015, 653380120015, Captain_csai</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-G998B <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">11 人</span></div>
-                    <div class="ids">570130120015, 597130120015, feeling, Captain_1siq</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-G998B <span class="tag tag-red">11 人共用</span></div>
+                        <div class="cluster-ids">570130120015, 597130120015, feeling, Captain_1siq</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-G960N <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">11 人</span></div>
-                    <div class="ids">615950120015, 617430120015, 622750120015, 629300120015</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-G960N <span class="tag tag-red">11 人共用</span></div>
+                        <div class="cluster-ids">615950120015, 617430120015, 622750120015, 629300120015</div>
+                    </div>
                 </div>
                 <div class="cluster-item">
-                    <div class="title">📱 samsung SM-S908E <span class="tag" style="background:rgba(255,107,107,0.15);color:#ff6b6b">10 人</span></div>
-                    <div class="ids">440000120015, 530100120015, 530140120015, 596960120015</div>
+                    <div class="cluster-icon">📱</div>
+                    <div class="cluster-info">
+                        <div class="cluster-title">samsung SM-S908E <span class="tag tag-red">10 人共用</span></div>
+                        <div class="cluster-ids">440000120015, 530100120015, 530140120015, 596960120015</div>
+                    </div>
                 </div>
             </div>
         </div>
