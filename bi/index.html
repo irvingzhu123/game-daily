@@ -7,338 +7,325 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#0a0b10;--surface:#131520;--card:#1a1d2e;--border:#2a2d42;--accent:#6c5ce7;--accent2:#a29bfe;--accent3:#00cec9;--text:#e8eaf0;--text-dim:#8a8d9e;--text-muted:#5a5d6e;--success:#00b894;--warning:#fdcb6e;--danger:#ff6b6b;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3)}
+        :root{
+            --bg:#06080d;--surface:#0c1018;--card:#111825;--card-h:#162030;
+            --border:#1c2738;--border-h:#263550;
+            --accent:#6366f1;--accent2:#818cf8;--accent3:#a5b4fc;
+            --accent-g:linear-gradient(135deg,#6366f1,#8b5cf6);
+            --text:#f1f5f9;--text2:#cbd5e1;--text3:#94a3b8;--text4:#64748b;
+            --green:#10b981;--green-bg:rgba(16,185,129,.1);
+            --orange:#f59e0b;--orange-bg:rgba(245,158,11,.1);
+            --red:#ef4444;--red-bg:rgba(239,68,68,.1);
+            --cyan:#06b6d4;--purple:#8b5cf6;
+            --radius:12px;--radius-sm:8px;
+            --shadow:0 4px 24px rgba(0,0,0,.3);
+            --glow:0 0 30px rgba(99,102,241,.15);
+        }
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
 
-        /* Top Bar */
-        .topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;position:sticky;top:0;z-index:100}
-        .topbar .brand{font-size:15px;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
-        .topbar .divider{width:1px;height:20px;background:var(--border)}
-        .topbar .dataset-name{color:var(--text-dim);font-size:12px;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        /* ===== Topbar ===== */
+        .topbar{height:56px;background:rgba(12,16,24,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:100}
+        .topbar .brand{font-size:15px;font-weight:700;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;display:flex;align-items:center;gap:8px}
+        .topbar .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .topbar .divider{width:1px;height:24px;background:var(--border)}
+        .topbar .ds-name{color:var(--text3);font-size:12px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .topbar .spacer{flex:1}
-        .topbar .btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
-        .topbar .btn:hover{border-color:var(--accent);background:rgba(108,92,231,.1)}
-        .topbar .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-        .topbar .btn.danger{border-color:var(--danger);color:var(--danger)}
-        .topbar .btn.danger:hover{background:rgba(255,107,107,.1)}
+        .tb-btn{padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;font-family:inherit}
+        .tb-btn:hover{border-color:var(--accent);background:rgba(99,102,241,.08);color:var(--accent2)}
+        .tb-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+        .tb-btn.primary:hover{background:#5558e6}
+        .tb-btn.danger{border-color:var(--red);color:var(--red)}
+        .tb-btn.danger:hover{background:var(--red-bg)}
 
-        /* Tabs */
-        .tabs{height:40px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0;position:sticky;top:50px;z-index:99}
-        .tab-btn{padding:8px 20px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;user-select:none}
-        .tab-btn:hover{color:var(--text-dim)}
+        /* ===== Tabs ===== */
+        .tabs{height:42px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:0}
+        .tab-btn{padding:10px 20px;font-size:13px;font-weight:500;color:var(--text4);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;user-select:none;position:relative}
+        .tab-btn:hover{color:var(--text3)}
         .tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent)}
+        .tab-btn .badge{position:absolute;top:6px;right:2px;background:var(--accent);color:#fff;font-size:9px;padding:0 5px;border-radius:10px;line-height:16px}
 
-        .main{display:flex;min-height:calc(100vh - 90px)}
+        .main{display:flex;min-height:calc(100vh - 98px)}
 
-        /* Sidebar */
-        .sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0;position:sticky;top:90px;height:calc(100vh - 90px)}
+        /* ===== Sidebar ===== */
+        .sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}
         .sidebar.collapsed{width:0;border:none}
-        .sidebar-header{padding:12px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
-        .sidebar-scroll{flex:1;overflow-y:auto;padding:10px}
-        .sidebar-scroll::-webkit-scrollbar{width:4px}
+        .sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;justify-content:space-between}
+        .sidebar-scroll{flex:1;overflow-y:auto;padding:12px}
+        .sidebar-scroll::-webkit-scrollbar{width:3px}
         .sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-        .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:20px 12px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px}
-        .upload-area:hover,.upload-area.dragover{border-color:var(--accent);background:rgba(108,92,231,.05)}
-        .upload-area .icon{font-size:24px;margin-bottom:4px}
-        .upload-area p{color:var(--text-dim);font-size:11px}
-        .upload-area .formats{color:var(--text-muted);font-size:9px;margin-top:2px}
+        .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:24px 14px;text-align:center;cursor:pointer;transition:all .25s;margin-bottom:12px;position:relative;overflow:hidden}
+        .upload-area::before{content:'';position:absolute;inset:0;background:var(--accent-g);opacity:0;transition:opacity .25s}
+        .upload-area:hover::before,.upload-area.dragover::before{opacity:.05}
+        .upload-area:hover,.upload-area.dragover{border-color:var(--accent)}
+        .upload-area .icon{font-size:28px;margin-bottom:6px;position:relative}
+        .upload-area p{color:var(--text3);font-size:11px;position:relative}
+        .upload-area .fmt{color:var(--text4);font-size:9px;margin-top:3px;position:relative}
 
-        .field-group{margin-bottom:8px}
-        .field-group-title{font-size:9px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;padding-left:6px}
-        .field-item{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:5px;cursor:pointer;transition:background .15s;font-size:11px}
-        .field-item:hover{background:rgba(108,92,231,.1)}
-        .field-item .fi{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
-        .field-item .fi.dim{background:rgba(0,206,201,.15);color:var(--accent3)}
-        .field-item .fi.mea{background:rgba(253,203,110,.15);color:var(--warning)}
-        .field-item .fi.dat{background:rgba(162,155,254,.15);color:var(--accent2)}
-        .field-item .fn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .fg{margin-bottom:10px}
+        .fg-t{font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;padding-left:6px}
+        .fi{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:all .15s;font-size:11px;color:var(--text2)}
+        .fi:hover{background:rgba(99,102,241,.1);color:var(--accent3)}
+        .fi .dot{width:14px;height:14px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+        .fi .dot.dim{background:rgba(6,182,212,.12);color:var(--cyan)}
+        .fi .dot.mea{background:rgba(245,158,11,.12);color:var(--orange)}
+        .fi .dot.dat{background:rgba(139,92,246,.12);color:var(--purple)}
+        .fi .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-        .builder-panel{width:280px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0;position:sticky;top:90px;height:calc(100vh - 90px)}
-        .builder-panel.collapsed{width:0;border:none}
-        .builder-header{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
-        .builder-scroll{flex:1;overflow-y:auto;padding:12px}
-        .builder-scroll::-webkit-scrollbar{width:4px}
-        .builder-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+        /* ===== Builder ===== */
+        .builder{width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}
+        .builder.collapsed{width:0;border:none}
+        .builder-h{padding:14px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px}
+        .builder-s{flex:1;overflow-y:auto;padding:14px}
+        .builder-s::-webkit-scrollbar{width:3px}
+        .builder-s::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-        .b-section{margin-bottom:12px}
-        .b-label{font-size:9px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+        .bs{margin-bottom:14px}
+        .bl{font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 
-        .chart-types{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-        .ct-btn{background:var(--card);border:2px solid var(--border);border-radius:7px;padding:7px 3px;text-align:center;cursor:pointer;transition:all .15s}
-        .ct-btn:hover{border-color:var(--accent)}
-        .ct-btn.active{border-color:var(--accent);background:rgba(108,92,231,.15)}
-        .ct-btn .ci{font-size:16px;display:block;margin-bottom:1px}
-        .ct-btn .cl{font-size:8px;color:var(--text-dim)}
+        .ctypes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+        .ctb{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .2s}
+        .ctb:hover{border-color:var(--accent);transform:translateY(-1px)}
+        .ctb.active{border-color:var(--accent);background:rgba(99,102,241,.1);box-shadow:var(--glow)}
+        .ctb .ci{font-size:16px;display:block;margin-bottom:2px}
+        .ctb .cl{font-size:8px;color:var(--text3)}
 
-        .f-slot{background:var(--card);border:1px dashed var(--border);border-radius:7px;min-height:30px;padding:5px 8px;display:flex;align-items:center;gap:5px;cursor:pointer;transition:border-color .15s;position:relative}
-        .f-slot:hover{border-color:var(--accent)}
-        .f-slot.has{border-style:solid;border-color:var(--accent)}
-        .f-slot .sp{color:var(--text-muted);font-size:10px;flex:1}
-        .f-slot .sv{flex:1;font-size:11px;color:var(--accent2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .f-slot .sc{color:var(--text-muted);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
-        .f-slot .sc:hover{color:var(--danger)}
+        .fs{background:var(--card);border:1.5px dashed var(--border);border-radius:8px;min-height:32px;padding:6px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .2s}
+        .fs:hover{border-color:var(--accent)}
+        .fs.has{border-style:solid;border-color:var(--accent);background:rgba(99,102,241,.06)}
+        .fs .sp{color:var(--text4);font-size:10px;flex:1}
+        .fs .sv{flex:1;font-size:11px;color:var(--accent3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .fs .sx{color:var(--text4);cursor:pointer;font-size:14px;line-height:1;padding:0 2px;transition:color .15s}
+        .fs .sx:hover{color:var(--red)}
 
-        .agg-sel{background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:10px;padding:3px 6px;outline:none;margin-top:5px;width:100%}
+        .asel{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:10px;padding:4px 8px;outline:none;margin-top:6px;width:100%;font-family:inherit;cursor:pointer}
+        .asel option{background:var(--card);color:var(--text2)}
 
-        .filter-row{display:flex;gap:3px;align-items:center;margin-bottom:3px}
-        .filter-row select,.filter-row input{background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:10px;padding:3px 5px;outline:none;flex:1}
-        .filter-row select{flex:1.5}
-        .filter-row input{flex:1.2}
-        .filter-row .fr-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0 2px}
-        .filter-row .fr-del:hover{color:var(--danger)}
+        .frow{display:flex;gap:4px;align-items:center;margin-bottom:4px;animation:slideIn .2s ease}
+        @keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+        .frow select,.frow input{background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text2);font-size:10px;padding:4px 6px;outline:none;flex:1;font-family:inherit}
+        .frow select{flex:1.5}
+        .frow input{flex:1.2}
+        .frow .fd{background:none;border:none;color:var(--text4);cursor:pointer;font-size:13px;padding:0 2px;transition:color .15s}
+        .frow .fd:hover{color:var(--red)}
 
-        .data-prev-toggle{padding:7px 10px;border-top:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text-dim);transition:background .15s}
-        .data-prev-toggle:hover{background:rgba(108,92,231,.05)}
-        .data-preview{border-top:1px solid var(--border);overflow:auto;max-height:0;transition:max-height .3s}
-        .data-preview.open{max-height:250px}
-        .data-preview table{width:100%;border-collapse:collapse;font-size:9px}
-        .data-preview th{position:sticky;top:0;background:var(--surface);padding:3px 5px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-dim);font-weight:500;white-space:nowrap}
-        .data-preview td{padding:2px 5px;border-bottom:1px solid rgba(42,45,66,.5);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
-
-        /* Canvas */
-        .canvas{flex:1;overflow:auto;padding:16px;position:relative;background:var(--bg)}
-        .canvas::-webkit-scrollbar{width:6px;height:6px}
+        /* ===== Canvas ===== */
+        .canvas{flex:1;overflow:auto;padding:20px;position:relative}
+        .canvas::-webkit-scrollbar{width:5px;height:5px}
         .canvas::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        .canvas::-webkit-scrollbar-thumb:hover{background:var(--border-h)}
 
-        .canvas-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);text-align:center}
-        .canvas-empty .ce-icon{font-size:48px;margin-bottom:10px;opacity:.3}
-        .canvas-empty h2{font-size:16px;color:var(--text-dim);margin-bottom:5px}
-        .canvas-empty p{font-size:12px}
+        .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text4);text-align:center}
+        .empty .ei{font-size:56px;margin-bottom:12px;opacity:.4}
+        .empty h2{font-size:18px;color:var(--text3);margin-bottom:6px;font-weight:600}
+        .empty p{font-size:12px}
 
-        .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px}
+        .dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px}
 
-        .widget{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:wIn .25s ease}
-        @keyframes wIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-        .widget:hover{box-shadow:var(--shadow)}
-        .widget .wh{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        .widget{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s;animation:wIn .3s ease}
+        @keyframes wIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .widget:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+        .widget .wh{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
         .widget .wt{font-size:12px;font-weight:600}
-        .widget .wa{display:flex;gap:3px}
-        .widget .wa button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:2px 3px;border-radius:3px}
-        .widget .wa button:hover{color:var(--text);background:rgba(255,255,255,.05)}
-        .widget .wa button.del:hover{color:var(--danger)}
-        .widget .wb{padding:10px;height:260px;position:relative}
+        .widget .wa{display:flex;gap:4px}
+        .widget .wa button{background:none;border:none;color:var(--text4);cursor:pointer;font-size:13px;padding:3px 4px;border-radius:4px;transition:all .15s}
+        .widget .wa button:hover{color:var(--text2);background:rgba(255,255,255,.05)}
+        .widget .wa button.del:hover{color:var(--red)}
+        .widget .wb{padding:12px;height:260px;position:relative}
         .widget .wb canvas{width:100%!important;height:100%!important}
-        .widget .wb table{width:100%;border-collapse:collapse;font-size:11px;overflow:auto;display:block;height:100%}
-        .widget .wb th{position:sticky;top:0;background:var(--card);padding:5px 8px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-dim);font-size:10px}
-        .widget .wb td{padding:4px 8px;border-bottom:1px solid var(--border)}
-        .widget .wb tr:hover td{background:rgba(108,92,231,.05)}
 
-        .modal-overlay{position:fixed;inset:0;background:rgba(10,11,16,.85);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
-        .modal-overlay.show{display:flex}
-        .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;max-width:380px;width:90%;max-height:65vh;overflow-y:auto}
-        .modal h3{font-size:13px;margin-bottom:10px}
-        .modal .fpl{max-height:220px;overflow-y:auto}
-        .modal .fpi{padding:6px 8px;border-radius:5px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;font-size:12px}
-        .modal .fpi:hover{background:rgba(108,92,231,.1)}
+        /* ===== Modal ===== */
+        .modal-ov{position:fixed;inset:0;background:rgba(6,8,13,.9);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(8px)}
+        .modal-ov.show{display:flex}
+        .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;max-width:400px;width:90%;max-height:65vh;overflow-y:auto;animation:modalIn .25s ease}
+        @keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+        .modal h3{font-size:14px;margin-bottom:12px;font-weight:600}
+        .modal .fpl{max-height:240px;overflow-y:auto}
+        .modal .fpi{padding:7px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;font-size:12px}
+        .modal .fpi:hover{background:rgba(99,102,241,.1)}
+        .modal .mf{text-align:right;margin-top:12px}
 
-        .toast{position:fixed;bottom:16px;right:16px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:8px 14px;font-size:11px;color:var(--text);z-index:2000;box-shadow:var(--shadow);animation:tIn .3s ease,tOut .3s ease 2.3s forwards}
-        @keyframes tIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+        /* ===== Toast ===== */
+        .toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--text2);z-index:2000;box-shadow:var(--shadow);animation:tIn .3s ease,tOut .3s ease 2.5s forwards;backdrop-filter:blur(10px)}
+        @keyframes tIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
         @keyframes tOut{from{opacity:1}to{opacity:0}}
 
-        /* ===== Default Dashboard (ROI/UA style) ===== */
-        .default-dash{width:100%;max-width:1400px;margin:0 auto}
+        /* ===== Default Dashboard ===== */
+        .dash{width:100%;max-width:1440px;margin:0 auto}
 
-        /* Section titles */
-        .sec-title{font-size:15px;font-weight:600;margin:20px 0 12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-        .sec-title .st-icon{font-size:18px}
+        /* Global Filter Bar */
+        .filter-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+        .filter-bar .fb-label{font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-right:4px}
+        .filter-bar select{background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;padding:6px 10px;outline:none;font-family:inherit;cursor:pointer;transition:border-color .15s}
+        .filter-bar select:hover{border-color:var(--accent)}
+        .filter-bar select:focus{border-color:var(--accent)}
+        .filter-bar option{background:var(--surface);color:var(--text2)}
+        .filter-bar .fb-spacer{flex:1}
+        .filter-bar .fb-reset{background:none;border:none;color:var(--text4);cursor:pointer;font-size:11px;padding:6px 10px;border-radius:6px;transition:all .15s;font-family:inherit}
+        .filter-bar .fb-reset:hover{color:var(--red);background:var(--red-bg)}
 
-        /* KPI row */
-        .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:8px}
-        .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
-        .kpi-card .kpi-icon{font-size:18px;margin-bottom:4px}
-        .kpi-card .kpi-value{font-size:24px;font-weight:700}
-        .kpi-card .kpi-label{font-size:11px;color:var(--text-dim);margin-top:2px}
-        .kpi-card .kpi-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
-        .kpi-card.blue .kpi-value{color:var(--accent2)}
-        .kpi-card.green .kpi-value{color:var(--success)}
-        .kpi-card.orange .kpi-value{color:var(--warning)}
-        .kpi-card.red .kpi-value{color:var(--danger)}
-        .kpi-card.purple .kpi-value{color:var(--accent)}
-        .kpi-card.cyan .kpi-value{color:var(--accent3)}
+        /* KPI */
+        .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+        .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;cursor:default;transition:all .25s}
+        .kpi:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+        .kpi::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.06}
+        .kpi.blue::after{background:var(--accent2)}
+        .kpi.green::after{background:var(--green)}
+        .kpi.orange::after{background:var(--orange)}
+        .kpi.red::after{background:var(--red)}
+        .kpi.purple::after{background:var(--purple)}
+        .kpi.cyan::after{background:var(--cyan)}
+        .kpi .ki{font-size:18px;margin-bottom:6px}
+        .kpi .kv{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+        .kpi.blue .kv{color:var(--accent2)}
+        .kpi.green .kv{color:var(--green)}
+        .kpi.orange .kv{color:var(--orange)}
+        .kpi.red .kv{color:var(--red)}
+        .kpi.purple .kv{color:var(--purple)}
+        .kpi.cyan .kv{color:var(--cyan)}
+        .kpi .kl{font-size:11px;color:var(--text3);margin-top:3px;font-weight:500}
+        .kpi .ks{font-size:10px;color:var(--text4);margin-top:3px}
 
-        /* Chart grid */
-        .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:14px;margin-bottom:8px}
-        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-        .chart-card h4{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-dim);display:flex;align-items:center;gap:6px}
-        .chart-card canvas{max-height:260px}
-        .chart-card.full{grid-column:1/-1}
+        /* Sections */
+        .sec{margin-bottom:20px}
+        .sec-t{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+        .sec-t .si{font-size:18px}
+
+        .cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:14px}
+        .cc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .25s}
+        .cc:hover{border-color:var(--border-h)}
+        .cc h4{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
+        .cc canvas{max-height:280px}
+        .cc.full{grid-column:1/-1}
 
         /* Table */
-        .data-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;max-height:400px;margin-bottom:20px}
-        .data-table{width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap}
-        .data-table th{position:sticky;top:0;background:var(--surface);padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-dim);font-size:10px;font-weight:600;z-index:1}
-        .data-table th.num{text-align:right}
-        .data-table td{padding:4px 10px;border-bottom:1px solid rgba(42,45,66,.4)}
-        .data-table td.num{text-align:right;font-variant-numeric:tabular-nums}
-        .data-table tr:hover td{background:rgba(108,92,231,.04)}
-        .data-table .country-cell{display:flex;align-items:center;gap:6px}
-        .data-table .flag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+        .tw{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;max-height:500px;margin-bottom:20px}
+        .tw::-webkit-scrollbar{width:4px;height:4px}
+        .tw::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+        .dt{width:100%;border-collapse:collapse;font-size:11px}
+        .dt th{position:sticky;top:0;background:var(--surface);padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);color:var(--text4);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;z-index:1}
+        .dt th.num{text-align:right}
+        .dt td{padding:6px 12px;border-bottom:1px solid rgba(28,39,56,.5)}
+        .dt td.num{text-align:right;font-variant-numeric:tabular-nums}
+        .dt tr{transition:background .15s}
+        .dt tr:hover td{background:rgba(99,102,241,.04)}
 
-        /* Progress bar in table */
-        .bar-cell{display:flex;align-items:center;gap:6px}
-        .bar-bg{width:60px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-        .bar-fill{height:100%;border-radius:2px}
-        .bar-fill.green{background:var(--success)}
-        .bar-fill.orange{background:var(--warning)}
-        .bar-fill.red{background:var(--danger)}
-        .bar-fill.blue{background:var(--accent2)}
+        .flag{display:inline-flex;align-items:center;gap:8px}
+        .flag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-        /* Metric badge */
-        .badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:500}
-        .badge.good{background:rgba(0,184,148,.15);color:var(--success)}
-        .badge.warn{background:rgba(253,203,110,.15);color:var(--warning)}
-        .badge.bad{background:rgba(255,107,107,.15);color:var(--danger)}
+        .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:600}
+        .badge.g{background:var(--green-bg);color:var(--green)}
+        .badge.w{background:var(--orange-bg);color:var(--orange)}
+        .badge.b{background:var(--red-bg);color:var(--red)}
 
-        @media(max-width:900px){.sidebar{width:200px}.builder-panel{width:240px}.dash-grid,.chart-grid{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}}
+        /* Welcome screen */
+        .welcome{text-align:center;padding:80px 20px}
+        .welcome .w-icon{font-size:64px;margin-bottom:20px;animation:float 3s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .welcome h2{font-size:24px;font-weight:700;margin-bottom:8px;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .welcome p{color:var(--text3);font-size:14px;margin-bottom:24px}
+        .welcome .steps{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+        .welcome .step{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;width:200px;text-align:left;transition:all .25s}
+        .welcome .step:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:var(--shadow)}
+        .welcome .step .sn{font-size:28px;margin-bottom:8px}
+        .welcome .step h3{font-size:13px;font-weight:600;margin-bottom:4px}
+        .welcome .step p{font-size:11px;color:var(--text4)}
+
+        @media(max-width:900px){.sidebar,.builder{width:0;border:none}.cg,.dg{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}}
     </style>
 </head>
 <body>
 
-<!-- Top Bar -->
 <div class="topbar">
-    <span class="brand">🧱 BI 看板</span>
+    <span class="brand"><span class="dot"></span> Republic BI</span>
     <div class="divider"></div>
-    <span class="dataset-name" id="dsName">未加载数据</span>
+    <span class="ds-name" id="dsName">未加载数据</span>
     <div class="spacer"></div>
-    <button class="btn" onclick="toggleSidebar()">📋 字段</button>
-    <button class="btn" onclick="toggleBuilder()">🎨 构建器</button>
+    <button class="tb-btn" onclick="toggleSidebar()">📋 字段</button>
+    <button class="tb-btn" onclick="toggleBuilder()">🎨 构建器</button>
     <div class="divider"></div>
-    <button class="btn primary" onclick="document.getElementById('fileIn').click()">📤 上传数据</button>
+    <button class="tb-btn primary" onclick="document.getElementById('fileIn').click()">📤 上传数据</button>
     <input type="file" id="fileIn" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)">
 </div>
 
-<!-- Tabs -->
-<div class="tabs" id="tabBar">
-    <div class="tab-btn active" data-tab="default" onclick="switchTab('default')">📊 默认看板</div>
-    <div class="tab-btn" data-tab="custom" onclick="switchTab('custom')">🎨 自定义看板</div>
+<div class="tabs">
+    <div class="tab-btn active" data-tab="default" onclick="switchTab('default')">📊 数据看板</div>
+    <div class="tab-btn" data-tab="custom" onclick="switchTab('custom')">🎨 自定义<span class="badge" id="wCount" style="display:none">0</span></div>
 </div>
 
 <div class="main">
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">📁 数据源</div>
+        <div class="sidebar-header">数据源 <button class="tb-btn" style="padding:2px 6px;font-size:10px" onclick="document.getElementById('fileIn').click()">更换</button></div>
         <div class="sidebar-scroll">
             <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileIn').click()">
                 <div class="icon">📤</div>
                 <p>点击或拖拽上传</p>
-                <div class="formats">.xlsx / .xls / .csv</div>
+                <div class="fmt">.xlsx / .xls / .csv</div>
             </div>
             <div id="sheetTabs" style="display:none;margin-bottom:8px">
-                <div class="b-label">工作表</div>
+                <div class="bl">工作表</div>
                 <div id="sheetTabList" style="display:flex;gap:4px;flex-wrap:wrap"></div>
             </div>
             <div id="fieldsSection" style="display:none">
-                <div class="field-group"><div class="field-group-title">维度</div><div id="dimFields"></div></div>
-                <div class="field-group"><div class="field-group-title">度量</div><div id="meaFields"></div></div>
-                <div class="field-group"><div class="field-group-title">日期</div><div id="dateFields"></div></div>
+                <div class="fg"><div class="fg-t">维度</div><div id="dimFields"></div></div>
+                <div class="fg"><div class="fg-t">度量</div><div id="meaFields"></div></div>
+                <div class="fg"><div class="fg-t">日期</div><div id="dateFields"></div></div>
             </div>
             <div id="previewSection" style="display:none">
-                <div class="data-prev-toggle" onclick="togglePreview()"><span>预览 (<span id="rowCount">0</span> 行)</span><span>▼</span></div>
-                <div class="data-preview" id="dataPreview"></div>
+                <div style="padding:6px 8px;border-top:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text4)" onclick="togglePreview()"><span>预览 (<span id="rowCount">0</span> 行)</span><span>▼</span></div>
+                <div id="dataPreview" style="border-top:1px solid var(--border);overflow:auto;max-height:0;transition:max-height .3s"></div>
             </div>
         </div>
     </div>
 
-    <!-- Builder Panel -->
-    <div class="builder-panel" id="builder">
-        <div class="builder-header">🎨 图表构建器</div>
-        <div class="builder-scroll">
-            <div class="b-section">
-                <div class="b-label">图表类型</div>
-                <div class="chart-types">
-                    <div class="ct-btn active" data-t="bar" onclick="selType('bar')"><span class="ci">📊</span><span class="cl">柱状图</span></div>
-                    <div class="ct-btn" data-t="line" onclick="selType('line')"><span class="ci">📈</span><span class="cl">折线图</span></div>
-                    <div class="ct-btn" data-t="pie" onclick="selType('pie')"><span class="ci">🥧</span><span class="cl">饼图</span></div>
-                    <div class="ct-btn" data-t="doughnut" onclick="selType('doughnut')"><span class="ci">🍩</span><span class="cl">环形图</span></div>
-                    <div class="ct-btn" data-t="scatter" onclick="selType('scatter')"><span class="ci">⚬</span><span class="cl">散点图</span></div>
-                    <div class="ct-btn" data-t="radar" onclick="selType('radar')"><span class="ci">🕸️</span><span class="cl">雷达图</span></div>
-                    <div class="ct-btn" data-t="polarArea" onclick="selType('polarArea')"><span class="ci">🎯</span><span class="cl">极地区域</span></div>
-                    <div class="ct-btn" data-t="table" onclick="selType('table')"><span class="ci">📋</span><span class="cl">数据表</span></div>
-                </div>
-            </div>
-            <div class="b-section">
-                <div class="b-label">X 轴 (维度)</div>
-                <div class="f-slot" id="xSlot" onclick="pickField('xAxis')"><span class="sp">选择维度字段</span></div>
-            </div>
-            <div class="b-section">
-                <div class="b-label">Y 轴 (度量)</div>
-                <div class="f-slot" id="ySlot" onclick="pickField('yAxis')"><span class="sp">选择度量字段</span></div>
-                <select class="agg-sel" id="aggSel">
-                    <option value="sum">SUM 求和</option>
-                    <option value="avg">AVG 平均</option>
-                    <option value="count">COUNT 计数</option>
-                    <option value="min">MIN 最小值</option>
-                    <option value="max">MAX 最大值</option>
-                </select>
-            </div>
-            <div class="b-section">
-                <div class="b-label">分组 (可选)</div>
-                <div class="f-slot" id="gSlot" onclick="pickField('groupBy')"><span class="sp">选择分组字段</span></div>
-            </div>
-            <div class="b-section">
-                <div class="b-label">筛选 (可选)</div>
-                <div id="filterArea"></div>
-                <button class="btn" onclick="addFilter()" style="width:100%;justify-content:center;margin-top:3px;font-size:10px;padding:5px">+ 添加筛选</button>
-            </div>
-            <div class="b-section">
-                <div class="b-label">图表标题</div>
-                <input type="text" id="chartTitle" placeholder="自动生成" style="width:100%;padding:6px 8px;border-radius:5px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:11px;outline:none">
-            </div>
-            <button class="btn primary" onclick="addChart()" style="width:100%;justify-content:center;padding:9px;font-size:12px;margin-top:6px">➕ 添加到看板</button>
+    <div class="builder collapsed" id="builder">
+        <div class="builder-h">🎨 图表构建器</div>
+        <div class="builder-s">
+            <div class="bs"><div class="bl">图表类型</div><div class="ctypes">
+                <div class="ctb active" data-t="bar" onclick="selType('bar')"><span class="ci">📊</span><span class="cl">柱状</span></div>
+                <div class="ctb" data-t="line" onclick="selType('line')"><span class="ci">📈</span><span class="cl">折线</span></div>
+                <div class="ctb" data-t="pie" onclick="selType('pie')"><span class="ci">🥧</span><span class="cl">饼图</span></div>
+                <div class="ctb" data-t="doughnut" onclick="selType('doughnut')"><span class="ci">🍩</span><span class="cl">环形</span></div>
+                <div class="ctb" data-t="scatter" onclick="selType('scatter')"><span class="ci">⚬</span><span class="cl">散点</span></div>
+                <div class="ctb" data-t="radar" onclick="selType('radar')"><span class="ci">🕸️</span><span class="cl">雷达</span></div>
+                <div class="ctb" data-t="polarArea" onclick="selType('polarArea')"><span class="ci">🎯</span><span class="cl">极坐标</span></div>
+                <div class="ctb" data-t="table" onclick="selType('table')"><span class="ci">📋</span><span class="cl">表格</span></div>
+            </div></div>
+            <div class="bs"><div class="bl">X 轴</div><div class="fs" id="xSlot" onclick="pickField('xAxis')"><span class="sp">选择维度</span></div></div>
+            <div class="bs"><div class="bl">Y 轴</div><div class="fs" id="ySlot" onclick="pickField('yAxis')"><span class="sp">选择度量</span></div><select class="asel" id="aggSel"><option value="sum">SUM 求和</option><option value="avg">AVG 平均</option><option value="count">COUNT 计数</option><option value="min">MIN 最小</option><option value="max">MAX 最大</option></select></div>
+            <div class="bs"><div class="bl">分组 (可选)</div><div class="fs" id="gSlot" onclick="pickField('groupBy')"><span class="sp">选择分组</span></div></div>
+            <div class="bs"><div class="bl">筛选 (可选)</div><div id="filterArea"></div><button class="tb-btn" onclick="addFilter()" style="width:100%;justify-content:center;margin-top:4px;font-size:10px;padding:4px">+ 添加筛选</button></div>
+            <div class="bs"><div class="bl">标题</div><input type="text" id="chartTitle" placeholder="自动生成" style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:11px;outline:none;font-family:inherit"></div>
+            <button class="tb-btn primary" onclick="addChart()" style="width:100%;justify-content:center;padding:10px;font-size:12px;margin-top:8px">➕ 添加到看板</button>
         </div>
     </div>
 
-    <!-- Canvas -->
     <div class="canvas" id="canvas">
         <div id="defaultView"></div>
         <div id="customView" style="display:none">
-            <div class="canvas-empty" id="emptyState">
-                <div class="ce-icon">📊</div>
-                <h2>自定义图表构建</h2>
-                <p>在左侧选择字段和图表类型 → 添加到看板</p>
-            </div>
-            <div class="dash-grid" id="dashGrid" style="display:none"></div>
+            <div class="empty" id="emptyState"><div class="ei">📊</div><h2>自定义图表构建</h2><p>在左侧选择字段和图表类型 → 添加到看板</p></div>
+            <div class="dg" id="dashGrid" style="display:none"></div>
         </div>
     </div>
 </div>
 
-<!-- Field Picker Modal -->
-<div class="modal-overlay" id="fModal">
-    <div class="modal">
-        <h3 id="fModalTitle">选择字段</h3>
-        <div class="fpl" id="fPickList"></div>
-        <div style="text-align:right;margin-top:10px">
-            <button class="btn" onclick="closeModal()" style="font-size:11px;padding:5px 10px">取消</button>
-        </div>
-    </div>
-</div>
+<div class="modal-ov" id="fModal"><div class="modal"><h3 id="fModalTitle">选择字段</h3><div class="fpl" id="fPickList"></div><div class="mf"><button class="tb-btn" onclick="closeModal()" style="font-size:11px;padding:5px 10px">取消</button></div></div></div>
 
 <script>
-// ===== State =====
 let rawData=[],headers=[],fieldTypes={},currentSheet=null,workbook=null;
 let chartType='bar',cfg={xAxis:null,yAxis:null,groupBy:null,agg:'sum',filters:[]};
 let widgets=[],wId=0,pickTarget=null,currentTab='default';
-const COLORS=['#6c5ce7','#a29bfe','#00b894','#fdcb6e','#ff6b6b','#00cec9','#e17055','#74b9ff','#d63031','#0984e3','#e84393','#55efc4','#fab1a0','#81ecec','#ffeaa7','#dfe6e9','#b2bec3','#636e72','#fd79a8','#f39c12'];
-Chart.defaults.color='#8a8d9e';
-Chart.defaults.borderColor='#2a2d42';
-Chart.defaults.font.family='-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC",sans-serif';
-Chart.defaults.font.size=10;
+let globalFilters={date:null,country:null};
+const COLORS=['#6366f1','#818cf8','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#f97316','#14b8a6','#3b82f6','#84cc16','#a855f7','#e11d48','#0ea5e9','#d946ef'];
+Chart.defaults.color='#94a3b8';Chart.defaults.borderColor='#1c2738';Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10;
 
-// ===== Tabs =====
-function switchTab(tab){
-    currentTab=tab;
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-    document.getElementById('defaultView').style.display=tab==='default'?'block':'none';
-    document.getElementById('customView').style.display=tab==='custom'?'block':'none';
-    const builder=document.getElementById('builder');
-    if(tab==='default')builder.classList.add('collapsed');else builder.classList.remove('collapsed');
-    if(tab==='default'&&rawData.length)renderDefaultDash();
-}
+function switchTab(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.getElementById('defaultView').style.display=tab==='default'?'block':'none';document.getElementById('customView').style.display=tab==='custom'?'block':'none';const b=document.getElementById('builder');if(tab==='default')b.classList.add('collapsed');else b.classList.remove('collapsed');if(tab==='default'&&rawData.length)renderDefaultDash()}
 
-// ===== Upload =====
 const ua=document.getElementById('uploadArea');
 ua.addEventListener('dragover',e=>{e.preventDefault();ua.classList.add('dragover')});
 ua.addEventListener('dragleave',()=>ua.classList.remove('dragover'));
@@ -354,13 +341,10 @@ function loadFile(file){
             if(sn.length>1){
                 document.getElementById('sheetTabs').style.display='block';
                 const tl=document.getElementById('sheetTabList');tl.innerHTML='';
-                sn.forEach(n=>{
-                    const b=document.createElement('button');b.className='btn';b.style.cssText='font-size:10px;padding:3px 7px';b.textContent=n;
-                    b.onclick=()=>loadSheet(n);tl.appendChild(b);
-                });
+                sn.forEach(n=>{const b=document.createElement('button');b.className='tb-btn';b.style.cssText='font-size:10px;padding:3px 8px';b.textContent=n;b.onclick=()=>loadSheet(n);tl.appendChild(b)});
                 loadSheet(sn[0]);
             }else{loadSheet(sn[0])}
-            ua.innerHTML=`<div class="icon">✅</div><p>${file.name}</p><div class="formats">${rawData.length} 行 × ${headers.length} 列</div>`;
+            ua.innerHTML=`<div class="icon">✅</div><p style="font-weight:600;color:var(--accent3)">${file.name}</p><div class="fmt">${rawData.length} 行 × ${headers.length} 列</div>`;
             toast('✅ 已加载 '+rawData.length+' 行数据');
             if(currentTab==='default')renderDefaultDash();
         }catch(err){toast('❌ 解析失败: '+err.message)}
@@ -373,56 +357,43 @@ function loadSheet(name){
     const ws=workbook.Sheets[name];
     const aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
     if(!aoa||!aoa.length){toast('⚠️ 空表');return}
-    const parsed=smartParse(aoa);
-    rawData=parsed.data;
-    headers=parsed.headers;
+    const parsed=smartParse(aoa);rawData=parsed.data;headers=parsed.headers;
     if(!rawData.length){toast('⚠️ 没有有效数据');return}
-    fieldTypes={};
-    headers.forEach(h=>{fieldTypes[h]=detectType(h,rawData)});
-    const hInfo=parsed.numHeaderRows>1?` (${parsed.numHeaderRows}行标题)`:'';
-    document.getElementById('dsName').textContent=currentSheet+' · '+rawData.length+' 行 · '+headers.length+' 列'+hInfo;
+    fieldTypes={};headers.forEach(h=>{fieldTypes[h]=detectType(h,rawData)});
+    document.getElementById('dsName').textContent=currentSheet+' · '+rawData.length+' 行 · '+headers.length+' 列';
     renderFields();renderPreview();
     document.getElementById('fieldsSection').style.display='block';
     document.getElementById('previewSection').style.display='block';
 }
 
 function smartParse(aoa){
-    const fmtDate=v=>{if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return y+'-'+m+'-'+d}return v};
+    const fmtD=v=>{if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return y+'-'+m+'-'+d}return v};
     const isDash=v=>{if(v===null||v===undefined)return false;if(typeof v==='string')return v.trim()==='--'||v.trim()==='-';return false};
-    // Scan first 15 rows
     const rowInfo=[];
     for(let i=0;i<Math.min(aoa.length,15);i++){
         const row=aoa[i];let nn=0,sc=0,nc=0,dc=0;
         if(row){for(const v of row){if(v!==null&&v!==undefined&&v!==''){nn++;if(typeof v==='number'||v instanceof Date)nc++;else if(isDash(v))dc++;else sc++}}}
         rowInfo.push({idx:i,nn,sc,nc,dc});
     }
-    // Find the last header row: skip rows that are mostly '--' (summary/dummy rows)
     let headerEnd=0,bestNe=0;
     for(let i=0;i<rowInfo.length;i++){
-        // Skip rows that are mostly '--' (these are summary/total rows, not headers)
-        if(rowInfo[i].dc>0&&rowInfo[i].dc/rowInfo[i].nn>.3)continue;
+        if(rowInfo[i].dc>0&&rowInfo[i].nn>0&&rowInfo[i].dc/rowInfo[i].nn>.3)continue;
         if(rowInfo[i].nn>bestNe){bestNe=rowInfo[i].nn;headerEnd=rowInfo[i].idx}
         if(rowInfo[i].nc>rowInfo[i].sc&&rowInfo[i].nn>=3)break;
     }
     const headerRows=[];
     for(let i=0;i<=headerEnd;i++){const row=aoa[i];if(row&&row.some(v=>v!==null&&v!==undefined&&v!==''&&!isDash(v)))headerRows.push(row)}
-    let maxCols=0;
-    for(const row of aoa){if(row&&row.length>maxCols)maxCols=row.length}
+    let maxCols=0;for(const row of aoa){if(row&&row.length>maxCols)maxCols=row.length}
     if(maxCols===0)return{headers:[],data:[],numHeaderRows:0};
     const mergedHeaders=[];
-    for(let c=0;c<maxCols;c++){
-        let parts=[];
-        for(const row of headerRows){const v=row[c];if(v!==null&&v!==undefined&&v!==''&&!isDash(v))parts.push(String(fmtDate(v)).trim())}
-        mergedHeaders.push(parts.length?parts.join(' · '):('列'+(c+1)));
-    }
-    const seen={};
-    const uniqueHeaders=mergedHeaders.map((h,i)=>{if(seen[h]){seen[h]++;return h+' ('+seen[h]+')'}seen[h]=1;return h});
+    for(let c=0;c<maxCols;c++){let parts=[];for(const row of headerRows){const v=row[c];if(v!==null&&v!==undefined&&v!==''&&!isDash(v))parts.push(String(fmtD(v)).trim())}mergedHeaders.push(parts.length?parts.join(' · '):('列'+(c+1)))}
+    const seen={};const uniqueHeaders=mergedHeaders.map((h,i)=>{if(seen[h]){seen[h]++;return h+' ('+seen[h]+')'}seen[h]=1;return h});
     const dataRows=[];
     for(let i=headerEnd+1;i<aoa.length;i++){
         const row=aoa[i];if(!row)continue;
         let hasData=false;for(const v of row){if(v!==null&&v!==undefined&&v!==''&&!isDash(v)){hasData=true;break}}
         if(!hasData)continue;
-        const obj={};for(let c=0;c<uniqueHeaders.length;c++){const v=row[c];obj[uniqueHeaders[c]]=v!==null&&v!==undefined&&v!==''?fmtDate(v):''}
+        const obj={};for(let c=0;c<uniqueHeaders.length;c++){const v=row[c];obj[uniqueHeaders[c]]=v!==null&&v!==undefined&&v!==''?fmtD(v):''}
         dataRows.push(obj);
     }
     return{headers:uniqueHeaders,data:dataRows,numHeaderRows:headerRows.length};
@@ -430,473 +401,253 @@ function smartParse(aoa){
 
 function detectType(col,data){
     let nc=0,dc=0,t=0;
-    data.slice(0,50).forEach(r=>{
-        const v=r[col];if(v===''||v==null||v===undefined)return;t++;
-        if(v instanceof Date){dc++;return}
-        if(typeof v==='number'){nc++;return}
-        if(typeof v==='string'){const n=parseFloat(v.replace(/[,%$￥€£\s]/g,''));if(!isNaN(n)&&n.toString().length<=v.length+2)nc++;else if(/^\d{4}[-/.]\d{1,2}[-/.]/.test(v))dc++}
-    });
+    data.slice(0,50).forEach(r=>{const v=r[col];if(v===''||v==null||v===undefined)return;t++;if(v instanceof Date){dc++;return}if(typeof v==='number'){nc++;return}if(typeof v==='string'){const n=parseFloat(v.replace(/[,%$￥€£\s]/g,''));if(!isNaN(n)&&n.toString().length<=v.length+2)nc++;else if(/^\d{4}[-/.]\d{1,2}[-/.]/.test(v))dc++}});
     if(t===0)return'dim';if(dc/t>.5)return'date';if(nc/t>.5)return'mea';return'dim';
 }
 
 function renderFields(){
     const d=headers.filter(h=>fieldTypes[h]==='dim'),m=headers.filter(h=>fieldTypes[h]==='mea'),dt=headers.filter(h=>fieldTypes[h]==='date');
-    document.getElementById('dimFields').innerHTML=d.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi dim">A</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
-    document.getElementById('meaFields').innerHTML=m.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi mea">Σ</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
-    document.getElementById('dateFields').innerHTML=dt.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi dat">📅</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('dimFields').innerHTML=d.map(h=>`<div class="fi" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><span class="dot dim">A</span><span class="lbl" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('meaFields').innerHTML=m.map(h=>`<div class="fi" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><span class="dot mea">Σ</span><span class="lbl" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('dateFields').innerHTML=dt.map(h=>`<div class="fi" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><span class="dot dat">📅</span><span class="lbl" title="${esc(h)}">${esc(h)}</span></div>`).join('');
 }
 function renderPreview(){
     document.getElementById('rowCount').textContent=rawData.length;
-    let html='<table><thead><tr>';
-    headers.forEach(h=>{html+=`<th>${esc(h)}</th>`});
+    let html='<div style="max-height:250px;overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:9px">';
+    html+='<thead><tr>';headers.forEach(h=>{html+=`<th style="position:sticky;top:0;background:var(--surface);padding:3px 5px;text-align:left;border-bottom:1px solid var(--border);color:var(--text4);font-size:9px;white-space:nowrap">${esc(h)}</th>`});
     html+='</tr></thead><tbody>';
-    rawData.slice(0,30).forEach(r=>{html+='<tr>';headers.forEach(h=>{html+=`<td title="${esc(String(r[h]??''))}">${esc(String(r[h]??''))}</td>`});html+='</tr>'});
-    html+='</tbody></table>';
+    rawData.slice(0,30).forEach(r=>{html+='<tr>';headers.forEach(h=>{html+=`<td style="padding:2px 5px;border-bottom:1px solid rgba(28,39,56,.3);white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis">${esc(String(r[h]??''))}</td>`});html+='</tr>'});
+    html+='</tbody></table></div>';
     document.getElementById('dataPreview').innerHTML=html;
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed')}
 function toggleBuilder(){document.getElementById('builder').classList.toggle('collapsed')}
-function togglePreview(){document.getElementById('dataPreview').classList.toggle('open')}
+function togglePreview(){const el=document.getElementById('dataPreview');el.style.maxHeight=el.style.maxHeight&&el.style.maxHeight!=='0px'?'0':'250px'}
 
-// ===== Field Selection =====
-function quickAdd(encoded){const field=decodeURIComponent(encoded);if(fieldTypes[field]==='mea')cfg.yAxis=field;else cfg.xAxis=field;updateSlots();toast('已选: '+field)}
+function quickAdd(e){const f=decodeURIComponent(e);if(fieldTypes[f]==='mea')cfg.yAxis=f;else cfg.xAxis=f;updateSlots();toast('已选: '+f)}
 function pickField(target){
     pickTarget=target;const modal=document.getElementById('fModal'),title=document.getElementById('fModalTitle'),list=document.getElementById('fPickList');
-    let fields;
-    if(target==='xAxis'||target==='groupBy'){title.textContent=target==='xAxis'?'选择 X 轴 (维度)':'选择分组字段';fields=headers.filter(h=>fieldTypes[h]!=='mea')}
-    else{title.textContent='选择 Y 轴 (度量)';fields=headers.filter(h=>fieldTypes[h]==='mea')}
-    list.innerHTML=fields.map(f=>{
-        const icon=fieldTypes[f]==='mea'?'Σ':fieldTypes[f]==='date'?'📅':'A';const cls=fieldTypes[f]==='mea'?'mea':'dim';
-        return `<div class="fpi" onclick="setField(encodeURIComponent('${esc(f)}'))"><span class="fi ${cls}" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-size:9px">${icon}</span>${esc(f)}</div>`;
-    }).join('');
+    let fields;if(target==='xAxis'||target==='groupBy'){title.textContent=target==='xAxis'?'选择 X 轴':'选择分组字段';fields=headers.filter(h=>fieldTypes[h]!=='mea')}else{title.textContent='选择 Y 轴';fields=headers.filter(h=>fieldTypes[h]==='mea')}
+    list.innerHTML=fields.map(f=>{const icon=fieldTypes[f]==='mea'?'Σ':fieldTypes[f]==='date'?'📅':'A';const cls=fieldTypes[f]==='mea'?'mea':'dim';return `<div class="fpi" onclick="setField(encodeURIComponent('${esc(f)}'))"><span class="dot ${cls}" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-size:9px">${icon}</span>${esc(f)}</div>`}).join('');
     modal.classList.add('show');
 }
-function setField(encoded){const f=decodeURIComponent(encoded);if(pickTarget==='xAxis')cfg.xAxis=f;else if(pickTarget==='yAxis')cfg.yAxis=f;else if(pickTarget==='groupBy')cfg.groupBy=f;closeModal();updateSlots()}
+function setField(e){const f=decodeURIComponent(e);if(pickTarget==='xAxis')cfg.xAxis=f;else if(pickTarget==='yAxis')cfg.yAxis=f;else if(pickTarget==='groupBy')cfg.groupBy=f;closeModal();updateSlots()}
 function closeModal(){document.getElementById('fModal').classList.remove('show')}
 function updateSlots(){
     const x=document.getElementById('xSlot'),y=document.getElementById('ySlot'),g=document.getElementById('gSlot');
-    if(cfg.xAxis){x.className='f-slot has';x.innerHTML=`<span class="sv">${esc(cfg.xAxis)}</span><span class="sc" onclick="clearSlot('xAxis')">×</span>`}
-    else{x.className='f-slot';x.innerHTML='<span class="sp">选择维度字段</span>'}
-    if(cfg.yAxis){y.className='f-slot has';y.innerHTML=`<span class="sv">${esc(cfg.yAxis)}</span><span class="sc" onclick="clearSlot('yAxis')">×</span>`}
-    else{y.className='f-slot';y.innerHTML='<span class="sp">选择度量字段</span>'}
-    if(cfg.groupBy){g.className='f-slot has';g.innerHTML=`<span class="sv">${esc(cfg.groupBy)}</span><span class="sc" onclick="clearSlot('groupBy')">×</span>`}
-    else{g.className='f-slot';g.innerHTML='<span class="sp">选择分组字段</span>'}
+    if(cfg.xAxis){x.className='fs has';x.innerHTML=`<span class="sv">${esc(cfg.xAxis)}</span><span class="sx" onclick="clearSlot('xAxis')">×</span>`}else{x.className='fs';x.innerHTML='<span class="sp">选择维度</span>'}
+    if(cfg.yAxis){y.className='fs has';y.innerHTML=`<span class="sv">${esc(cfg.yAxis)}</span><span class="sx" onclick="clearSlot('yAxis')">×</span>`}else{y.className='fs';y.innerHTML='<span class="sp">选择度量</span>'}
+    if(cfg.groupBy){g.className='fs has';g.innerHTML=`<span class="sv">${esc(cfg.groupBy)}</span><span class="sx" onclick="clearSlot('groupBy')">×</span>`}else{g.className='fs';g.innerHTML='<span class="sp">选择分组</span>'}
 }
 function clearSlot(t){if(t==='xAxis')cfg.xAxis=null;else if(t==='yAxis')cfg.yAxis=null;else if(t==='groupBy')cfg.groupBy=null;updateSlots()}
-function selType(t){chartType=t;document.querySelectorAll('.ct-btn').forEach(b=>b.classList.toggle('active',b.dataset.t===t))}
+function selType(t){chartType=t;document.querySelectorAll('.ctb').forEach(b=>b.classList.toggle('active',b.dataset.t===t))}
 
-// ===== Filters =====
 let filterCount=0;
 function addFilter(){
     const id=filterCount++,area=document.getElementById('filterArea'),row=document.createElement('div');
-    row.className='filter-row';row.id='filter-'+id;
-    let opts='<option value="">字段</option>';
-    headers.forEach((h,i)=>{opts+=`<option value="${i}">${esc(h)}</option>`});
-    row.innerHTML=`<select class="ff">${opts}</select><select class="fo"><option value="eq">=</option><option value="neq">≠</option><option value="gt">&gt;</option><option value="gte">≥</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="contains">包含</option></select><input class="fv" placeholder="值"><button class="fr-del" onclick="this.parentElement.remove()">×</button>`;
+    row.className='frow';row.id='filter-'+id;
+    let opts='<option value="">字段</option>';headers.forEach((h,i)=>{opts+=`<option value="${i}">${esc(h)}</option>`});
+    row.innerHTML=`<select class="ff">${opts}</select><select class="fo"><option value="eq">=</option><option value="neq">≠</option><option value="gt">&gt;</option><option value="gte">≥</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="contains">包含</option></select><input class="fv" placeholder="值"><button class="fd" onclick="this.parentElement.remove()">×</button>`;
     area.appendChild(row);
 }
-function getFilters(){
-    const filters=[];
-    document.querySelectorAll('.filter-row').forEach(r=>{
-        const idx=parseInt(r.querySelector('.ff').value);if(isNaN(idx))return;
-        const field=headers[idx],op=r.querySelector('.fo').value,val=r.querySelector('.fv').value;
-        if(field&&val)filters.push({field,op,val});
-    });
-    return filters;
-}
-function applyFilters(data){
-    const filters=getFilters();if(!filters.length)return data;
-    return data.filter(row=>filters.every(f=>{
-        const rv=row[f.field],fv=f.val;
-        switch(f.op){case'eq':return String(rv)===fv;case'neq':return String(rv)!==fv;case'gt':return Number(rv)>Number(fv);case'gte':return Number(rv)>=Number(fv);case'lt':return Number(rv)<Number(fv);case'lte':return Number(rv)<=Number(fv);case'contains':return String(rv).includes(fv);default:return true}
-    }));
-}
+function getFilters(){const filters=[];document.querySelectorAll('.frow').forEach(r=>{const i=parseInt(r.querySelector('.ff').value);if(isNaN(i))return;const field=headers[i],op=r.querySelector('.fo').value,val=r.querySelector('.fv').value;if(field&&val)filters.push({field,op,val})});return filters}
+function applyFilters(data){const filters=getFilters();if(!filters.length)return data;return data.filter(row=>filters.every(f=>{const rv=row[f.field],fv=f.val;switch(f.op){case'eq':return String(rv)===fv;case'neq':return String(rv)!==fv;case'gt':return Number(rv)>Number(fv);case'gte':return Number(rv)>=Number(fv);case'lt':return Number(rv)<Number(fv);case'lte':return Number(rv)<=Number(fv);case'contains':return String(rv).includes(fv);default:return true}}))}
 
-// ===== Aggregation =====
-function aggregate(data,xField,yField,groupField,agg){
+function aggregate(data,x,y,g,agg){
     const filtered=applyFilters(data);const groups={};
-    filtered.forEach(row=>{
-        const key=xField?String(row[xField]??'空值'):'';const group=groupField?String(row[groupField]??'空值'):null;const val=Number(row[yField])||0;
-        if(!groups[key])groups[key]={};
-        if(!groups[key][group??'_'])groups[key][group??'_']={sum:0,count:0,min:Infinity,max:-Infinity};
-        groups[key][group??'_'].sum+=val;groups[key][group??'_'].count++;
-        groups[key][group??'_'].min=Math.min(groups[key][group??'_'].min,val);groups[key][group??'_'].max=Math.max(groups[key][group??'_'].max,val);
-    });
-    const labels=Object.keys(groups);
-    const allGroups=[...new Set(Object.values(groups).flatMap(g=>Object.keys(g)))].filter(k=>k!=='_');
+    filtered.forEach(row=>{const key=x?String(row[x]??'空值'):'';const group=g?String(row[g]??'空值'):null;const val=Number(row[y])||0;if(!groups[key])groups[key]={};if(!groups[key][group??'_'])groups[key][group??'_']={sum:0,count:0,min:Infinity,max:-Infinity};groups[key][group??'_'].sum+=val;groups[key][group??'_'].count++;groups[key][group??'_'].min=Math.min(groups[key][group??'_'].min,val);groups[key][group??'_'].max=Math.max(groups[key][group??'_'].max,val)});
+    const labels=Object.keys(groups);const allGroups=[...new Set(Object.values(groups).flatMap(g=>Object.keys(g)))].filter(k=>k!=='_');
     let datasets=[];
-    if(groupField&&allGroups.length>0){
-        allGroups.forEach((g,i)=>{
-            const vals=labels.map(l=>{const gd=groups[l][g];if(!gd)return 0;return agg==='sum'?gd.sum:agg==='avg'?gd.sum/gd.count:agg==='count'?gd.count:agg==='min'?gd.min:agg==='max'?gd.max:gd.sum});
-            datasets.push({label:g,data:vals,backgroundColor:COLORS[i%COLORS.length],borderColor:COLORS[i%COLORS.length]});
-        });
-    }else{
-        const vals=labels.map(l=>{const gd=groups[l]['_']||{sum:0,count:0,min:0,max:0};return agg==='sum'?gd.sum:agg==='avg'?gd.sum/gd.count:agg==='count'?gd.count:agg==='min'?gd.min:agg==='max'?gd.max:gd.sum});
-        datasets.push({label:yField,data:vals,backgroundColor:COLORS.slice(0,labels.length),borderColor:COLORS.slice(0,labels.length),borderWidth:2});
-    }
+    if(g&&allGroups.length>0){allGroups.forEach((g,i)=>{const vals=labels.map(l=>{const gd=groups[l][g];if(!gd)return 0;return agg==='sum'?gd.sum:agg==='avg'?gd.sum/gd.count:agg==='count'?gd.count:agg==='min'?gd.min:agg==='max'?gd.max:gd.sum});datasets.push({label:g,data:vals,backgroundColor:COLORS[i%COLORS.length],borderColor:COLORS[i%COLORS.length]})})}
+    else{const vals=labels.map(l=>{const gd=groups[l]['_']||{sum:0,count:0,min:0,max:0};return agg==='sum'?gd.sum:agg==='avg'?gd.sum/gd.count:agg==='count'?gd.count:agg==='min'?gd.min:agg==='max'?gd.max:gd.sum});datasets.push({label:y,data:vals,backgroundColor:COLORS.slice(0,labels.length),borderColor:COLORS.slice(0,labels.length),borderWidth:2})}
     return{labels,datasets};
 }
 
-// ===== Custom Dashboard =====
 function addChart(){
     if(!rawData.length){toast('⚠️ 请先上传数据');return}
-    if(!cfg.yAxis){toast('⚠️ 请选择 Y 轴字段');return}
+    if(!cfg.yAxis){toast('⚠️ 请选择 Y 轴');return}
     const agg=document.getElementById('aggSel').value;cfg.agg=agg;
     const title=document.getElementById('chartTitle').value||`${agg.toUpperCase()}(${cfg.yAxis}) by ${cfg.xAxis||'全部'}${cfg.groupBy?' · '+cfg.groupBy:''}`;
     const result=aggregate(rawData,cfg.xAxis,cfg.yAxis,cfg.groupBy,agg);
     const id='w'+(++wId),grid=document.getElementById('dashGrid');
     document.getElementById('emptyState').style.display='none';grid.style.display='grid';
     const isPie=chartType==='pie'||chartType==='doughnut'||chartType==='polarArea';
-    result.datasets.forEach((ds,i)=>{
-        if(chartType==='table')return;
-        ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length];
-        ds.borderColor=isPie?'transparent':COLORS[i%COLORS.length];ds.borderWidth=isPie?0:2;
-        if(chartType==='line'){ds.fill=false;ds.tension=.3;ds.pointRadius=4;ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length]+'33'}
-        if(chartType==='bar'){ds.borderRadius=4;if(result.datasets.length<=1){ds.backgroundColor=COLORS.slice(0,result.labels.length);ds.borderColor=COLORS.slice(0,result.labels.length)}}
-    });
+    result.datasets.forEach((ds,i)=>{if(chartType==='table')return;ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length];ds.borderColor=isPie?'transparent':COLORS[i%COLORS.length];ds.borderWidth=isPie?0:2;if(chartType==='line'){ds.fill=false;ds.tension=.3;ds.pointRadius=4;ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length]+'33'}if(chartType==='bar'){ds.borderRadius=4;if(result.datasets.length<=1){ds.backgroundColor=COLORS.slice(0,result.labels.length);ds.borderColor=COLORS.slice(0,result.labels.length)}}});
     const widget=document.createElement('div');widget.className='widget';widget.id=id;
-    if(chartType==='table'){
-        widget.innerHTML=`<div class="wh"><span class="wt">${esc(title)}</span><div class="wa"><button class="del" onclick="removeWidget('${id}')">🗑️</button></div></div><div class="wb"><div style="overflow:auto;max-height:100%"><table><thead><tr><th>${esc(cfg.xAxis||'-')}</th><th>${esc(cfg.yAxis)} (${agg})</th>${cfg.groupBy?`<th>${esc(cfg.groupBy)}</th>`:''}</tr></thead><tbody>${result.labels.map((l,i)=>result.datasets.map(ds=>`<tr><td>${esc(l)}</td><td class="num">${ds.data[i].toLocaleString()}</td>${cfg.groupBy?`<td>${esc(ds.label)}</td>`:''}</tr>`).join('')).join('')}</tbody></table></div></div>`;
-    }else{
-        widget.innerHTML=`<div class="wh"><span class="wt">${esc(title)}</span><div class="wa"><button class="del" onclick="removeWidget('${id}')">🗑️</button></div></div><div class="wb"><canvas id="cv-${id}"></canvas></div>`;
-    }
+    if(chartType==='table'){widget.innerHTML=`<div class="wh"><span class="wt">${esc(title)}</span><div class="wa"><button class="del" onclick="removeWidget('${id}')">🗑️</button></div></div><div class="wb"><div style="overflow:auto;max-height:100%"><table><thead><tr><th>${esc(cfg.xAxis||'-')}</th><th>${esc(cfg.yAxis)} (${agg})</th>${cfg.groupBy?`<th>${esc(cfg.groupBy)}</th>`:''}</tr></thead><tbody>${result.labels.map((l,i)=>result.datasets.map(ds=>`<tr><td>${esc(l)}</td><td class="num">${ds.data[i].toLocaleString()}</td>${cfg.groupBy?`<td>${esc(ds.label)}</td>`:''}</tr>`).join('')).join('')}</tbody></table></div></div>`}
+    else{widget.innerHTML=`<div class="wh"><span class="wt">${esc(title)}</span><div class="wa"><button class="del" onclick="removeWidget('${id}')">🗑️</button></div></div><div class="wb"><canvas id="cv-${id}"></canvas></div>`}
     grid.appendChild(widget);
-    if(chartType!=='table'){
-        new Chart(document.getElementById('cv-'+id).getContext('2d'),{type:chartType,data:{labels:result.labels,datasets:result.datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:result.datasets.length>1,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9},color:'#8a8d9e'}},tooltip:{backgroundColor:'#1a1d2e',borderColor:'#2a2d42',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#a29bfe',padding:8,cornerRadius:6}},scales:(isPie||chartType==='radar')?{}:{x:{grid:{display:false},ticks:{color:'#8a8d9e',maxRotation:45,font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
-    }
-    widgets.push({id,title,chartType,xAxis:cfg.xAxis,yAxis:cfg.yAxis,groupBy:cfg.groupBy,agg,config:{...cfg}});
-    toast('✅ 图表已添加');
+    if(chartType!=='table')new Chart(document.getElementById('cv-'+id).getContext('2d'),{type:chartType,data:{labels:result.labels,datasets:result.datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:result.datasets.length>1,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9}}},tooltip:{backgroundColor:'#111825',borderColor:'#1c2738',borderWidth:1,titleColor:'#f1f5f9',bodyColor:'#818cf8',padding:8,cornerRadius:6}},scales:(isPie||chartType==='radar')?{}:{x:{grid:{display:false},ticks:{color:'#94a3b8',maxRotation:45,font:{size:9}}},y:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{color:'#94a3b8',font:{size:9}}}}}});
+    widgets.push({id,title,chartType,xAxis:cfg.xAxis,yAxis:cfg.yAxis,groupBy:cfg.groupBy,agg});
+    updWCount();toast('✅ 图表已添加');
 }
-function removeWidget(id){const el=document.getElementById(id);if(el)el.remove();widgets=widgets.filter(w=>w.id!==id);if(!widgets.length){document.getElementById('emptyState').style.display='flex';document.getElementById('dashGrid').style.display='none'}}
+function removeWidget(id){const el=document.getElementById(id);if(el)el.remove();widgets=widgets.filter(w=>w.id!==id);if(!widgets.length){document.getElementById('emptyState').style.display='flex';document.getElementById('dashGrid').style.display='none'}updWCount()}
+function updWCount(){const b=document.getElementById('wCount');b.textContent=widgets.length;b.style.display=widgets.length?'inline-block':'none'}
 
-// ===== Default Dashboard (ROI/UA 买量日报风格) =====
+// ===== Default Dashboard =====
 function fn(h){return headers.includes(h)?h:null}
-
-function fmtVal(v,field){
-    if(v===null||v===undefined||isNaN(v))return'-';
-    // If it looks like a percentage field
-    if(field&&field.includes('率'))return(v*100).toFixed(2)+'%';
-    if(field&&field.includes('比'))return(v*100).toFixed(2)+'%';
-    if(field&&field.includes('回报'))return(v*100).toFixed(2)+'%';
-    if(field&&field.includes('系数'))return v.toFixed(2);
-    if(v>=1e6)return(v/1e6).toFixed(1)+'M';
-    if(v>=1e4)return(v/1e4).toFixed(1)+'万';
-    if(v>=1e3)return v.toLocaleString();
-    if(Number.isInteger(v))return v.toString();
-    return v.toFixed(2);
-}
-
+function fmtNum(v){if(v===null||v===undefined||isNaN(v))return'-';if(v>=1e9)return(v/1e9).toFixed(1)+'B';if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e4)return(v/1e4).toFixed(1)+'万';if(v>=1e3)return v.toLocaleString();if(Number.isInteger(v))return v.toString();return v.toFixed(2)}
 function fmtPct(v){return(v*100).toFixed(2)+'%'}
-function fmtNum(v){
-    if(v===null||v===undefined||isNaN(v))return'-';
-    if(v>=1e6)return(v/1e6).toFixed(2)+'M';
-    if(v>=1e4)return(v/1e4).toFixed(1)+'万';
-    if(v>=1e3)return v.toLocaleString();
-    if(Number.isInteger(v))return v.toString();
-    return v.toFixed(2);
-}
-
-function countryColor(country){
-    let hash=0;
-    for(let i=0;i<country.length;i++)hash=country.charCodeAt(i)+((hash<<5)-hash);
-    return COLORS[Math.abs(hash)%COLORS.length];
-}
-
-function roiBadge(v){
-    if(v>=0.5)return`<span class="badge good">${fmtPct(v)}</span>`;
-    if(v>=0.15)return`<span class="badge warn">${fmtPct(v)}</span>`;
-    return`<span class="badge bad">${fmtPct(v)}</span>`;
-}
-function retentionBadge(v){
-    if(v>=0.4)return`<span class="badge good">${fmtPct(v)}</span>`;
-    if(v>=0.2)return`<span class="badge warn">${fmtPct(v)}</span>`;
-    return`<span class="badge bad">${fmtPct(v)}</span>`;
-}
+function cColor(c){let h=0;for(let i=0;i<c.length;i++)h=c.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length]}
+function roiB(v){if(v>=.5)return`<span class="badge g">${fmtPct(v)}</span>`;if(v>=.15)return`<span class="badge w">${fmtPct(v)}</span>`;return`<span class="badge b">${fmtPct(v)}</span>`}
+function retB(v){if(v>=.4)return`<span class="badge g">${fmtPct(v)}</span>`;if(v>=.2)return`<span class="badge w">${fmtPct(v)}</span>`;return`<span class="badge b">${fmtPct(v)}</span>`}
 
 function renderDefaultDash(){
     const view=document.getElementById('defaultView');
     if(!rawData.length){
-        view.innerHTML='<div class="canvas-empty"><div class="ce-icon">📊</div><h2>上传数据后自动生成看板</h2><p>支持 .xlsx / .xls / .csv 格式</p></div>';
+        view.innerHTML=`<div class="welcome"><div class="w-icon">📊</div><h2>欢迎使用 Republic BI</h2><p>上传你的游戏运营数据，自动生成专业看板</p><button class="tb-btn primary" onclick="document.getElementById('fileIn').click()" style="font-size:14px;padding:12px 24px">📤 上传数据文件</button><div class="steps"><div class="step"><div class="sn">📤</div><h3>1. 上传数据</h3><p>支持 Excel / CSV 格式，自动识别字段</p></div><div class="step"><div class="sn">🤖</div><h3>2. 智能分析</h3><p>自动识别买量指标，生成可视化看板</p></div><div class="step"><div class="sn">🎨</div><h3>3. 自定义</h3><p>切换到自定义模式，自由组合图表</p></div></div></div>`;
         return;
     }
 
-    // === Detect columns by name matching ===
-    const dateCol=fn('日期')||headers.find(h=>fieldTypes[h]==='date');
-    const countryCol=fn('国家');
-    const installsCol=fn('安装');
-    const organicCol=fn('自然量安装');
-    const organicPctCol=fn('自然量占比');
-    const paidCol=fn('买量安装');
-    const imprCol=fn('展示');
-    const clicksCol=fn('点击');
-    const ctrCol=fn('CTR');
-    const cvrCol=fn('CVR');
-    const cpcCol=fn('CC');
-    const spendCol=fn('广告花费');
-    const ipmCol=fn('IPM');
-    const cpiCol=fn('CPI');
-    const cpmCol=fn('CPM');
-    const roi0Col=fn('0日回报率');
-    const roi1Col=fn('1日回报率');
-    const roi3Col=fn('3日回报率');
-    const online0Col=fn('0日人均在线时长');
-    const online1Col=fn('1日人均在线时长');
-    const ret1Col=fn('1日留存率');
-    const ret3Col=fn('3日留存率');
-    const ltv0Col=fn('0日LTV');
-    const ltv1Col=fn('1日LTV');
-    const ltv3Col=fn('3日LTV');
-    const arppu0Col=fn('0日Arppu');
-    const arppu1Col=fn('1日Arppu');
-    const arppu3Col=fn('3日Arppu');
-    const payCost0Col=fn('0日付费用户成本');
-    const payCost1Col=fn('1日付费用户成本');
-    const payCost3Col=fn('3日付费用户成本');
-    const payRate0Col=fn('0日付费率');
-    const payRate1Col=fn('1日付费率');
-    const payRate3Col=fn('3日付费率');
-    const payUser0Col=fn('0日内付费人数');
-    const payUser1Col=fn('1日内付费人数');
-    const grow10Col=fn('D1:D0增长系数');
-    const grow31Col=fn('D3:D1增长系数');
-    const grow30Col=fn('D3:D0 增长系数');
+    const dc=fn('日期')||headers.find(h=>fieldTypes[h]==='date');
+    const cc=fn('国家'),ic=fn('安装'),oc=fn('自然量安装'),opc=fn('自然量占比'),pc=fn('买量安装');
+    const impC=fn('展示'),clkC=fn('点击'),ctrC=fn('CTR'),cvrC=fn('CVR'),spC=fn('广告花费');
+    const ipmC=fn('IPM'),cpiC=fn('CPI'),cpmC=fn('CPM');
+    const r0=fn('0日回报率'),r1=fn('1日回报率'),r3=fn('3日回报率');
+    const ol0=fn('0日人均在线时长'),ol1=fn('1日人均在线时长');
+    const rt1=fn('1日留存率'),rt3=fn('3日留存率');
+    const l0=fn('0日LTV'),l1=fn('1日LTV'),l3=fn('3日LTV');
+    const a0=fn('0日Arppu'),a1=fn('1日Arppu'),a3=fn('3日Arppu');
+    const pr0=fn('0日付费率'),pr1=fn('1日付费率'),pr3=fn('3日付费率');
+    const pu0=fn('0日内付费人数'),pu1=fn('1日内付费人数');
 
-    // Filter out total rows (国家 == '--')
-    const dataRows=rawData.filter(r=>countryCol?r[countryCol]!=='--':true);
-    const totalRows=rawData.filter(r=>countryCol?r[countryCol]==='--':false);
+    const rows=rawData.filter(r=>cc?r[cc]!=='--':true);
+    const sum=c=>rows.reduce((s,r)=>s+(Number(r[c])||0),0);
+    const avg=c=>{const v=rows.map(r=>Number(r[c])).filter(x=>!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:0};
 
-    // Aggregate totals across all data
-    const sum=(col)=>dataRows.reduce((s,r)=>s+(Number(r[col])||0),0);
-    const avg=(col)=>{const vals=dataRows.map(r=>Number(r[col])).filter(v=>!isNaN(v));return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0};
+    const dates=dc?[...new Set(rows.map(r=>{const d=r[dc];return d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10)}))].sort():[];
+    const countries=cc?[...new Set(rows.map(r=>r[cc]))].filter(c=>c!=='--'&&c):[];
 
-    // Unique dates and countries
-    const dates=dateCol?[...new Set(dataRows.map(r=>{const d=r[dateCol];return d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10)}))].sort():[];
-    const countries=countryCol?[...new Set(dataRows.map(r=>r[countryCol]))].filter(c=>c!=='--'&&c):[];
+    const byDate={};if(dc){rows.forEach(r=>{const d=r[dc];const k=d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10);if(!byDate[k])byDate[k]={};headers.forEach(h=>{if(fieldTypes[h]==='mea'){if(!byDate[k][h])byDate[k][h]={sum:0,count:0};byDate[k][h].sum+=Number(r[h])||0;byDate[k][h].count++}})})}
+    const sDates=Object.keys(byDate).sort();
 
-    // Date-grouped aggregation
-    const byDate={};
-    if(dateCol){
-        dataRows.forEach(r=>{
-            const d=r[dateCol];const key=d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10);
-            if(!byDate[key])byDate[key]={};
-            headers.forEach(h=>{
-                if(fieldTypes[h]==='mea'){
-                    if(!byDate[key][h])byDate[key][h]={sum:0,count:0};
-                    byDate[key][h].sum+=Number(r[h])||0;
-                    byDate[key][h].count++;
-                }
-            });
-        });
-    }
-    const sortedDates=Object.keys(byDate).sort();
+    const byCtry={};if(cc){rows.forEach(r=>{const c=r[cc];if(!c||c==='--')return;if(!byCtry[c])byCtry[c]={};headers.forEach(h=>{if(fieldTypes[h]==='mea'){if(!byCtry[c][h])byCtry[c][h]={sum:0,count:0};byCtry[c][h].sum+=Number(r[h])||0;byCtry[c][h].count++}})})}
 
-    // Country-grouped aggregation
-    const byCountry={};
-    if(countryCol){
-        dataRows.forEach(r=>{
-            const c=r[countryCol];if(!c||c==='--')return;
-            if(!byCountry[c])byCountry[c]={};
-            headers.forEach(h=>{
-                if(fieldTypes[h]==='mea'){
-                    if(!byCountry[c][h])byCountry[c][h]={sum:0,count:0};
-                    byCountry[c][h].sum+=Number(r[h])||0;
-                    byCountry[c][h].count++;
-                }
-            });
-        });
-    }
+    // Global filter: date & country
+    let filteredRows=rows;
+    if(globalFilters.date)filteredRows=filteredRows.filter(r=>{const d=r[dc];return(d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10))===globalFilters.date});
+    if(globalFilters.country)filteredRows=filteredRows.filter(r=>r[cc]===globalFilters.country);
 
-    // ====== BUILD HTML ======
+    const fSum=c=>filteredRows.reduce((s,r)=>s+(Number(r[c])||0),0);
+    const fAvg=c=>{const v=filteredRows.map(r=>Number(r[c])).filter(x=>!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:0};
+
+    // Recompute byDate/byCtry from filtered
+    const fByDate={};if(dc){filteredRows.forEach(r=>{const d=r[dc];const k=d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10);if(!fByDate[k])fByDate[k]={};headers.forEach(h=>{if(fieldTypes[h]==='mea'){if(!fByDate[k][h])fByDate[k][h]={sum:0,count:0};fByDate[k][h].sum+=Number(r[h])||0;fByDate[k][h].count++}})})}
+    const fSDates=Object.keys(fByDate).sort();
+
+    const fByCtry={};if(cc){filteredRows.forEach(r=>{const c=r[cc];if(!c||c==='--')return;if(!fByCtry[c])fByCtry[c]={};headers.forEach(h=>{if(fieldTypes[h]==='mea'){if(!fByCtry[c][h])fByCtry[c][h]={sum:0,count:0};fByCtry[c][h].sum+=Number(r[h])||0;fByCtry[c][h].count++}})})}
+    const fCountries=cc?[...new Set(filteredRows.map(r=>r[cc]))].filter(c=>c!=='--'&&c):[];
+
     let html='';
 
-    // --- KPI Row ---
+    // Filter bar
+    html+=`<div class="filter-bar"><span class="fb-label">筛选</span>`;
+    if(dc){
+        html+=`<select onchange="globalFilters.date=this.value||null;renderDefaultDash()"><option value="">全部日期</option>`;
+        dates.forEach(d=>{html+=`<option value="${d}" ${globalFilters.date===d?'selected':''}>${d.slice(5)}</option>`});
+        html+='</select>';
+    }
+    if(cc){
+        html+=`<select onchange="globalFilters.country=this.value||null;renderDefaultDash()"><option value="">全部市场</option>`;
+        countries.forEach(c=>{html+=`<option value="${c}" ${globalFilters.country===c?'selected':''}>${c}</option>`});
+        html+='</select>';
+    }
+    html+=`<div class="fb-spacer"></div>`;
+    html+=`<span style="font-size:11px;color:var(--text4)">${filteredRows.length} 条数据</span>`;
+    html+=`<button class="fb-reset" onclick="globalFilters={date:null,country:null};renderDefaultDash()">重置</button>`;
+    html+='</div>';
+
+    // KPI
     html+='<div class="kpi-row">';
-    const kpiDefs=[
-        {icon:'📥',label:'总安装',value:fmtNum(sum(installsCol)),cls:'blue',sub:`自然 ${fmtNum(sum(organicCol))} (${organicPctCol?fmtPct(avg(organicPctCol)):'-'})`},
-        {icon:'💰',label:'总广告花费',value:fmtNum(sum(spendCol)),cls:'orange',sub:`CPI $${cpiCol?fmtVal(avg(cpiCol)): '-'}`},
-        {icon:'👁️',label:'总展示',value:fmtNum(sum(imprCol)),cls:'cyan',sub:`CPM $${cpmCol?fmtVal(avg(cpmCol)):'-'}`},
-        {icon:'👆',label:'总点击',value:fmtNum(sum(clicksCol)),cls:'purple',sub:`CTR ${ctrCol?fmtPct(avg(ctrCol)):'-'} · CVR ${cvrCol?fmtPct(avg(cvrCol)):'-'}`},
-        {icon:'📈',label:'1日留存',value:ret1Col?retentionBadge(avg(ret1Col)):'-',cls:'green',sub:`3日 ${ret3Col?retentionBadge(avg(ret3Col)):'-'}`},
-        {icon:'🔄',label:'1日ROI',value:roi1Col?roiBadge(avg(roi1Col)):'-',cls:'green',sub:`3日 ${roi3Col?roiBadge(avg(roi3Col)):'-'}`},
-        {icon:'💎',label:'3日LTV',value:ltv3Col?'$'+fmtVal(avg(ltv3Col)):'-',cls:'blue',sub:`1日LTV ${ltv1Col?'$'+fmtVal(avg(ltv1Col)):'-'}`},
-        {icon:'🎯',label:'3日ARPPU',value:arppu3Col?'$'+fmtVal(avg(arppu3Col)):'-',cls:'orange',sub:`付费率 ${payRate3Col?fmtPct(avg(payRate3Col)):'-'}`},
+    const kpis=[
+        {icon:'📥',label:'总安装',val:fmtNum(fSum(ic)),cls:'blue',sub:`自然 ${fmtNum(fSum(oc))} · 买量 ${fmtNum(fSum(pc))}`},
+        {icon:'💰',label:'总广告花费',val:'$'+fmtNum(fSum(spC)),cls:'orange',sub:`CPI $${cpiC?fAvg(cpiC).toFixed(2):'-'} · CPM $${cpmC?fAvg(cpmC).toFixed(2):'-'}`},
+        {icon:'👁️',label:'总展示',val:fmtNum(fSum(impC)),cls:'cyan',sub:`点击 ${fmtNum(fSum(clkC))} · IPM ${ipmC?fAvg(ipmC).toFixed(1):'-'}`},
+        {icon:'📊',label:'CTR / CVR',val:ctrC?fmtPct(fAvg(ctrC)):'-',cls:'purple',sub:`CTR ${ctrC?fmtPct(fAvg(ctrC)):'-'} · CVR ${cvrC?fmtPct(fAvg(cvrC)):'-'}`},
+        {icon:'🔄',label:'D1 ROI',val:r1?roiB(fAvg(r1)):'-',cls:r1&&fAvg(r1)>=.15?'green':'red',sub:`D3 ${r3?roiB(fAvg(r3)):'-'}`},
+        {icon:'📈',label:'D1 留存',val:rt1?retB(fAvg(rt1)):'-',cls:'green',sub:`D3 ${rt3?retB(fAvg(rt3)):'-'}`},
+        {icon:'💎',label:'D3 LTV',val:l3?'$'+fAvg(l3).toFixed(2):'-',cls:'blue',sub:`D0 $${l0?fAvg(l0).toFixed(2):'-'}`},
+        {icon:'🎯',label:'D3 ARPPU',val:a3?'$'+fAvg(a3).toFixed(2):'-',cls:'orange',sub:`付费率 ${pr3?fmtPct(fAvg(pr3)):'-'}`},
     ];
-    kpiDefs.forEach(k=>{
-        html+=`<div class="kpi-card ${k.cls}"><div class="kpi-icon">${k.icon}</div><div class="kpi-value">${k.value}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`;
-    });
+    kpis.forEach(k=>{html+=`<div class="kpi ${k.cls}"><div class="ki">${k.icon}</div><div class="kv">${k.val}</div><div class="kl">${k.label}</div><div class="ks">${k.sub}</div></div>`});
     html+='</div>';
 
-    // --- 投放趋势 (Time Series) ---
-    html+='<div class="sec-title"><span class="st-icon">📈</span>投放趋势（按日期）</div><div class="chart-grid">';
-    if(sortedDates.length>0){
-        html+=`<div class="chart-card"><h4>📥 安装量 & 买量安装</h4><canvas id="chart-trend-1"></canvas></div>`;
-        html+=`<div class="chart-card"><h4>💰 广告花费 & CPI</h4><canvas id="chart-trend-2"></canvas></div>`;
-        html+=`<div class="chart-card"><h4>🔄 回报率趋势</h4><canvas id="chart-trend-3"></canvas></div>`;
-        html+=`<div class="chart-card"><h4>📊 留存率趋势</h4><canvas id="chart-trend-4"></canvas></div>`;
+    // Trend charts
+    html+='<div class="sec"><div class="sec-t"><span class="si">📈</span>投放趋势</div><div class="cg">';
+    if(fSDates.length>0){
+        html+=`<div class="cc"><h4>📥 安装量趋势</h4><canvas id="chart-trend-1"></canvas></div>`;
+        html+=`<div class="cc"><h4>💰 花费 & CPI</h4><canvas id="chart-trend-2"></canvas></div>`;
+        html+=`<div class="cc"><h4>🔄 ROI 趋势</h4><canvas id="chart-trend-3"></canvas></div>`;
+        html+=`<div class="cc"><h4>📊 留存率趋势</h4><canvas id="chart-trend-4"></canvas></div>`;
     }
-    html+='</div>';
+    html+='</div></div>';
 
-    // --- 市场对比 (Country Comparison) ---
-    html+='<div class="sec-title"><span class="st-icon">🌍</span>市场对比</div><div class="chart-grid">';
-    if(countries.length>0){
-        html+=`<div class="chart-card"><h4>📥 各市场安装量</h4><canvas id="chart-ctry-1"></canvas></div>`;
-        html+=`<div class="chart-card"><h4>💰 各市场 CPI</h4><canvas id="chart-ctry-2"></canvas></div>`;
-        html+=`<div class="chart-card"><h4>🔄 各市场 ROI</h4><canvas id="chart-ctry-3"></canvas></div>`;
-        html+=`<div class="chart-card"><h4>📊 各市场留存率</h4><canvas id="chart-ctry-4"></canvas></div>`;
+    // Country charts
+    html+='<div class="sec"><div class="sec-t"><span class="si">🌍</span>市场对比</div><div class="cg">';
+    if(fCountries.length>0){
+        html+=`<div class="cc"><h4>📥 各市场安装量</h4><canvas id="chart-ctry-1"></canvas></div>`;
+        html+=`<div class="cc"><h4>💰 各市场 CPI</h4><canvas id="chart-ctry-2"></canvas></div>`;
+        html+=`<div class="cc"><h4>🔄 各市场 ROI</h4><canvas id="chart-ctry-3"></canvas></div>`;
+        html+=`<div class="cc"><h4>📊 各市场留存率</h4><canvas id="chart-ctry-4"></canvas></div>`;
     }
-    html+='</div>';
+    html+='</div></div>';
 
-    // --- 转化漏斗 ---
-    html+='<div class="sec-title"><span class="st-icon">🔻</span>投放转化漏斗</div><div class="chart-grid">';
-    html+=`<div class="chart-card"><h4>展示 → 点击 → 安装 → 付费</h4><canvas id="chart-funnel-1"></canvas></div>`;
-    html+='</div>';
+    // Funnel
+    html+='<div class="sec"><div class="sec-t"><span class="si">🔻</span>转化漏斗</div><div class="cg">';
+    html+=`<div class="cc"><h4>展示 → 点击 → 安装 → 付费</h4><canvas id="chart-funnel-1"></canvas></div>`;
+    html+='</div></div>';
 
-    // --- 数据明细表 ---
-    html+='<div class="sec-title"><span class="st-icon">📋</span>数据明细（按市场）</div>';
-    html+='<div class="data-table-wrap"><table class="data-table"><thead><tr>';
-
-    const tableCols=[
-        {key:countryCol,label:'市场',type:'str'},
-        {key:installsCol,label:'安装',type:'num'},
-        {key:organicCol,label:'自然安装',type:'num'},
-        {key:paidCol,label:'买量安装',type:'num'},
-        {key:spendCol,label:'广告花费($)',type:'num'},
-        {key:cpiCol,label:'CPI($)',type:'num'},
-        {key:ctrCol,label:'CTR',type:'pct'},
-        {key:cvrCol,label:'CVR',type:'pct'},
-        {key:imprCol,label:'展示',type:'num'},
-        {key:clicksCol,label:'点击',type:'num'},
-        {key:roi0Col,label:'D0 ROI',type:'pct'},
-        {key:roi1Col,label:'D1 ROI',type:'pct'},
-        {key:roi3Col,label:'D3 ROI',type:'pct'},
-        {key:ret1Col,label:'D1 留存',type:'pct'},
-        {key:ret3Col,label:'D3 留存',type:'pct'},
-        {key:ltv0Col,label:'D0 LTV',type:'num'},
-        {key:ltv1Col,label:'D1 LTV',type:'num'},
-        {key:ltv3Col,label:'D3 LTV',type:'num'},
-        {key:payRate1Col,label:'D1 付费率',type:'pct'},
-        {key:arppu3Col,label:'D3 ARPPU',type:'num'},
-    ].filter(c=>c.key);
-
-    tableCols.forEach(c=>{html+=`<th class="${c.type==='num'||c.type==='pct'?'num':''}">${c.label}</th>`});
+    // Table
+    html+='<div class="sec"><div class="sec-t"><span class="si">📋</span>数据明细</div>';
+    html+='<div class="tw"><table class="dt"><thead><tr>';
+    const tCols=[{k:cc,l:'市场',t:'s'},{k:ic,l:'安装',t:'n'},{k:oc,l:'自然安装',t:'n'},{k:pc,l:'买量安装',t:'n'},{k:spC,l:'花费($)',t:'n'},{k:cpiC,l:'CPI',t:'n'},{k:ctrC,l:'CTR',t:'p'},{k:cvrC,l:'CVR',t:'p'},{k:r1,l:'D1 ROI',t:'p'},{k:r3,l:'D3 ROI',t:'p'},{k:rt1,l:'D1 留存',t:'p'},{k:rt3,l:'D3 留存',t:'p'},{k:l3,l:'D3 LTV',t:'n'}].filter(c=>c.k);
+    tCols.forEach(c=>{html+=`<th class="${c.t!=='s'?'num':''}">${c.l}</th>`});
     html+='</tr></thead><tbody>';
-
-    // Sort countries by total installs desc
-    const sortedCountries=[...countries].sort((a,b)=>{
-        const ai=byCountry[a]&&byCountry[a][installsCol]?byCountry[a][installsCol].sum:0;
-        const bi=byCountry[b]&&byCountry[b][installsCol]?byCountry[b][installsCol].sum:0;
-        return bi-ai;
-    });
-
-    const maxInstalls=sortedCountries.length?((byCountry[sortedCountries[0]]&&byCountry[sortedCountries[0]][installsCol])?byCountry[sortedCountries[0]][installsCol].sum:1):1;
-
-    sortedCountries.forEach(c=>{
-        const cd=byCountry[c]||{};
-        html+='<tr>';
-        tableCols.forEach(tc=>{
-            const gd=cd[tc.key];
-            const v=gd?gd.sum:0;
-            const avgV=gd?gd.count?gd.sum/gd.count:0:0;
-            let display='-';
-            if(tc.type==='num'){display=v?fmtNum(v):'-'}
-            else if(tc.type==='pct'){display=v!==undefined&&v!==null&&gd?fmtPct(avgV):'-'}
-
-            if(tc.key===countryCol){
-                const color=countryColor(c);
-                display=`<div class="country-cell"><span class="flag-dot" style="background:${color}"></span>${esc(c)}</div>`;
-            }
-            html+=`<td class="${tc.type==='num'||tc.type==='pct'?'num':''}">${display}</td>`;
-        });
-        html+='</tr>';
-    });
-
-    html+='</tbody></table></div>';
+    const sorted=[...fCountries].sort((a,b)=>{const ai=fByCtry[a]&&fByCtry[a][ic]?fByCtry[a][ic].sum:0;const bi=fByCtry[b]&&fByCtry[b][ic]?fByCtry[b][ic].sum:0;return bi-ai});
+    sorted.forEach(c=>{const cd=fByCtry[c]||{};html+='<tr>';tCols.forEach(tc=>{const gd=cd[tc.k];const v=gd?gd.sum:0;const av=gd&&gd.count?gd.sum/gd.count:0;let d='-';if(tc.t==='n')d=v?fmtNum(v):'-';else if(tc.t==='p')d=gd?fmtPct(av):'-';if(tc.k===cc)d=`<span class="flag"><span class="flag-dot" style="background:${cColor(c)}"></span>${esc(c)}</span>`;html+=`<td class="${tc.t!=='s'?'num':''}">${d}</td>`});html+='</tr>'});
+    html+='</tbody></table></div></div>';
 
     view.innerHTML=html;
 
-    // ===== Render Charts =====
+    // Render charts
     requestAnimationFrame(()=>{
-        if(sortedDates.length>0){
-            const xLabels=sortedDates.map(d=>d.slice(5));
+        const chartOpts=(extra={})=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9},color:'#94a3b8'}}},scales:{x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{color:'#94a3b8',font:{size:9}}}},...extra});
 
-            // Installs trend
+        if(fSDates.length>0){
+            const xl=fSDates.map(d=>d.slice(5));
             const e1=document.getElementById('chart-trend-1');
-            if(e1)new Chart(e1.getContext('2d'),{type:'bar',data:{labels:xLabels,datasets:[
-                {label:'安装',data:sortedDates.map(d=>byDate[d][installsCol]?byDate[d][installsCol].sum:0),backgroundColor:'#6c5ce7',borderRadius:4},
-                {label:'买量安装',data:sortedDates.map(d=>byDate[d][paidCol]?byDate[d][paidCol].sum:0),backgroundColor:'#a29bfe',borderRadius:4},
-                {label:'自然安装',data:sortedDates.map(d=>byDate[d][organicCol]?byDate[d][organicCol].sum:0),backgroundColor:'#00cec9',borderRadius:4},
-            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
-
-            // Spend & CPI
+            if(e1)new Chart(e1,{type:'bar',data:{labels:xl,datasets:[{label:'安装',data:fSDates.map(d=>fByDate[d][ic]?fByDate[d][ic].sum:0),backgroundColor:'#6366f1',borderRadius:4},{label:'买量',data:fSDates.map(d=>fByDate[d][pc]?fByDate[d][pc].sum:0),backgroundColor:'#818cf8',borderRadius:4},{label:'自然',data:fSDates.map(d=>fByDate[d][oc]?fByDate[d][oc].sum:0),backgroundColor:'#06b6d4',borderRadius:4}]},options:chartOpts()});
             const e2=document.getElementById('chart-trend-2');
-            if(e2)new Chart(e2.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
-                {label:'广告花费($)',data:sortedDates.map(d=>byDate[d][spendCol]?byDate[d][spendCol].sum:0),borderColor:'#fdcb6e',backgroundColor:'rgba(253,203,110,.1)',fill:true,tension:.3,borderWidth:2,yAxisID:'y'},
-                {label:'CPI($)',data:sortedDates.map(d=>byDate[d][cpiCol]?byDate[d][cpiCol].sum/byDate[d][cpiCol].count:0),borderColor:'#ff6b6b',backgroundColor:'transparent',tension:.3,borderWidth:2,borderDash:[5,5],pointRadius:4,yAxisID:'y1'},
-            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,position:'left',grid:{color:'#2a2d42'},ticks:{color:'#fdcb6e',font:{size:9}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{color:'#ff6b6b',font:{size:9}}}}}});
-
-            // ROI trend
+            if(e2)new Chart(e2,{type:'line',data:{labels:xl,datasets:[{label:'花费($)',data:fSDates.map(d=>fByDate[d][spC]?fByDate[d][spC].sum:0),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',fill:true,tension:.3,borderWidth:2,yAxisID:'y'},{label:'CPI($)',data:fSDates.map(d=>{const dd=fByDate[d][cpiC];return dd&&dd.count?dd.sum/dd.count:0}),borderColor:'#ef4444',tension:.3,borderWidth:2,borderDash:[5,5],pointRadius:4,yAxisID:'y1'}]},options:{...chartOpts(),scales:{x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}},y:{beginAtZero:true,position:'left',grid:{color:'#1c2738'},ticks:{color:'#f59e0b',font:{size:9}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{color:'#ef4444',font:{size:9}}}}}});
             const e3=document.getElementById('chart-trend-3');
-            if(e3)new Chart(e3.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
-                {label:'D0 ROI',data:sortedDates.map(d=>byDate[d][roi0Col]?byDate[d][roi0Col].sum/byDate[d][roi0Col].count:0),borderColor:'#a29bfe',tension:.3,borderWidth:2,pointRadius:4},
-                {label:'D1 ROI',data:sortedDates.map(d=>byDate[d][roi1Col]?byDate[d][roi1Col].sum/byDate[d][roi1Col].count:0),borderColor:'#00b894',tension:.3,borderWidth:2,pointRadius:4},
-                {label:'D3 ROI',data:sortedDates.map(d=>byDate[d][roi3Col]?byDate[d][roi3Col].sum/byDate[d][roi3Col].count:0),borderColor:'#fdcb6e',tension:.3,borderWidth:2,pointRadius:4},
-            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}}}}});
-
-            // Retention trend
+            if(e3)new Chart(e3,{type:'line',data:{labels:xl,datasets:[{label:'D0',data:fSDates.map(d=>{const dd=fByDate[d][r0];return dd&&dd.count?dd.sum/dd.count:0}),borderColor:'#818cf8',tension:.3,borderWidth:2,pointRadius:4},{label:'D1',data:fSDates.map(d=>{const dd=fByDate[d][r1];return dd&&dd.count?dd.sum/dd.count:0}),borderColor:'#10b981',tension:.3,borderWidth:2,pointRadius:4},{label:'D3',data:fSDates.map(d=>{const dd=fByDate[d][r3];return dd&&dd.count?dd.sum/dd.count:0}),borderColor:'#f59e0b',tension:.3,borderWidth:2,pointRadius:4}]},options:{...chartOpts(),scales:{x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#94a3b8',font:{size:9}}}}}});
             const e4=document.getElementById('chart-trend-4');
-            if(e4)new Chart(e4.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
-                {label:'D1 留存',data:sortedDates.map(d=>byDate[d][ret1Col]?byDate[d][ret1Col].sum/byDate[d][ret1Col].count:0),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.1)',fill:true,tension:.3,borderWidth:2},
-                {label:'D3 留存',data:sortedDates.map(d=>byDate[d][ret3Col]?byDate[d][ret3Col].sum/byDate[d][ret3Col].count:0),borderColor:'#fdcb6e',backgroundColor:'rgba(253,203,110,.1)',fill:true,tension:.3,borderWidth:2},
-            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}}}}});
+            if(e4)new Chart(e4,{type:'line',data:{labels:xl,datasets:[{label:'D1',data:fSDates.map(d=>{const dd=fByDate[d][rt1];return dd&&dd.count?dd.sum/dd.count:0}),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.08)',fill:true,tension:.3,borderWidth:2},{label:'D3',data:fSDates.map(d=>{const dd=fByDate[d][rt3];return dd&&dd.count?dd.sum/dd.count:0}),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',fill:true,tension:.3,borderWidth:2}]},options:{...chartOpts(),scales:{x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#94a3b8',font:{size:9}}}}}});
         }
 
-        // Country charts
-        if(countries.length>0){
-            const sorted=[...countries].sort((a,b)=>{
-                const ai=byCountry[a]&&byCountry[a][installsCol]?byCountry[a][installsCol].sum:0;
-                const bi=byCountry[b]&&byCountry[b][installsCol]?byCountry[b][installsCol].sum:0;
-                return bi-ai;
-            });
-            const cLabels=sorted.map(c=>c.replace(/^[A-Z]{2}-/,''));
-            const cColors=sorted.map(c=>countryColor(c));
-
-            // Installs by country
+        if(fCountries.length>0){
+            const sorted=[...fCountries].sort((a,b)=>{const ai=fByCtry[a]&&fByCtry[a][ic]?fByCtry[a][ic].sum:0;const bi=fByCtry[b]&&fByCtry[b][ic]?fByCtry[b][ic].sum:0;return bi-ai});
+            const cl=sorted.map(c=>c.replace(/^[A-Z]{2}-/,''));const cc2=sorted.map(c=>cColor(c));
+            const cOpts={responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{color:'#94a3b8',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}}}};
             const e5=document.getElementById('chart-ctry-1');
-            if(e5)new Chart(e5.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[{label:'安装量',data:sorted.map(c=>byCountry[c][installsCol]?byCountry[c][installsCol].sum:0),backgroundColor:cColors,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
-
-            // CPI by country
+            if(e5)new Chart(e5,{type:'bar',data:{labels:cl,datasets:[{data:sorted.map(c=>fByCtry[c][ic]?fByCtry[c][ic].sum:0),backgroundColor:cc2,borderRadius:4}]},options:cOpts});
             const e6=document.getElementById('chart-ctry-2');
-            if(e6)new Chart(e6.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[{label:'CPI($)',data:sorted.map(c=>{const d=byCountry[c][cpiCol];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#ff6b6b',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
-
-            // ROI by country
+            if(e6)new Chart(e6,{type:'bar',data:{labels:cl,datasets:[{data:sorted.map(c=>{const d=fByCtry[c][cpiC];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#ef4444',borderRadius:4}]},options:cOpts});
             const e7=document.getElementById('chart-ctry-3');
-            if(e7)new Chart(e7.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[
-                {label:'D1 ROI',data:sorted.map(c=>{const d=byCountry[c][roi1Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#00b894',borderRadius:4},
-                {label:'D3 ROI',data:sorted.map(c=>{const d=byCountry[c][roi3Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#fdcb6e',borderRadius:4},
-            ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
-
-            // Retention by country
+            if(e7)new Chart(e7,{type:'bar',data:{labels:cl,datasets:[{label:'D1',data:sorted.map(c=>{const d=fByCtry[c][r1];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#10b981',borderRadius:4},{label:'D3',data:sorted.map(c=>{const d=fByCtry[c][r3];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#f59e0b',borderRadius:4}]},options:{...cOpts,plugins:{legend:{display:true,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9},color:'#94a3b8'}}},scales:{x:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#94a3b8',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}}}});
             const e8=document.getElementById('chart-ctry-4');
-            if(e8)new Chart(e8.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[
-                {label:'D1 留存',data:sorted.map(c=>{const d=byCountry[c][ret1Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#a29bfe',borderRadius:4},
-                {label:'D3 留存',data:sorted.map(c=>{const d=byCountry[c][ret3Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#6c5ce7',borderRadius:4},
-            ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
+            if(e8)new Chart(e8,{type:'bar',data:{labels:cl,datasets:[{label:'D1',data:sorted.map(c=>{const d=fByCtry[c][rt1];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#818cf8',borderRadius:4},{label:'D3',data:sorted.map(c=>{const d=fByCtry[c][rt3];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#6366f1',borderRadius:4}]},options:{...cOpts,plugins:{legend:{display:true,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9},color:'#94a3b8'}}},scales:{x:{beginAtZero:true,grid:{color:'#1c2738'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#94a3b8',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:9}}}}});
         }
 
-        // Funnel chart
-        const totalImpr=sum(imprCol),totalClicks=sum(clicksCol),totalInstalls=sum(installsCol),totalPayUsers=sum(payUser1Col);
+        const ti=fSum(impC),tc2=fSum(clkC),ti2=fSum(ic),tp=fSum(pu1);
         const e9=document.getElementById('chart-funnel-1');
-        if(e9)new Chart(e9.getContext('2d'),{type:'bar',data:{labels:['展示','点击','安装','付费用户'],datasets:[{label:'数量',data:[totalImpr,totalClicks,totalInstalls,totalPayUsers],backgroundColor:['#6c5ce7','#a29bfe','#00cec9','#00b894'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{type:'logarithmic',beginAtZero:false,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#e8eaf0',font:{size:11}}}}}});
+        if(e9)new Chart(e9,{type:'bar',data:{labels:['展示','点击','安装','付费用户'],datasets:[{data:[ti,tc2,ti2,tp],backgroundColor:['#6366f1','#818cf8','#06b6d4','#10b981'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw.toLocaleString()}}},scales:{x:{type:'logarithmic',grid:{color:'#1c2738'},ticks:{color:'#94a3b8',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#f1f5f9',font:{size:11}}}}}});
     });
 }
 
-// ===== Toast =====
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
-
-// ===== Init =====
-document.getElementById('builder').classList.add('collapsed');
-document.getElementById('defaultView').innerHTML='<div class="canvas-empty"><div class="ce-icon">📊</div><h2>上传数据后自动生成看板</h2><p>支持 .xlsx / .xls / .csv 格式 · 自动识别买量指标</p></div>';
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+document.getElementById('defaultView').innerHTML=`<div class="welcome"><div class="w-icon">📊</div><h2>欢迎使用 Republic BI</h2><p>上传你的游戏运营数据，自动生成专业看板</p><button class="tb-btn primary" onclick="document.getElementById('fileIn').click()" style="font-size:14px;padding:12px 24px">📤 上传数据文件</button><div class="steps"><div class="step"><div class="sn">📤</div><h3>1. 上传数据</h3><p>支持 Excel / CSV 格式</p></div><div class="step"><div class="sn">🤖</div><h3>2. 智能分析</h3><p>自动生成可视化看板</p></div><div class="step"><div class="sn">🎨</div><h3>3. 自定义</h3><p>自由组合图表</p></div></div></div>`;
 </script>
 </body>
 </html>
