@@ -388,26 +388,31 @@ function loadSheet(name){
 
 function smartParse(aoa){
     const fmtDate=v=>{if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return y+'-'+m+'-'+d}return v};
+    const isDash=v=>{if(v===null||v===undefined)return false;if(typeof v==='string')return v.trim()==='--'||v.trim()==='-';return false};
+    // Scan first 15 rows
     const rowInfo=[];
     for(let i=0;i<Math.min(aoa.length,15);i++){
-        const row=aoa[i];let nn=0,sc=0,nc=0;
-        if(row){for(const v of row){if(v!==null&&v!==undefined&&v!==''){nn++;if(typeof v==='number'||v instanceof Date)nc++;else sc++}}}
-        rowInfo.push({idx:i,nn,sc,nc});
+        const row=aoa[i];let nn=0,sc=0,nc=0,dc=0;
+        if(row){for(const v of row){if(v!==null&&v!==undefined&&v!==''){nn++;if(typeof v==='number'||v instanceof Date)nc++;else if(isDash(v))dc++;else sc++}}}
+        rowInfo.push({idx:i,nn,sc,nc,dc});
     }
+    // Find the last header row: skip rows that are mostly '--' (summary/dummy rows)
     let headerEnd=0,bestNe=0;
     for(let i=0;i<rowInfo.length;i++){
+        // Skip rows that are mostly '--' (these are summary/total rows, not headers)
+        if(rowInfo[i].dc>0&&rowInfo[i].dc/rowInfo[i].nn>.3)continue;
         if(rowInfo[i].nn>bestNe){bestNe=rowInfo[i].nn;headerEnd=rowInfo[i].idx}
         if(rowInfo[i].nc>rowInfo[i].sc&&rowInfo[i].nn>=3)break;
     }
     const headerRows=[];
-    for(let i=0;i<=headerEnd;i++){const row=aoa[i];if(row&&row.some(v=>v!==null&&v!==undefined&&v!==''))headerRows.push(row)}
+    for(let i=0;i<=headerEnd;i++){const row=aoa[i];if(row&&row.some(v=>v!==null&&v!==undefined&&v!==''&&!isDash(v)))headerRows.push(row)}
     let maxCols=0;
     for(const row of aoa){if(row&&row.length>maxCols)maxCols=row.length}
     if(maxCols===0)return{headers:[],data:[],numHeaderRows:0};
     const mergedHeaders=[];
     for(let c=0;c<maxCols;c++){
         let parts=[];
-        for(const row of headerRows){const v=row[c];if(v!==null&&v!==undefined&&v!=='')parts.push(String(fmtDate(v)).trim())}
+        for(const row of headerRows){const v=row[c];if(v!==null&&v!==undefined&&v!==''&&!isDash(v))parts.push(String(fmtDate(v)).trim())}
         mergedHeaders.push(parts.length?parts.join(' · '):('列'+(c+1)));
     }
     const seen={};
@@ -415,7 +420,7 @@ function smartParse(aoa){
     const dataRows=[];
     for(let i=headerEnd+1;i<aoa.length;i++){
         const row=aoa[i];if(!row)continue;
-        let hasData=false;for(const v of row){if(v!==null&&v!==undefined&&v!==''){hasData=true;break}}
+        let hasData=false;for(const v of row){if(v!==null&&v!==undefined&&v!==''&&!isDash(v)){hasData=true;break}}
         if(!hasData)continue;
         const obj={};for(let c=0;c<uniqueHeaders.length;c++){const v=row[c];obj[uniqueHeaders[c]]=v!==null&&v!==undefined&&v!==''?fmtDate(v):''}
         dataRows.push(obj);
@@ -725,43 +730,26 @@ function renderDefaultDash(){
     // --- 投放趋势 (Time Series) ---
     html+='<div class="sec-title"><span class="st-icon">📈</span>投放趋势（按日期）</div><div class="chart-grid">';
     if(sortedDates.length>0){
-        // Installs trend
-        const cid1='dt-'+Date.now()+'-1';
-        html+=`<div class="chart-card"><h4>📥 安装量 & 买量安装</h4><canvas id="${cid1}"></canvas></div>`;
-        // Spend & CPI trend
-        const cid2='dt-'+Date.now()+'-2';
-        html+=`<div class="chart-card"><h4>💰 广告花费 & CPI</h4><canvas id="${cid2}"></canvas></div>`;
-        // ROI trend
-        const cid3='dt-'+Date.now()+'-3';
-        html+=`<div class="chart-card"><h4>🔄 回报率趋势</h4><canvas id="${cid3}"></canvas></div>`;
-        // Retention trend
-        const cid4='dt-'+Date.now()+'-4';
-        html+=`<div class="chart-card"><h4>📊 留存率趋势</h4><canvas id="${cid4}"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>📥 安装量 & 买量安装</h4><canvas id="chart-trend-1"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>💰 广告花费 & CPI</h4><canvas id="chart-trend-2"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>🔄 回报率趋势</h4><canvas id="chart-trend-3"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>📊 留存率趋势</h4><canvas id="chart-trend-4"></canvas></div>`;
     }
     html+='</div>';
 
     // --- 市场对比 (Country Comparison) ---
     html+='<div class="sec-title"><span class="st-icon">🌍</span>市场对比</div><div class="chart-grid">';
     if(countries.length>0){
-        // Installs by country
-        const cid5='ct-'+Date.now()+'-5';
-        html+=`<div class="chart-card"><h4>📥 各市场安装量</h4><canvas id="${cid5}"></canvas></div>`;
-        // CPI by country
-        const cid6='ct-'+Date.now()+'-6';
-        html+=`<div class="chart-card"><h4>💰 各市场 CPI</h4><canvas id="${cid6}"></canvas></div>`;
-        // ROI by country
-        const cid7='ct-'+Date.now()+'-7';
-        html+=`<div class="chart-card"><h4>🔄 各市场 ROI</h4><canvas id="${cid7}"></canvas></div>`;
-        // Retention by country
-        const cid8='ct-'+Date.now()+'-8';
-        html+=`<div class="chart-card"><h4>📊 各市场留存率</h4><canvas id="${cid8}"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>📥 各市场安装量</h4><canvas id="chart-ctry-1"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>💰 各市场 CPI</h4><canvas id="chart-ctry-2"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>🔄 各市场 ROI</h4><canvas id="chart-ctry-3"></canvas></div>`;
+        html+=`<div class="chart-card"><h4>📊 各市场留存率</h4><canvas id="chart-ctry-4"></canvas></div>`;
     }
     html+='</div>';
 
     // --- 转化漏斗 ---
     html+='<div class="sec-title"><span class="st-icon">🔻</span>投放转化漏斗</div><div class="chart-grid">';
-    const cid9='ct-'+Date.now()+'-9';
-    html+=`<div class="chart-card"><h4>展示 → 点击 → 安装 → 付费</h4><canvas id="${cid9}"></canvas></div>`;
+    html+=`<div class="chart-card"><h4>展示 → 点击 → 安装 → 付费</h4><canvas id="chart-funnel-1"></canvas></div>`;
     html+='</div>';
 
     // --- 数据明细表 ---
@@ -833,7 +821,7 @@ function renderDefaultDash(){
             const xLabels=sortedDates.map(d=>d.slice(5));
 
             // Installs trend
-            const e1=document.getElementById('dt-'+Date.now()+'-1');
+            const e1=document.getElementById('chart-trend-1');
             if(e1)new Chart(e1.getContext('2d'),{type:'bar',data:{labels:xLabels,datasets:[
                 {label:'安装',data:sortedDates.map(d=>byDate[d][installsCol]?byDate[d][installsCol].sum:0),backgroundColor:'#6c5ce7',borderRadius:4},
                 {label:'买量安装',data:sortedDates.map(d=>byDate[d][paidCol]?byDate[d][paidCol].sum:0),backgroundColor:'#a29bfe',borderRadius:4},
@@ -841,14 +829,14 @@ function renderDefaultDash(){
             ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
 
             // Spend & CPI
-            const e2=document.getElementById('dt-'+Date.now()+'-2');
+            const e2=document.getElementById('chart-trend-2');
             if(e2)new Chart(e2.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
                 {label:'广告花费($)',data:sortedDates.map(d=>byDate[d][spendCol]?byDate[d][spendCol].sum:0),borderColor:'#fdcb6e',backgroundColor:'rgba(253,203,110,.1)',fill:true,tension:.3,borderWidth:2,yAxisID:'y'},
                 {label:'CPI($)',data:sortedDates.map(d=>byDate[d][cpiCol]?byDate[d][cpiCol].sum/byDate[d][cpiCol].count:0),borderColor:'#ff6b6b',backgroundColor:'transparent',tension:.3,borderWidth:2,borderDash:[5,5],pointRadius:4,yAxisID:'y1'},
             ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,position:'left',grid:{color:'#2a2d42'},ticks:{color:'#fdcb6e',font:{size:9}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{color:'#ff6b6b',font:{size:9}}}}}});
 
             // ROI trend
-            const e3=document.getElementById('dt-'+Date.now()+'-3');
+            const e3=document.getElementById('chart-trend-3');
             if(e3)new Chart(e3.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
                 {label:'D0 ROI',data:sortedDates.map(d=>byDate[d][roi0Col]?byDate[d][roi0Col].sum/byDate[d][roi0Col].count:0),borderColor:'#a29bfe',tension:.3,borderWidth:2,pointRadius:4},
                 {label:'D1 ROI',data:sortedDates.map(d=>byDate[d][roi1Col]?byDate[d][roi1Col].sum/byDate[d][roi1Col].count:0),borderColor:'#00b894',tension:.3,borderWidth:2,pointRadius:4},
@@ -856,7 +844,7 @@ function renderDefaultDash(){
             ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}}}}});
 
             // Retention trend
-            const e4=document.getElementById('dt-'+Date.now()+'-4');
+            const e4=document.getElementById('chart-trend-4');
             if(e4)new Chart(e4.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
                 {label:'D1 留存',data:sortedDates.map(d=>byDate[d][ret1Col]?byDate[d][ret1Col].sum/byDate[d][ret1Col].count:0),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.1)',fill:true,tension:.3,borderWidth:2},
                 {label:'D3 留存',data:sortedDates.map(d=>byDate[d][ret3Col]?byDate[d][ret3Col].sum/byDate[d][ret3Col].count:0),borderColor:'#fdcb6e',backgroundColor:'rgba(253,203,110,.1)',fill:true,tension:.3,borderWidth:2},
@@ -874,22 +862,22 @@ function renderDefaultDash(){
             const cColors=sorted.map(c=>countryColor(c));
 
             // Installs by country
-            const e5=document.getElementById('ct-'+Date.now()+'-5');
+            const e5=document.getElementById('chart-ctry-1');
             if(e5)new Chart(e5.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[{label:'安装量',data:sorted.map(c=>byCountry[c][installsCol]?byCountry[c][installsCol].sum:0),backgroundColor:cColors,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
 
             // CPI by country
-            const e6=document.getElementById('ct-'+Date.now()+'-6');
+            const e6=document.getElementById('chart-ctry-2');
             if(e6)new Chart(e6.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[{label:'CPI($)',data:sorted.map(c=>{const d=byCountry[c][cpiCol];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#ff6b6b',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
 
             // ROI by country
-            const e7=document.getElementById('ct-'+Date.now()+'-7');
+            const e7=document.getElementById('chart-ctry-3');
             if(e7)new Chart(e7.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[
                 {label:'D1 ROI',data:sorted.map(c=>{const d=byCountry[c][roi1Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#00b894',borderRadius:4},
                 {label:'D3 ROI',data:sorted.map(c=>{const d=byCountry[c][roi3Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#fdcb6e',borderRadius:4},
             ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
 
             // Retention by country
-            const e8=document.getElementById('ct-'+Date.now()+'-8');
+            const e8=document.getElementById('chart-ctry-4');
             if(e8)new Chart(e8.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[
                 {label:'D1 留存',data:sorted.map(c=>{const d=byCountry[c][ret1Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#a29bfe',borderRadius:4},
                 {label:'D3 留存',data:sorted.map(c=>{const d=byCountry[c][ret3Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#6c5ce7',borderRadius:4},
@@ -898,7 +886,7 @@ function renderDefaultDash(){
 
         // Funnel chart
         const totalImpr=sum(imprCol),totalClicks=sum(clicksCol),totalInstalls=sum(installsCol),totalPayUsers=sum(payUser1Col);
-        const e9=document.getElementById('ct-'+Date.now()+'-9');
+        const e9=document.getElementById('chart-funnel-1');
         if(e9)new Chart(e9.getContext('2d'),{type:'bar',data:{labels:['展示','点击','安装','付费用户'],datasets:[{label:'数量',data:[totalImpr,totalClicks,totalInstalls,totalPayUsers],backgroundColor:['#6c5ce7','#a29bfe','#00cec9','#00b894'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{type:'logarithmic',beginAtZero:false,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#e8eaf0',font:{size:11}}}}}});
     });
 }
