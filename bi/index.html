@@ -295,15 +295,102 @@ function loadFile(file){
 
 function loadSheet(name){
     currentSheet=name;
-    rawData=XLSX.utils.sheet_to_json(workbook.Sheets[name],{defval:''});
-    if(!rawData.length){toast('⚠️ 空表');return}
-    headers=Object.keys(rawData[0]);
+    const ws=workbook.Sheets[name];
+    const aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
+    if(!aoa||!aoa.length){toast('⚠️ 空表');return}
+    const parsed=smartParse(aoa);
+    rawData=parsed.data;
+    headers=parsed.headers;
+    if(!rawData.length){toast('⚠️ 没有有效数据');return}
     fieldTypes={};
     headers.forEach(h=>{fieldTypes[h]=detectType(h,rawData)});
-    document.getElementById('dsName').textContent=currentSheet+' · '+rawData.length+' 行 · '+headers.length+' 列';
+    const hInfo=parsed.numHeaderRows>1?` (${parsed.numHeaderRows} 行标题)`:'';
+    document.getElementById('dsName').textContent=currentSheet+' · '+rawData.length+' 行 · '+headers.length+' 列'+hInfo;
     renderFields();renderPreview();
     document.getElementById('fieldsSection').style.display='block';
     document.getElementById('previewSection').style.display='block';
+}
+
+function smartParse(aoa){
+    // Scan first 15 rows: find where headers end and data begins
+    const rowInfo=[];
+    for(let i=0;i<Math.min(aoa.length,15);i++){
+        const row=aoa[i];
+        let nonNull=0,strCount=0,numCount=0;
+        if(row){
+            for(const v of row){
+                if(v!==null&&v!==undefined&&v!==''){
+                    nonNull++;
+                    if(typeof v==='number')numCount++;
+                    else if(v instanceof Date)numCount++;
+                    else strCount++;
+                }
+            }
+        }
+        rowInfo.push({idx:i,nonNull,strCount,numCount});
+    }
+
+    // Find the last header row:
+    // Strategy: scan from top, track rows that are "string-heavy" (headers)
+    // When we see a row with more numbers than strings and enough cells filled, that's data
+    let headerEnd=0;
+    let bestNonEmpty=0;
+    for(let i=0;i<rowInfo.length;i++){
+        if(rowInfo[i].nonNull>bestNonEmpty){
+            bestNonEmpty=rowInfo[i].nonNull;
+            headerEnd=rowInfo[i].idx;
+        }
+        // Once we hit a data-heavy row, stop
+        if(rowInfo[i].numCount>rowInfo[i].strCount&&rowInfo[i].nonNull>=3)break;
+    }
+
+    // Collect all non-empty header rows from 0 to headerEnd
+    const headerRows=[];
+    for(let i=0;i<=headerEnd;i++){
+        const row=aoa[i];
+        if(row&&row.some(v=>v!==null&&v!==undefined&&v!==''))headerRows.push(row);
+    }
+
+    // Find max columns across all rows
+    let maxCols=0;
+    for(const row of aoa){if(row&&row.length>maxCols)maxCols=row.length}
+    if(maxCols===0)return{headers:[],data:[],numHeaderRows:0};
+
+    // Build merged headers: combine values from all header rows per column
+    const mergedHeaders=[];
+    for(let c=0;c<maxCols;c++){
+        let parts=[];
+        for(const row of headerRows){
+            const v=row[c];
+            if(v!==null&&v!==undefined&&v!==''){parts.push(String(v).trim())}
+        }
+        mergedHeaders.push(parts.length?parts.join(' · '):('列'+(c+1)));
+    }
+
+    // Deduplicate header names
+    const seen={};
+    const uniqueHeaders=mergedHeaders.map((h,i)=>{
+        if(seen[h]){seen[h]++;return h+' ('+seen[h]+')'}
+        seen[h]=1;return h;
+    });
+
+    // Build data: rows after headerEnd, skip empty rows
+    const dataRows=[];
+    for(let i=headerEnd+1;i<aoa.length;i++){
+        const row=aoa[i];
+        if(!row)continue;
+        let hasData=false;
+        for(const v of row){if(v!==null&&v!==undefined&&v!==''){hasData=true;break}}
+        if(!hasData)continue;
+        const obj={};
+        for(let c=0;c<uniqueHeaders.length;c++){
+            const v=row[c];
+            obj[uniqueHeaders[c]]=v!==null&&v!==undefined&&v!==''?v:'';
+        }
+        dataRows.push(obj);
+    }
+
+    return{headers:uniqueHeaders,data:dataRows,numHeaderRows:headerRows.length};
 }
 
 function detectType(col,data){
@@ -324,9 +411,9 @@ function renderFields(){
     const d=headers.filter(h=>fieldTypes[h]==='dim');
     const m=headers.filter(h=>fieldTypes[h]==='mea');
     const dt=headers.filter(h=>fieldTypes[h]==='date');
-    document.getElementById('dimFields').innerHTML=d.map(h=>`<div class="field-item" onclick="quickAdd('${h}')"><div class="fi dim">A</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
-    document.getElementById('meaFields').innerHTML=m.map(h=>`<div class="field-item" onclick="quickAdd('${h}')"><div class="fi mea">Σ</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
-    document.getElementById('dateFields').innerHTML=dt.map(h=>`<div class="field-item" onclick="quickAdd('${h}')"><div class="fi dat">📅</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('dimFields').innerHTML=d.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi dim">A</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('meaFields').innerHTML=m.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi mea">Σ</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('dateFields').innerHTML=dt.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi dat">📅</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
 }
 
 function renderPreview(){
@@ -350,12 +437,10 @@ function toggleBuilder(){document.getElementById('builder').classList.toggle('co
 function togglePreview(){document.getElementById('dataPreview').classList.toggle('open')}
 
 // ===== Field Selection =====
-function quickAdd(field){
-    if(fieldTypes[field]==='mea'){
-        cfg.yAxis=field;
-    }else{
-        cfg.xAxis=field;
-    }
+function quickAdd(encoded){
+    const field=decodeURIComponent(encoded);
+    if(fieldTypes[field]==='mea')cfg.yAxis=field;
+    else cfg.xAxis=field;
     updateSlots();
     toast('已选: '+field);
 }
@@ -365,7 +450,6 @@ function pickField(target){
     const modal=document.getElementById('fModal');
     const title=document.getElementById('fModalTitle');
     const list=document.getElementById('fPickList');
-
     let fields;
     if(target==='xAxis'||target==='groupBy'){
         title.textContent=target==='xAxis'?'选择 X 轴 (维度)':'选择分组字段';
@@ -374,15 +458,16 @@ function pickField(target){
         title.textContent='选择 Y 轴 (度量)';
         fields=headers.filter(h=>fieldTypes[h]==='mea');
     }
-
     list.innerHTML=fields.map(f=>{
         const icon=fieldTypes[f]==='mea'?'Σ':fieldTypes[f]==='date'?'📅':'A';
-        return `<div class="fpi" onclick="setField('${f}')"><span class="fi ${fieldTypes[f]==='mea'?'mea':'dim'}" style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:10px">${icon}</span>${esc(f)}</div>`;
+        const cls=fieldTypes[f]==='mea'?'mea':'dim';
+        return `<div class="fpi" onclick="setField(encodeURIComponent('${esc(f)}'))"><span class="fi ${cls}" style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:10px">${icon}</span>${esc(f)}</div>`;
     }).join('');
     modal.classList.add('show');
 }
 
-function setField(f){
+function setField(encoded){
+    const f=decodeURIComponent(encoded);
     if(pickTarget==='xAxis')cfg.xAxis=f;
     else if(pickTarget==='yAxis')cfg.yAxis=f;
     else if(pickTarget==='groupBy')cfg.groupBy=f;
@@ -424,15 +509,20 @@ function addFilter(){
     const id=filterCount++;
     const area=document.getElementById('filterArea');
     const row=document.createElement('div');row.className='filter-row';row.id='filter-'+id;
-    let opts='<option value="">字段</option>'+headers.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join('');
-    row.innerHTML=`<select class="ff">${opts}</select><select class="fo"><option value="eq">=</option><option value="neq">≠</option><option value="gt">&gt;</option><option value="gte">≥</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="contains">包含</option></select><input class="fv" placeholder="值"><button class="fr-del" onclick="this.parentElement.remove()">×</button>`;
+    let opts='<option value="">字段</option>';
+    headers.forEach((h,i)=>{
+        opts+=`<option value="${i}">${esc(h)}</option>`;
+    });
+    row.innerHTML=`<select class="ff" data-idx="-1">${opts}</select><select class="fo"><option value="eq">=</option><option value="neq">≠</option><option value="gt">&gt;</option><option value="gte">≥</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="contains">包含</option></select><input class="fv" placeholder="值"><button class="fr-del" onclick="this.parentElement.remove()">×</button>`;
     area.appendChild(row);
 }
 
 function getFilters(){
     const filters=[];
     document.querySelectorAll('.filter-row').forEach(r=>{
-        const field=r.querySelector('.ff').value;
+        const idx=parseInt(r.querySelector('.ff').value);
+        if(isNaN(idx))return;
+        const field=headers[idx];
         const op=r.querySelector('.fo').value;
         const val=r.querySelector('.fv').value;
         if(field&&val)filters.push({field,op,val});
