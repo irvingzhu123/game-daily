@@ -10,9 +10,10 @@
     <style>
         :root{--bg:#0a0b10;--surface:#131520;--card:#1a1d2e;--border:#2a2d42;--accent:#6c5ce7;--accent2:#a29bfe;--accent3:#00cec9;--text:#e8eaf0;--text-dim:#8a8d9e;--text-muted:#5a5d6e;--success:#00b894;--warning:#fdcb6e;--danger:#ff6b6b;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3)}
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+        body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
 
-        .topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100}
+        /* Top Bar */
+        .topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;position:sticky;top:0;z-index:100}
         .topbar .brand{font-size:15px;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
         .topbar .divider{width:1px;height:20px;background:var(--border)}
         .topbar .dataset-name{color:var(--text-dim);font-size:12px;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -24,27 +25,28 @@
         .topbar .btn.danger:hover{background:rgba(255,107,107,.1)}
 
         /* Tabs */
-        .tabs{height:40px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0}
+        .tabs{height:40px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0;position:sticky;top:50px;z-index:99}
         .tab-btn{padding:8px 20px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;user-select:none}
         .tab-btn:hover{color:var(--text-dim)}
         .tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent)}
 
-        .main{display:flex;height:calc(100vh - 90px)}
+        .main{display:flex;min-height:calc(100vh - 90px)}
 
-        .sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0}
+        /* Sidebar */
+        .sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0;position:sticky;top:90px;height:calc(100vh - 90px)}
         .sidebar.collapsed{width:0;border:none}
         .sidebar-header{padding:12px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
         .sidebar-scroll{flex:1;overflow-y:auto;padding:10px}
         .sidebar-scroll::-webkit-scrollbar{width:4px}
         .sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-        .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:22px 12px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:10px}
+        .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:20px 12px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px}
         .upload-area:hover,.upload-area.dragover{border-color:var(--accent);background:rgba(108,92,231,.05)}
-        .upload-area .icon{font-size:28px;margin-bottom:4px}
+        .upload-area .icon{font-size:24px;margin-bottom:4px}
         .upload-area p{color:var(--text-dim);font-size:11px}
         .upload-area .formats{color:var(--text-muted);font-size:9px;margin-top:2px}
 
-        .field-group{margin-bottom:10px}
+        .field-group{margin-bottom:8px}
         .field-group-title{font-size:9px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;padding-left:6px}
         .field-item{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:5px;cursor:pointer;transition:background .15s;font-size:11px}
         .field-item:hover{background:rgba(108,92,231,.1)}
@@ -54,14 +56,14 @@
         .field-item .fi.dat{background:rgba(162,155,254,.15);color:var(--accent2)}
         .field-item .fn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-        .builder-panel{width:280px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0}
+        .builder-panel{width:280px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0;position:sticky;top:90px;height:calc(100vh - 90px)}
         .builder-panel.collapsed{width:0;border:none}
         .builder-header{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
         .builder-scroll{flex:1;overflow-y:auto;padding:12px}
         .builder-scroll::-webkit-scrollbar{width:4px}
         .builder-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-        .b-section{margin-bottom:14px}
+        .b-section{margin-bottom:12px}
         .b-label{font-size:9px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 
         .chart-types{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
@@ -136,38 +138,59 @@
         @keyframes tIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
         @keyframes tOut{from{opacity:1}to{opacity:0}}
 
-        /* Default Dashboard Styles */
-        .default-dash{width:100%;padding:0}
-        .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
-        .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
-        .kpi-card .kpi-icon{font-size:20px;margin-bottom:6px}
-        .kpi-card .kpi-value{font-size:28px;font-weight:700;color:var(--accent2)}
+        /* ===== Default Dashboard (ROI/UA style) ===== */
+        .default-dash{width:100%;max-width:1400px;margin:0 auto}
+
+        /* Section titles */
+        .sec-title{font-size:15px;font-weight:600;margin:20px 0 12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+        .sec-title .st-icon{font-size:18px}
+
+        /* KPI row */
+        .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:8px}
+        .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
+        .kpi-card .kpi-icon{font-size:18px;margin-bottom:4px}
+        .kpi-card .kpi-value{font-size:24px;font-weight:700}
         .kpi-card .kpi-label{font-size:11px;color:var(--text-dim);margin-top:2px}
-        .kpi-card .kpi-sub{font-size:10px;color:var(--text-muted);margin-top:4px}
-        .kpi-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:.05;transform:translate(15px,-15px)}
-        .kpi-card.blue::after{background:var(--accent2)}
-        .kpi-card.green::after{background:var(--success)}
-        .kpi-card.orange::after{background:var(--warning)}
-        .kpi-card.red::after{background:var(--danger)}
-        .kpi-card.purple::after{background:var(--accent)}
+        .kpi-card .kpi-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+        .kpi-card.blue .kpi-value{color:var(--accent2)}
+        .kpi-card.green .kpi-value{color:var(--success)}
+        .kpi-card.orange .kpi-value{color:var(--warning)}
+        .kpi-card.red .kpi-value{color:var(--danger)}
+        .kpi-card.purple .kpi-value{color:var(--accent)}
+        .kpi-card.cyan .kpi-value{color:var(--accent3)}
 
-        .chart-section{margin-bottom:20px}
-        .section-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-        .section-title .st-icon{font-size:16px}
-
-        .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px}
-        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-        .chart-card h4{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text-dim)}
-        .chart-card canvas{max-height:280px}
+        /* Chart grid */
+        .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:14px;margin-bottom:8px}
+        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+        .chart-card h4{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-dim);display:flex;align-items:center;gap:6px}
+        .chart-card canvas{max-height:260px}
         .chart-card.full{grid-column:1/-1}
 
-        .metric-table{width:100%;border-collapse:collapse;font-size:12px}
-        .metric-table th{padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-dim);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
-        .metric-table td{padding:6px 12px;border-bottom:1px solid var(--border)}
-        .metric-table tr:hover td{background:rgba(108,92,231,.04)}
-        .metric-table .num{text-align:right;font-variant-numeric:tabular-nums}
+        /* Table */
+        .data-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;max-height:400px;margin-bottom:20px}
+        .data-table{width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap}
+        .data-table th{position:sticky;top:0;background:var(--surface);padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-dim);font-size:10px;font-weight:600;z-index:1}
+        .data-table th.num{text-align:right}
+        .data-table td{padding:4px 10px;border-bottom:1px solid rgba(42,45,66,.4)}
+        .data-table td.num{text-align:right;font-variant-numeric:tabular-nums}
+        .data-table tr:hover td{background:rgba(108,92,231,.04)}
+        .data-table .country-cell{display:flex;align-items:center;gap:6px}
+        .data-table .flag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-        .no-data-hint{color:var(--text-muted);font-size:12px;padding:20px;text-align:center;border:1px dashed var(--border);border-radius:var(--radius)}
+        /* Progress bar in table */
+        .bar-cell{display:flex;align-items:center;gap:6px}
+        .bar-bg{width:60px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+        .bar-fill{height:100%;border-radius:2px}
+        .bar-fill.green{background:var(--success)}
+        .bar-fill.orange{background:var(--warning)}
+        .bar-fill.red{background:var(--danger)}
+        .bar-fill.blue{background:var(--accent2)}
+
+        /* Metric badge */
+        .badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:500}
+        .badge.good{background:rgba(0,184,148,.15);color:var(--success)}
+        .badge.warn{background:rgba(253,203,110,.15);color:var(--warning)}
+        .badge.bad{background:rgba(255,107,107,.15);color:var(--danger)}
 
         @media(max-width:900px){.sidebar{width:200px}.builder-panel{width:240px}.dash-grid,.chart-grid{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}}
     </style>
@@ -203,7 +226,7 @@
                 <p>点击或拖拽上传</p>
                 <div class="formats">.xlsx / .xls / .csv</div>
             </div>
-            <div id="sheetTabs" style="display:none;margin-bottom:10px">
+            <div id="sheetTabs" style="display:none;margin-bottom:8px">
                 <div class="b-label">工作表</div>
                 <div id="sheetTabList" style="display:flex;gap:4px;flex-wrap:wrap"></div>
             </div>
@@ -219,7 +242,7 @@
         </div>
     </div>
 
-    <!-- Builder Panel (only shown in custom tab) -->
+    <!-- Builder Panel -->
     <div class="builder-panel" id="builder">
         <div class="builder-header">🎨 图表构建器</div>
         <div class="builder-scroll">
@@ -270,9 +293,7 @@
 
     <!-- Canvas -->
     <div class="canvas" id="canvas">
-        <!-- Default Dashboard -->
-        <div id="defaultView" class="default-dash"></div>
-        <!-- Custom Dashboard -->
+        <div id="defaultView"></div>
         <div id="customView" style="display:none">
             <div class="canvas-empty" id="emptyState">
                 <div class="ce-icon">📊</div>
@@ -299,9 +320,7 @@
 // ===== State =====
 let rawData=[],headers=[],fieldTypes={},currentSheet=null,workbook=null;
 let chartType='bar',cfg={xAxis:null,yAxis:null,groupBy:null,agg:'sum',filters:[]};
-let widgets=[],wId=0,pickTarget=null;
-let currentTab='default';
-let defaultCharts=[];
+let widgets=[],wId=0,pickTarget=null,currentTab='default';
 const COLORS=['#6c5ce7','#a29bfe','#00b894','#fdcb6e','#ff6b6b','#00cec9','#e17055','#74b9ff','#d63031','#0984e3','#e84393','#55efc4','#fab1a0','#81ecec','#ffeaa7','#dfe6e9','#b2bec3','#636e72','#fd79a8','#f39c12'];
 Chart.defaults.color='#8a8d9e';
 Chart.defaults.borderColor='#2a2d42';
@@ -315,8 +334,7 @@ function switchTab(tab){
     document.getElementById('defaultView').style.display=tab==='default'?'block':'none';
     document.getElementById('customView').style.display=tab==='custom'?'block':'none';
     const builder=document.getElementById('builder');
-    if(tab==='default'){builder.classList.add('collapsed')}
-    else{builder.classList.remove('collapsed')}
+    if(tab==='default')builder.classList.add('collapsed');else builder.classList.remove('collapsed');
     if(tab==='default'&&rawData.length)renderDefaultDash();
 }
 
@@ -369,6 +387,7 @@ function loadSheet(name){
 }
 
 function smartParse(aoa){
+    const fmtDate=v=>{if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return y+'-'+m+'-'+d}return v};
     const rowInfo=[];
     for(let i=0;i<Math.min(aoa.length,15);i++){
         const row=aoa[i];let nn=0,sc=0,nc=0;
@@ -388,7 +407,7 @@ function smartParse(aoa){
     const mergedHeaders=[];
     for(let c=0;c<maxCols;c++){
         let parts=[];
-        for(const row of headerRows){const v=row[c];if(v!==null&&v!==undefined&&v!=='')parts.push(String(v).trim())}
+        for(const row of headerRows){const v=row[c];if(v!==null&&v!==undefined&&v!=='')parts.push(String(fmtDate(v)).trim())}
         mergedHeaders.push(parts.length?parts.join(' · '):('列'+(c+1)));
     }
     const seen={};
@@ -398,7 +417,7 @@ function smartParse(aoa){
         const row=aoa[i];if(!row)continue;
         let hasData=false;for(const v of row){if(v!==null&&v!==undefined&&v!==''){hasData=true;break}}
         if(!hasData)continue;
-        const obj={};for(let c=0;c<uniqueHeaders.length;c++){const v=row[c];obj[uniqueHeaders[c]]=v!==null&&v!==undefined&&v!==''?v:''}
+        const obj={};for(let c=0;c<uniqueHeaders.length;c++){const v=row[c];obj[uniqueHeaders[c]]=v!==null&&v!==undefined&&v!==''?fmtDate(v):''}
         dataRows.push(obj);
     }
     return{headers:uniqueHeaders,data:dataRows,numHeaderRows:headerRows.length};
@@ -412,16 +431,11 @@ function detectType(col,data){
         if(typeof v==='number'){nc++;return}
         if(typeof v==='string'){const n=parseFloat(v.replace(/[,%$￥€£\s]/g,''));if(!isNaN(n)&&n.toString().length<=v.length+2)nc++;else if(/^\d{4}[-/.]\d{1,2}[-/.]/.test(v))dc++}
     });
-    if(t===0)return'dim';
-    if(dc/t>.5)return'date';
-    if(nc/t>.5)return'mea';
-    return'dim';
+    if(t===0)return'dim';if(dc/t>.5)return'date';if(nc/t>.5)return'mea';return'dim';
 }
 
 function renderFields(){
-    const d=headers.filter(h=>fieldTypes[h]==='dim');
-    const m=headers.filter(h=>fieldTypes[h]==='mea');
-    const dt=headers.filter(h=>fieldTypes[h]==='date');
+    const d=headers.filter(h=>fieldTypes[h]==='dim'),m=headers.filter(h=>fieldTypes[h]==='mea'),dt=headers.filter(h=>fieldTypes[h]==='date');
     document.getElementById('dimFields').innerHTML=d.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi dim">A</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
     document.getElementById('meaFields').innerHTML=m.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi mea">Σ</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
     document.getElementById('dateFields').innerHTML=dt.map(h=>`<div class="field-item" onclick="quickAdd(encodeURIComponent('${esc(h)}'))"><div class="fi dat">📅</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
@@ -431,55 +445,32 @@ function renderPreview(){
     let html='<table><thead><tr>';
     headers.forEach(h=>{html+=`<th>${esc(h)}</th>`});
     html+='</tr></thead><tbody>';
-    rawData.slice(0,30).forEach(r=>{html+='<tr>';headers.forEach(h=>{html+=`<td title="${esc(String(r[h]))}">${esc(String(r[h]??''))}</td>`});html+='</tr>'});
+    rawData.slice(0,30).forEach(r=>{html+='<tr>';headers.forEach(h=>{html+=`<td title="${esc(String(r[h]??''))}">${esc(String(r[h]??''))}</td>`});html+='</tr>'});
     html+='</tbody></table>';
     document.getElementById('dataPreview').innerHTML=html;
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed')}
 function toggleBuilder(){document.getElementById('builder').classList.toggle('collapsed')}
 function togglePreview(){document.getElementById('dataPreview').classList.toggle('open')}
 
 // ===== Field Selection =====
-function quickAdd(encoded){
-    const field=decodeURIComponent(encoded);
-    if(fieldTypes[field]==='mea')cfg.yAxis=field;else cfg.xAxis=field;
-    updateSlots();toast('已选: '+field);
-}
+function quickAdd(encoded){const field=decodeURIComponent(encoded);if(fieldTypes[field]==='mea')cfg.yAxis=field;else cfg.xAxis=field;updateSlots();toast('已选: '+field)}
 function pickField(target){
-    pickTarget=target;
-    const modal=document.getElementById('fModal');
-    const title=document.getElementById('fModalTitle');
-    const list=document.getElementById('fPickList');
+    pickTarget=target;const modal=document.getElementById('fModal'),title=document.getElementById('fModalTitle'),list=document.getElementById('fPickList');
     let fields;
-    if(target==='xAxis'||target==='groupBy'){
-        title.textContent=target==='xAxis'?'选择 X 轴 (维度)':'选择分组字段';
-        fields=headers.filter(h=>fieldTypes[h]!=='mea');
-    }else{
-        title.textContent='选择 Y 轴 (度量)';
-        fields=headers.filter(h=>fieldTypes[h]==='mea');
-    }
+    if(target==='xAxis'||target==='groupBy'){title.textContent=target==='xAxis'?'选择 X 轴 (维度)':'选择分组字段';fields=headers.filter(h=>fieldTypes[h]!=='mea')}
+    else{title.textContent='选择 Y 轴 (度量)';fields=headers.filter(h=>fieldTypes[h]==='mea')}
     list.innerHTML=fields.map(f=>{
-        const icon=fieldTypes[f]==='mea'?'Σ':fieldTypes[f]==='date'?'📅':'A';
-        const cls=fieldTypes[f]==='mea'?'mea':'dim';
+        const icon=fieldTypes[f]==='mea'?'Σ':fieldTypes[f]==='date'?'📅':'A';const cls=fieldTypes[f]==='mea'?'mea':'dim';
         return `<div class="fpi" onclick="setField(encodeURIComponent('${esc(f)}'))"><span class="fi ${cls}" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-size:9px">${icon}</span>${esc(f)}</div>`;
     }).join('');
     modal.classList.add('show');
 }
-function setField(encoded){
-    const f=decodeURIComponent(encoded);
-    if(pickTarget==='xAxis')cfg.xAxis=f;
-    else if(pickTarget==='yAxis')cfg.yAxis=f;
-    else if(pickTarget==='groupBy')cfg.groupBy=f;
-    closeModal();updateSlots();
-}
+function setField(encoded){const f=decodeURIComponent(encoded);if(pickTarget==='xAxis')cfg.xAxis=f;else if(pickTarget==='yAxis')cfg.yAxis=f;else if(pickTarget==='groupBy')cfg.groupBy=f;closeModal();updateSlots()}
 function closeModal(){document.getElementById('fModal').classList.remove('show')}
-
 function updateSlots(){
-    const x=document.getElementById('xSlot');
-    const y=document.getElementById('ySlot');
-    const g=document.getElementById('gSlot');
+    const x=document.getElementById('xSlot'),y=document.getElementById('ySlot'),g=document.getElementById('gSlot');
     if(cfg.xAxis){x.className='f-slot has';x.innerHTML=`<span class="sv">${esc(cfg.xAxis)}</span><span class="sc" onclick="clearSlot('xAxis')">×</span>`}
     else{x.className='f-slot';x.innerHTML='<span class="sp">选择维度字段</span>'}
     if(cfg.yAxis){y.className='f-slot has';y.innerHTML=`<span class="sv">${esc(cfg.yAxis)}</span><span class="sc" onclick="clearSlot('yAxis')">×</span>`}
@@ -493,9 +484,8 @@ function selType(t){chartType=t;document.querySelectorAll('.ct-btn').forEach(b=>
 // ===== Filters =====
 let filterCount=0;
 function addFilter(){
-    const id=filterCount++;
-    const area=document.getElementById('filterArea');
-    const row=document.createElement('div');row.className='filter-row';row.id='filter-'+id;
+    const id=filterCount++,area=document.getElementById('filterArea'),row=document.createElement('div');
+    row.className='filter-row';row.id='filter-'+id;
     let opts='<option value="">字段</option>';
     headers.forEach((h,i)=>{opts+=`<option value="${i}">${esc(h)}</option>`});
     row.innerHTML=`<select class="ff">${opts}</select><select class="fo"><option value="eq">=</option><option value="neq">≠</option><option value="gt">&gt;</option><option value="gte">≥</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="contains">包含</option></select><input class="fv" placeholder="值"><button class="fr-del" onclick="this.parentElement.remove()">×</button>`;
@@ -520,17 +510,13 @@ function applyFilters(data){
 
 // ===== Aggregation =====
 function aggregate(data,xField,yField,groupField,agg){
-    const filtered=applyFilters(data);
-    const groups={};
+    const filtered=applyFilters(data);const groups={};
     filtered.forEach(row=>{
-        const key=xField?String(row[xField]??'空值'):'';
-        const group=groupField?String(row[groupField]??'空值'):null;
-        const val=Number(row[yField])||0;
+        const key=xField?String(row[xField]??'空值'):'';const group=groupField?String(row[groupField]??'空值'):null;const val=Number(row[yField])||0;
         if(!groups[key])groups[key]={};
         if(!groups[key][group??'_'])groups[key][group??'_']={sum:0,count:0,min:Infinity,max:-Infinity};
         groups[key][group??'_'].sum+=val;groups[key][group??'_'].count++;
-        groups[key][group??'_'].min=Math.min(groups[key][group??'_'].min,val);
-        groups[key][group??'_'].max=Math.max(groups[key][group??'_'].max,val);
+        groups[key][group??'_'].min=Math.min(groups[key][group??'_'].min,val);groups[key][group??'_'].max=Math.max(groups[key][group??'_'].max,val);
     });
     const labels=Object.keys(groups);
     const allGroups=[...new Set(Object.values(groups).flatMap(g=>Object.keys(g)))].filter(k=>k!=='_');
@@ -547,22 +533,20 @@ function aggregate(data,xField,yField,groupField,agg){
     return{labels,datasets};
 }
 
-// ===== Add Chart (Custom) =====
+// ===== Custom Dashboard =====
 function addChart(){
     if(!rawData.length){toast('⚠️ 请先上传数据');return}
     if(!cfg.yAxis){toast('⚠️ 请选择 Y 轴字段');return}
     const agg=document.getElementById('aggSel').value;cfg.agg=agg;
     const title=document.getElementById('chartTitle').value||`${agg.toUpperCase()}(${cfg.yAxis}) by ${cfg.xAxis||'全部'}${cfg.groupBy?' · '+cfg.groupBy:''}`;
     const result=aggregate(rawData,cfg.xAxis,cfg.yAxis,cfg.groupBy,agg);
-    const id='w'+(++wId);
-    const grid=document.getElementById('dashGrid');
+    const id='w'+(++wId),grid=document.getElementById('dashGrid');
     document.getElementById('emptyState').style.display='none';grid.style.display='grid';
     const isPie=chartType==='pie'||chartType==='doughnut'||chartType==='polarArea';
     result.datasets.forEach((ds,i)=>{
         if(chartType==='table')return;
         ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length];
-        ds.borderColor=isPie?'transparent':COLORS[i%COLORS.length];
-        ds.borderWidth=isPie?0:2;
+        ds.borderColor=isPie?'transparent':COLORS[i%COLORS.length];ds.borderWidth=isPie?0:2;
         if(chartType==='line'){ds.fill=false;ds.tension=.3;ds.pointRadius=4;ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length]+'33'}
         if(chartType==='bar'){ds.borderRadius=4;if(result.datasets.length<=1){ds.backgroundColor=COLORS.slice(0,result.labels.length);ds.borderColor=COLORS.slice(0,result.labels.length)}}
     });
@@ -574,49 +558,55 @@ function addChart(){
     }
     grid.appendChild(widget);
     if(chartType!=='table'){
-        new Chart(document.getElementById('cv-'+id).getContext('2d'),{
-            type:chartType,data:{labels:result.labels,datasets:result.datasets},
-            options:{responsive:true,maintainAspectRatio:false,
-                plugins:{legend:{display:result.datasets.length>1,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9},color:'#8a8d9e'}},tooltip:{backgroundColor:'#1a1d2e',borderColor:'#2a2d42',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#a29bfe',padding:8,cornerRadius:6}},
-                scales:(isPie||chartType==='radar')?{}:{x:{grid:{display:false},ticks:{color:'#8a8d9e',maxRotation:45,font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}
-            }
-        });
+        new Chart(document.getElementById('cv-'+id).getContext('2d'),{type:chartType,data:{labels:result.labels,datasets:result.datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:result.datasets.length>1,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:9},color:'#8a8d9e'}},tooltip:{backgroundColor:'#1a1d2e',borderColor:'#2a2d42',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#a29bfe',padding:8,cornerRadius:6}},scales:(isPie||chartType==='radar')?{}:{x:{grid:{display:false},ticks:{color:'#8a8d9e',maxRotation:45,font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
     }
     widgets.push({id,title,chartType,xAxis:cfg.xAxis,yAxis:cfg.yAxis,groupBy:cfg.groupBy,agg,config:{...cfg}});
     toast('✅ 图表已添加');
 }
-function removeWidget(id){
-    const el=document.getElementById(id);if(el)el.remove();
-    widgets=widgets.filter(w=>w.id!==id);
-    if(!widgets.length){document.getElementById('emptyState').style.display='flex';document.getElementById('dashGrid').style.display='none'}
+function removeWidget(id){const el=document.getElementById(id);if(el)el.remove();widgets=widgets.filter(w=>w.id!==id);if(!widgets.length){document.getElementById('emptyState').style.display='flex';document.getElementById('dashGrid').style.display='none'}}
+
+// ===== Default Dashboard (ROI/UA 买量日报风格) =====
+function fn(h){return headers.includes(h)?h:null}
+
+function fmtVal(v,field){
+    if(v===null||v===undefined||isNaN(v))return'-';
+    // If it looks like a percentage field
+    if(field&&field.includes('率'))return(v*100).toFixed(2)+'%';
+    if(field&&field.includes('比'))return(v*100).toFixed(2)+'%';
+    if(field&&field.includes('回报'))return(v*100).toFixed(2)+'%';
+    if(field&&field.includes('系数'))return v.toFixed(2);
+    if(v>=1e6)return(v/1e6).toFixed(1)+'M';
+    if(v>=1e4)return(v/1e4).toFixed(1)+'万';
+    if(v>=1e3)return v.toLocaleString();
+    if(Number.isInteger(v))return v.toString();
+    return v.toFixed(2);
 }
 
-// ===== Default Dashboard =====
-function findField(keywords,types){
-    for(const kw of keywords){
-        for(const h of headers){
-            if(fieldTypes[h]===types||types==='any'){
-                if(h.toLowerCase().includes(kw.toLowerCase()))return h;
-            }
-        }
-    }
-    // Fallback: try partial match
-    for(const kw of keywords){
-        for(const h of headers){
-            if(h.toLowerCase().includes(kw.toLowerCase()))return h;
-        }
-    }
-    return null;
+function fmtPct(v){return(v*100).toFixed(2)+'%'}
+function fmtNum(v){
+    if(v===null||v===undefined||isNaN(v))return'-';
+    if(v>=1e6)return(v/1e6).toFixed(2)+'M';
+    if(v>=1e4)return(v/1e4).toFixed(1)+'万';
+    if(v>=1e3)return v.toLocaleString();
+    if(Number.isInteger(v))return v.toString();
+    return v.toFixed(2);
 }
 
-function formatNum(n){
-    if(n===null||n===undefined||isNaN(n))return'-';
-    if(n>=1e9)return(n/1e9).toFixed(1)+'B';
-    if(n>=1e6)return(n/1e6).toFixed(1)+'M';
-    if(n>=1e4)return(n/1e4).toFixed(1)+'万';
-    if(n>=1e3)return n.toLocaleString();
-    if(Number.isInteger(n))return n.toString();
-    return n.toFixed(2);
+function countryColor(country){
+    let hash=0;
+    for(let i=0;i<country.length;i++)hash=country.charCodeAt(i)+((hash<<5)-hash);
+    return COLORS[Math.abs(hash)%COLORS.length];
+}
+
+function roiBadge(v){
+    if(v>=0.5)return`<span class="badge good">${fmtPct(v)}</span>`;
+    if(v>=0.15)return`<span class="badge warn">${fmtPct(v)}</span>`;
+    return`<span class="badge bad">${fmtPct(v)}</span>`;
+}
+function retentionBadge(v){
+    if(v>=0.4)return`<span class="badge good">${fmtPct(v)}</span>`;
+    if(v>=0.2)return`<span class="badge warn">${fmtPct(v)}</span>`;
+    return`<span class="badge bad">${fmtPct(v)}</span>`;
 }
 
 function renderDefaultDash(){
@@ -626,179 +616,299 @@ function renderDefaultDash(){
         return;
     }
 
-    // Auto-detect fields
-    const dateField=findField(['日期','date','时间','time','day'],'date')||findField(['日期','date','时间','time','day'],'any');
-    const countryField=findField(['国家','country','地区','region','market','市场'],'dim');
-    const channelField=findField(['渠道','channel','media','source','媒体','广告渠道'],'dim');
-    const gameField=findField(['游戏','game','产品','product','应用','app'],'dim');
-    const dauField=findField(['DAU','dau','日活','日活跃'],'mea');
-    const mauField=findField(['MAU','mau','月活','月活跃'],'mea');
-    const revenueField=findField(['收入','revenue','流水','income','pay','付费金额','充值','金额'],'mea');
-    const installField=findField(['安装','install','下载','download','新增','注册','新注册'],'mea');
-    const retentionField=findField(['留存','retention','ret_rate'],'mea');
-    const ltvField=findField(['LTV','ltv','生命周期'],'mea');
-    const arpuField=findField(['ARPU','arpu','arppu','每用户'],'mea');
-    const payUserField=findField(['付费用户','paying','付费人数','付费'],'mea');
-    const payRateField=findField(['付费率','pay rate','paying_rate','payrate'],'mea');
-    const spendField=findField(['花费','spend','cost','消耗','广告花费','广告支出'],'mea');
-    const ctrField=findField(['CTR','ctr','点击率'],'mea');
-    const cvrField=findField(['CVR','cvr','转化率'],'mea');
-    const cpiField=findField(['CPI','cpi','cpa','安装成本'],'mea');
+    // === Detect columns by name matching ===
+    const dateCol=fn('日期')||headers.find(h=>fieldTypes[h]==='date');
+    const countryCol=fn('国家');
+    const installsCol=fn('安装');
+    const organicCol=fn('自然量安装');
+    const organicPctCol=fn('自然量占比');
+    const paidCol=fn('买量安装');
+    const imprCol=fn('展示');
+    const clicksCol=fn('点击');
+    const ctrCol=fn('CTR');
+    const cvrCol=fn('CVR');
+    const cpcCol=fn('CC');
+    const spendCol=fn('广告花费');
+    const ipmCol=fn('IPM');
+    const cpiCol=fn('CPI');
+    const cpmCol=fn('CPM');
+    const roi0Col=fn('0日回报率');
+    const roi1Col=fn('1日回报率');
+    const roi3Col=fn('3日回报率');
+    const online0Col=fn('0日人均在线时长');
+    const online1Col=fn('1日人均在线时长');
+    const ret1Col=fn('1日留存率');
+    const ret3Col=fn('3日留存率');
+    const ltv0Col=fn('0日LTV');
+    const ltv1Col=fn('1日LTV');
+    const ltv3Col=fn('3日LTV');
+    const arppu0Col=fn('0日Arppu');
+    const arppu1Col=fn('1日Arppu');
+    const arppu3Col=fn('3日Arppu');
+    const payCost0Col=fn('0日付费用户成本');
+    const payCost1Col=fn('1日付费用户成本');
+    const payCost3Col=fn('3日付费用户成本');
+    const payRate0Col=fn('0日付费率');
+    const payRate1Col=fn('1日付费率');
+    const payRate3Col=fn('3日付费率');
+    const payUser0Col=fn('0日内付费人数');
+    const payUser1Col=fn('1日内付费人数');
+    const grow10Col=fn('D1:D0增长系数');
+    const grow31Col=fn('D3:D1增长系数');
+    const grow30Col=fn('D3:D0 增长系数');
 
-    // Pick first date column for time series
-    const dateColumns=headers.filter(h=>fieldTypes[h]==='date');
-    const dimColumns=headers.filter(h=>fieldTypes[h]==='dim');
-    const meaColumns=headers.filter(h=>fieldTypes[h]==='mea');
+    // Filter out total rows (国家 == '--')
+    const dataRows=rawData.filter(r=>countryCol?r[countryCol]!=='--':true);
+    const totalRows=rawData.filter(r=>countryCol?r[countryCol]==='--':false);
 
-    // Compute summary stats
-    const totalRecords=rawData.length;
-    const totalMeaSum={};
-    meaColumns.forEach(m=>{
-        totalMeaSum[m]=rawData.reduce((s,r)=>s+(Number(r[m])||0),0);
-    });
+    // Aggregate totals across all data
+    const sum=(col)=>dataRows.reduce((s,r)=>s+(Number(r[col])||0),0);
+    const avg=(col)=>{const vals=dataRows.map(r=>Number(r[col])).filter(v=>!isNaN(v));return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0};
 
-    // Group by date if available
-    let dateGrouped={};
-    if(dateColumns.length>0){
-        const dc=dateColumns[0];
-        rawData.forEach(r=>{
-            const d=String(r[dc]??'').substring(0,10);
-            if(!dateGrouped[d])dateGrouped[d]={};
-            meaColumns.forEach(m=>{
-                if(!dateGrouped[d][m])dateGrouped[d][m]={sum:0,count:0};
-                dateGrouped[d][m].sum+=Number(r[m])||0;
-                dateGrouped[d][m].count++;
+    // Unique dates and countries
+    const dates=dateCol?[...new Set(dataRows.map(r=>{const d=r[dateCol];return d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10)}))].sort():[];
+    const countries=countryCol?[...new Set(dataRows.map(r=>r[countryCol]))].filter(c=>c!=='--'&&c):[];
+
+    // Date-grouped aggregation
+    const byDate={};
+    if(dateCol){
+        dataRows.forEach(r=>{
+            const d=r[dateCol];const key=d instanceof Date?d.toISOString().slice(0,10):String(d).slice(0,10);
+            if(!byDate[key])byDate[key]={};
+            headers.forEach(h=>{
+                if(fieldTypes[h]==='mea'){
+                    if(!byDate[key][h])byDate[key][h]={sum:0,count:0};
+                    byDate[key][h].sum+=Number(r[h])||0;
+                    byDate[key][h].count++;
+                }
+            });
+        });
+    }
+    const sortedDates=Object.keys(byDate).sort();
+
+    // Country-grouped aggregation
+    const byCountry={};
+    if(countryCol){
+        dataRows.forEach(r=>{
+            const c=r[countryCol];if(!c||c==='--')return;
+            if(!byCountry[c])byCountry[c]={};
+            headers.forEach(h=>{
+                if(fieldTypes[h]==='mea'){
+                    if(!byCountry[c][h])byCountry[c][h]={sum:0,count:0};
+                    byCountry[c][h].sum+=Number(r[h])||0;
+                    byCountry[c][h].count++;
+                }
             });
         });
     }
 
-    // Build KPIs
-    let kpis=[];
-    if(revenueField)kpis.push({icon:'💰',label:'总收入',value:formatNum(totalMeaSum[revenueField]),cls:'blue',sub:meaColumns.length+' 个指标'});
-    if(installField)kpis.push({icon:'📥',label:'总安装',value:formatNum(totalMeaSum[installField]),cls:'green',sub:''});
-    if(payUserField)kpis.push({icon:'👤',label:'总付费用户',value:formatNum(totalMeaSum[payUserField]),cls:'orange',sub:''});
-    if(dauField)kpis.push({icon:'📈',label:'DAU',value:formatNum(totalMeaSum[dauField]),cls:'purple',sub:''});
-    if(ltvField)kpis.push({icon:'💎',label:'LTV',value:typeof totalMeaSum[ltvField]==='number'?totalMeaSum[ltvField].toFixed(2):'-',cls:'blue',sub:''});
-    if(arpuField)kpis.push({icon:'🎯',label:'ARPU',value:typeof totalMeaSum[arpuField]==='number'?totalMeaSum[arpuField].toFixed(2):'-',cls:'green',sub:''});
-    if(payRateField)kpis.push({icon:'📊',label:'付费率',value:typeof totalMeaSum[payRateField]==='number'?totalMeaSum[payRateField].toFixed(2)+'%':'-',cls:'orange',sub:''});
-    if(spendField)kpis.push({icon:'💸',label:'总花费',value:formatNum(totalMeaSum[spendField]),cls:'red',sub:''});
-
-    // If no specific fields found, show first few metrics
-    if(kpis.length===0&&meaColumns.length>0){
-        meaColumns.slice(0,6).forEach((m,i)=>{
-            const cls=['blue','green','orange','red','purple'][i%5];
-            kpis.push({icon:'📊',label:m,value:formatNum(totalMeaSum[m]),cls,sub:''});
-        });
-    }
-
-    // Build HTML
+    // ====== BUILD HTML ======
     let html='';
 
-    // KPI Row
+    // --- KPI Row ---
     html+='<div class="kpi-row">';
-    kpis.forEach(k=>{
-        html+=`<div class="kpi-card ${k.cls}"><div class="kpi-icon">${k.icon}</div><div class="kpi-value">${k.value}</div><div class="kpi-label">${k.label}</div>${k.sub?`<div class="kpi-sub">${k.sub}</div>`:''}</div>`;
+    const kpiDefs=[
+        {icon:'📥',label:'总安装',value:fmtNum(sum(installsCol)),cls:'blue',sub:`自然 ${fmtNum(sum(organicCol))} (${organicPctCol?fmtPct(avg(organicPctCol)):'-'})`},
+        {icon:'💰',label:'总广告花费',value:fmtNum(sum(spendCol)),cls:'orange',sub:`CPI $${cpiCol?fmtVal(avg(cpiCol)): '-'}`},
+        {icon:'👁️',label:'总展示',value:fmtNum(sum(imprCol)),cls:'cyan',sub:`CPM $${cpmCol?fmtVal(avg(cpmCol)):'-'}`},
+        {icon:'👆',label:'总点击',value:fmtNum(sum(clicksCol)),cls:'purple',sub:`CTR ${ctrCol?fmtPct(avg(ctrCol)):'-'} · CVR ${cvrCol?fmtPct(avg(cvrCol)):'-'}`},
+        {icon:'📈',label:'1日留存',value:ret1Col?retentionBadge(avg(ret1Col)):'-',cls:'green',sub:`3日 ${ret3Col?retentionBadge(avg(ret3Col)):'-'}`},
+        {icon:'🔄',label:'1日ROI',value:roi1Col?roiBadge(avg(roi1Col)):'-',cls:'green',sub:`3日 ${roi3Col?roiBadge(avg(roi3Col)):'-'}`},
+        {icon:'💎',label:'3日LTV',value:ltv3Col?'$'+fmtVal(avg(ltv3Col)):'-',cls:'blue',sub:`1日LTV ${ltv1Col?'$'+fmtVal(avg(ltv1Col)):'-'}`},
+        {icon:'🎯',label:'3日ARPPU',value:arppu3Col?'$'+fmtVal(avg(arppu3Col)):'-',cls:'orange',sub:`付费率 ${payRate3Col?fmtPct(avg(payRate3Col)):'-'}`},
+    ];
+    kpiDefs.forEach(k=>{
+        html+=`<div class="kpi-card ${k.cls}"><div class="kpi-icon">${k.icon}</div><div class="kpi-value">${k.value}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`;
     });
     html+='</div>';
 
-    // Charts
-    html+='<div class="chart-section"><div class="section-title"><span class="st-icon">📈</span>趋势分析</div><div class="chart-grid">';
-
-    // Trend chart for each measure (up to 3)
-    if(dateColumns.length>0&&meaColumns.length>0){
-        const dc=dateColumns[0];
-        const dates=Object.keys(dateGrouped).sort();
-        meaColumns.slice(0,3).forEach((m,mi)=>{
-            const cid='dt-'+Date.now()+'-'+mi;
-            const vals=dates.map(d=>dateGrouped[d][m]?dateGrouped[d][m].sum:0);
-            html+=`<div class="chart-card"><h4>${m} 趋势</h4><canvas id="${cid}"></canvas></div>`;
-        });
+    // --- 投放趋势 (Time Series) ---
+    html+='<div class="sec-title"><span class="st-icon">📈</span>投放趋势（按日期）</div><div class="chart-grid">';
+    if(sortedDates.length>0){
+        // Installs trend
+        const cid1='dt-'+Date.now()+'-1';
+        html+=`<div class="chart-card"><h4>📥 安装量 & 买量安装</h4><canvas id="${cid1}"></canvas></div>`;
+        // Spend & CPI trend
+        const cid2='dt-'+Date.now()+'-2';
+        html+=`<div class="chart-card"><h4>💰 广告花费 & CPI</h4><canvas id="${cid2}"></canvas></div>`;
+        // ROI trend
+        const cid3='dt-'+Date.now()+'-3';
+        html+=`<div class="chart-card"><h4>🔄 回报率趋势</h4><canvas id="${cid3}"></canvas></div>`;
+        // Retention trend
+        const cid4='dt-'+Date.now()+'-4';
+        html+=`<div class="chart-card"><h4>📊 留存率趋势</h4><canvas id="${cid4}"></canvas></div>`;
     }
+    html+='</div>';
 
-    html+='</div></div>';
-
-    // Group by dimension
-    if(dimColumns.length>0&&meaColumns.length>0){
-        html+='<div class="chart-section"><div class="section-title"><span class="st-icon">📊</span>维度分布</div><div class="chart-grid">';
-        dimColumns.slice(0,2).forEach((d,di)=>{
-            const cid='gd-'+Date.now()+'-'+di;
-            // Aggregate top values
-            const agg={};
-            rawData.forEach(r=>{
-                const k=String(r[d]??'未知');
-                if(!agg[k])agg[k]=0;
-                meaColumns.slice(0,1).forEach(m=>{agg[k]+=(Number(r[m])||0)});
-            });
-            const entries=Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,15);
-            const labels=entries.map(e=>e[0]);
-            const values=entries.map(e=>e[1]);
-            html+=`<div class="chart-card"><h4>${d} · ${meaColumns[0]}</h4><canvas id="${cid}"></canvas></div>`;
-        });
-        html+='</div></div>';
+    // --- 市场对比 (Country Comparison) ---
+    html+='<div class="sec-title"><span class="st-icon">🌍</span>市场对比</div><div class="chart-grid">';
+    if(countries.length>0){
+        // Installs by country
+        const cid5='ct-'+Date.now()+'-5';
+        html+=`<div class="chart-card"><h4>📥 各市场安装量</h4><canvas id="${cid5}"></canvas></div>`;
+        // CPI by country
+        const cid6='ct-'+Date.now()+'-6';
+        html+=`<div class="chart-card"><h4>💰 各市场 CPI</h4><canvas id="${cid6}"></canvas></div>`;
+        // ROI by country
+        const cid7='ct-'+Date.now()+'-7';
+        html+=`<div class="chart-card"><h4>🔄 各市场 ROI</h4><canvas id="${cid7}"></canvas></div>`;
+        // Retention by country
+        const cid8='ct-'+Date.now()+'-8';
+        html+=`<div class="chart-card"><h4>📊 各市场留存率</h4><canvas id="${cid8}"></canvas></div>`;
     }
+    html+='</div>';
 
-    // Data summary table
-    html+='<div class="chart-section"><div class="section-title"><span class="st-icon">📋</span>数据明细</div>';
-    html+='<div class="chart-card" style="overflow:auto"><table class="metric-table"><thead><tr>';
-    headers.slice(0,12).forEach(h=>{html+=`<th>${esc(h)}</th>`});
+    // --- 转化漏斗 ---
+    html+='<div class="sec-title"><span class="st-icon">🔻</span>投放转化漏斗</div><div class="chart-grid">';
+    const cid9='ct-'+Date.now()+'-9';
+    html+=`<div class="chart-card"><h4>展示 → 点击 → 安装 → 付费</h4><canvas id="${cid9}"></canvas></div>`;
+    html+='</div>';
+
+    // --- 数据明细表 ---
+    html+='<div class="sec-title"><span class="st-icon">📋</span>数据明细（按市场）</div>';
+    html+='<div class="data-table-wrap"><table class="data-table"><thead><tr>';
+
+    const tableCols=[
+        {key:countryCol,label:'市场',type:'str'},
+        {key:installsCol,label:'安装',type:'num'},
+        {key:organicCol,label:'自然安装',type:'num'},
+        {key:paidCol,label:'买量安装',type:'num'},
+        {key:spendCol,label:'广告花费($)',type:'num'},
+        {key:cpiCol,label:'CPI($)',type:'num'},
+        {key:ctrCol,label:'CTR',type:'pct'},
+        {key:cvrCol,label:'CVR',type:'pct'},
+        {key:imprCol,label:'展示',type:'num'},
+        {key:clicksCol,label:'点击',type:'num'},
+        {key:roi0Col,label:'D0 ROI',type:'pct'},
+        {key:roi1Col,label:'D1 ROI',type:'pct'},
+        {key:roi3Col,label:'D3 ROI',type:'pct'},
+        {key:ret1Col,label:'D1 留存',type:'pct'},
+        {key:ret3Col,label:'D3 留存',type:'pct'},
+        {key:ltv0Col,label:'D0 LTV',type:'num'},
+        {key:ltv1Col,label:'D1 LTV',type:'num'},
+        {key:ltv3Col,label:'D3 LTV',type:'num'},
+        {key:payRate1Col,label:'D1 付费率',type:'pct'},
+        {key:arppu3Col,label:'D3 ARPPU',type:'num'},
+    ].filter(c=>c.key);
+
+    tableCols.forEach(c=>{html+=`<th class="${c.type==='num'||c.type==='pct'?'num':''}">${c.label}</th>`});
     html+='</tr></thead><tbody>';
-    rawData.slice(0,50).forEach(r=>{
-        html+='<tr>';headers.slice(0,12).forEach(h=>{
-            const v=r[h];
-            html+=`<td class="${fieldTypes[h]==='mea'?'num':''}">${esc(v===''||v==null?'-':String(v))}</td>`;
-        });html+='</tr>';
+
+    // Sort countries by total installs desc
+    const sortedCountries=[...countries].sort((a,b)=>{
+        const ai=byCountry[a]&&byCountry[a][installsCol]?byCountry[a][installsCol].sum:0;
+        const bi=byCountry[b]&&byCountry[b][installsCol]?byCountry[b][installsCol].sum:0;
+        return bi-ai;
     });
-    html+='</tbody></table></div></div>';
+
+    const maxInstalls=sortedCountries.length?((byCountry[sortedCountries[0]]&&byCountry[sortedCountries[0]][installsCol])?byCountry[sortedCountries[0]][installsCol].sum:1):1;
+
+    sortedCountries.forEach(c=>{
+        const cd=byCountry[c]||{};
+        html+='<tr>';
+        tableCols.forEach(tc=>{
+            const gd=cd[tc.key];
+            const v=gd?gd.sum:0;
+            const avgV=gd?gd.count?gd.sum/gd.count:0:0;
+            let display='-';
+            if(tc.type==='num'){display=v?fmtNum(v):'-'}
+            else if(tc.type==='pct'){display=v!==undefined&&v!==null&&gd?fmtPct(avgV):'-'}
+
+            if(tc.key===countryCol){
+                const color=countryColor(c);
+                display=`<div class="country-cell"><span class="flag-dot" style="background:${color}"></span>${esc(c)}</div>`;
+            }
+            html+=`<td class="${tc.type==='num'||tc.type==='pct'?'num':''}">${display}</td>`;
+        });
+        html+='</tr>';
+    });
+
+    html+='</tbody></table></div>';
 
     view.innerHTML=html;
 
-    // Render charts after DOM update
+    // ===== Render Charts =====
     requestAnimationFrame(()=>{
-        // Trend charts
-        if(dateColumns.length>0&&meaColumns.length>0){
-            const dc=dateColumns[0];
-            const dates=Object.keys(dateGrouped).sort();
-            meaColumns.slice(0,3).forEach((m,mi)=>{
-                const cid='dt-'+Date.now()+'-'+mi;
-                const el=document.getElementById(cid);
-                if(!el)return;
-                const vals=dates.map(d=>dateGrouped[d][m]?dateGrouped[d][m].sum:0);
-                new Chart(el.getContext('2d'),{
-                    type:mi===0?'line':'bar',
-                    data:{labels:dates.map(d=>d.substring(5)),datasets:[{label:m,data:vals,backgroundColor:COLORS[mi]+'33',borderColor:COLORS[mi],borderWidth:2,tension:.3,fill:mi===0,pointRadius:mi===0?4:0,borderRadius:mi>0?4:undefined}]},
-                    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',maxRotation:45,font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}}
-                });
-            });
+        if(sortedDates.length>0){
+            const xLabels=sortedDates.map(d=>d.slice(5));
+
+            // Installs trend
+            const e1=document.getElementById('dt-'+Date.now()+'-1');
+            if(e1)new Chart(e1.getContext('2d'),{type:'bar',data:{labels:xLabels,datasets:[
+                {label:'安装',data:sortedDates.map(d=>byDate[d][installsCol]?byDate[d][installsCol].sum:0),backgroundColor:'#6c5ce7',borderRadius:4},
+                {label:'买量安装',data:sortedDates.map(d=>byDate[d][paidCol]?byDate[d][paidCol].sum:0),backgroundColor:'#a29bfe',borderRadius:4},
+                {label:'自然安装',data:sortedDates.map(d=>byDate[d][organicCol]?byDate[d][organicCol].sum:0),backgroundColor:'#00cec9',borderRadius:4},
+            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
+
+            // Spend & CPI
+            const e2=document.getElementById('dt-'+Date.now()+'-2');
+            if(e2)new Chart(e2.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
+                {label:'广告花费($)',data:sortedDates.map(d=>byDate[d][spendCol]?byDate[d][spendCol].sum:0),borderColor:'#fdcb6e',backgroundColor:'rgba(253,203,110,.1)',fill:true,tension:.3,borderWidth:2,yAxisID:'y'},
+                {label:'CPI($)',data:sortedDates.map(d=>byDate[d][cpiCol]?byDate[d][cpiCol].sum/byDate[d][cpiCol].count:0),borderColor:'#ff6b6b',backgroundColor:'transparent',tension:.3,borderWidth:2,borderDash:[5,5],pointRadius:4,yAxisID:'y1'},
+            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,position:'left',grid:{color:'#2a2d42'},ticks:{color:'#fdcb6e',font:{size:9}}},y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{color:'#ff6b6b',font:{size:9}}}}}});
+
+            // ROI trend
+            const e3=document.getElementById('dt-'+Date.now()+'-3');
+            if(e3)new Chart(e3.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
+                {label:'D0 ROI',data:sortedDates.map(d=>byDate[d][roi0Col]?byDate[d][roi0Col].sum/byDate[d][roi0Col].count:0),borderColor:'#a29bfe',tension:.3,borderWidth:2,pointRadius:4},
+                {label:'D1 ROI',data:sortedDates.map(d=>byDate[d][roi1Col]?byDate[d][roi1Col].sum/byDate[d][roi1Col].count:0),borderColor:'#00b894',tension:.3,borderWidth:2,pointRadius:4},
+                {label:'D3 ROI',data:sortedDates.map(d=>byDate[d][roi3Col]?byDate[d][roi3Col].sum/byDate[d][roi3Col].count:0),borderColor:'#fdcb6e',tension:.3,borderWidth:2,pointRadius:4},
+            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}}}}});
+
+            // Retention trend
+            const e4=document.getElementById('dt-'+Date.now()+'-4');
+            if(e4)new Chart(e4.getContext('2d'),{type:'line',data:{labels:xLabels,datasets:[
+                {label:'D1 留存',data:sortedDates.map(d=>byDate[d][ret1Col]?byDate[d][ret1Col].sum/byDate[d][ret1Col].count:0),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.1)',fill:true,tension:.3,borderWidth:2},
+                {label:'D3 留存',data:sortedDates.map(d=>byDate[d][ret3Col]?byDate[d][ret3Col].sum/byDate[d][ret3Col].count:0),borderColor:'#fdcb6e',backgroundColor:'rgba(253,203,110,.1)',fill:true,tension:.3,borderWidth:2},
+            ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}}}}});
         }
-        // Dimension charts
-        if(dimColumns.length>0&&meaColumns.length>0){
-            dimColumns.slice(0,2).forEach((d,di)=>{
-                const cid='gd-'+Date.now()+'-'+di;
-                const el=document.getElementById(cid);
-                if(!el)return;
-                const agg={};
-                rawData.forEach(r=>{const k=String(r[d]??'未知');if(!agg[k])agg[k]=0;meaColumns.slice(0,1).forEach(m=>{agg[k]+=(Number(r[m])||0)})});
-                const entries=Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,15);
-                const labels=entries.map(e=>e[0]);
-                const values=entries.map(e=>e[1]);
-                new Chart(el.getContext('2d'),{
-                    type:'bar',
-                    data:{labels,datasets:[{label:meaColumns[0],data:values,backgroundColor:COLORS.slice(0,labels.length),borderRadius:4}]},
-                    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}
-                });
+
+        // Country charts
+        if(countries.length>0){
+            const sorted=[...countries].sort((a,b)=>{
+                const ai=byCountry[a]&&byCountry[a][installsCol]?byCountry[a][installsCol].sum:0;
+                const bi=byCountry[b]&&byCountry[b][installsCol]?byCountry[b][installsCol].sum:0;
+                return bi-ai;
             });
+            const cLabels=sorted.map(c=>c.replace(/^[A-Z]{2}-/,''));
+            const cColors=sorted.map(c=>countryColor(c));
+
+            // Installs by country
+            const e5=document.getElementById('ct-'+Date.now()+'-5');
+            if(e5)new Chart(e5.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[{label:'安装量',data:sorted.map(c=>byCountry[c][installsCol]?byCountry[c][installsCol].sum:0),backgroundColor:cColors,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
+
+            // CPI by country
+            const e6=document.getElementById('ct-'+Date.now()+'-6');
+            if(e6)new Chart(e6.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[{label:'CPI($)',data:sorted.map(c=>{const d=byCountry[c][cpiCol];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#ff6b6b',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
+
+            // ROI by country
+            const e7=document.getElementById('ct-'+Date.now()+'-7');
+            if(e7)new Chart(e7.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[
+                {label:'D1 ROI',data:sorted.map(c=>{const d=byCountry[c][roi1Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#00b894',borderRadius:4},
+                {label:'D3 ROI',data:sorted.map(c=>{const d=byCountry[c][roi3Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#fdcb6e',borderRadius:4},
+            ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
+
+            // Retention by country
+            const e8=document.getElementById('ct-'+Date.now()+'-8');
+            if(e8)new Chart(e8.getContext('2d'),{type:'bar',data:{labels:cLabels,datasets:[
+                {label:'D1 留存',data:sorted.map(c=>{const d=byCountry[c][ret1Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#a29bfe',borderRadius:4},
+                {label:'D3 留存',data:sorted.map(c=>{const d=byCountry[c][ret3Col];return d&&d.count?d.sum/d.count:0}),backgroundColor:'#6c5ce7',borderRadius:4},
+            ]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#8a8d9e',font:{size:9}}}},scales:{x:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{callback:v=>(v*100).toFixed(0)+'%',color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#8a8d9e',font:{size:9}}}}}});
         }
+
+        // Funnel chart
+        const totalImpr=sum(imprCol),totalClicks=sum(clicksCol),totalInstalls=sum(installsCol),totalPayUsers=sum(payUser1Col);
+        const e9=document.getElementById('ct-'+Date.now()+'-9');
+        if(e9)new Chart(e9.getContext('2d'),{type:'bar',data:{labels:['展示','点击','安装','付费用户'],datasets:[{label:'数量',data:[totalImpr,totalClicks,totalInstalls,totalPayUsers],backgroundColor:['#6c5ce7','#a29bfe','#00cec9','#00b894'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{type:'logarithmic',beginAtZero:false,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#e8eaf0',font:{size:11}}}}}});
     });
 }
 
 // ===== Toast =====
-function toast(msg){
-    const t=document.createElement('div');t.className='toast';t.textContent=msg;
-    document.body.appendChild(t);setTimeout(()=>t.remove(),2800);
-}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
 
 // ===== Init =====
 document.getElementById('builder').classList.add('collapsed');
+document.getElementById('defaultView').innerHTML='<div class="canvas-empty"><div class="ce-icon">📊</div><h2>上传数据后自动生成看板</h2><p>支持 .xlsx / .xls / .csv 格式 · 自动识别买量指标</p></div>';
 </script>
 </body>
 </html>
