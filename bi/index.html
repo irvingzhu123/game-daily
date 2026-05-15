@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI 数据看板 · Republic Zhu</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        :root{--bg:#0a0b10;--surface:#131520;--card:#1a1d2e;--border:#2a2d42;--accent:#6c5ce7;--accent2:#a29bfe;--accent3:#00cec9;--text:#e8eaf0;--text-dim:#8a8d9e;--text-muted:#5a5d6e;--success:#00b894;--warning:#fdcb6e;--danger:#ff6b6b;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.3)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+
+        .topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100}
+        .topbar .brand{font-size:16px;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+        .topbar .divider{width:1px;height:24px;background:var(--border)}
+        .topbar .dataset-name{color:var(--text-dim);font-size:13px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .topbar .spacer{flex:1}
+        .topbar .btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+        .topbar .btn:hover{border-color:var(--accent);background:rgba(108,92,231,.1)}
+        .topbar .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+        .topbar .btn.primary:hover{background:#5a4bd1}
+        .topbar .btn.danger{border-color:var(--danger);color:var(--danger)}
+        .topbar .btn.danger:hover{background:rgba(255,107,107,.1)}
+
+        .main{display:flex;height:calc(100vh - 56px)}
+
+        .sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0}
+        .sidebar.collapsed{width:0;border:none}
+        .sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
+        .sidebar-scroll{flex:1;overflow-y:auto;padding:12px}
+        .sidebar-scroll::-webkit-scrollbar{width:4px}
+        .sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+        .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}
+        .upload-area:hover,.upload-area.dragover{border-color:var(--accent);background:rgba(108,92,231,.05)}
+        .upload-area .icon{font-size:32px;margin-bottom:6px}
+        .upload-area p{color:var(--text-dim);font-size:12px}
+        .upload-area .formats{color:var(--text-muted);font-size:10px;margin-top:3px}
+
+        .field-group{margin-bottom:12px}
+        .field-group-title{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;padding-left:8px}
+        .field-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .15s;font-size:12px}
+        .field-item:hover{background:rgba(108,92,231,.1)}
+        .field-item .fi{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+        .field-item .fi.dim{background:rgba(0,206,201,.15);color:var(--accent3)}
+        .field-item .fi.mea{background:rgba(253,203,110,.15);color:var(--warning)}
+        .field-item .fi.dat{background:rgba(162,155,254,.15);color:var(--accent2)}
+        .field-item .fn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+        .builder-panel{width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s;flex-shrink:0}
+        .builder-panel.collapsed{width:0;border:none}
+        .builder-header{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+        .builder-scroll{flex:1;overflow-y:auto;padding:14px}
+        .builder-scroll::-webkit-scrollbar{width:4px}
+        .builder-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+        .b-section{margin-bottom:16px}
+        .b-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+        .chart-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+        .ct-btn{background:var(--card);border:2px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s}
+        .ct-btn:hover{border-color:var(--accent)}
+        .ct-btn.active{border-color:var(--accent);background:rgba(108,92,231,.15)}
+        .ct-btn .ci{font-size:18px;display:block;margin-bottom:2px}
+        .ct-btn .cl{font-size:9px;color:var(--text-dim)}
+
+        .f-slot{background:var(--card);border:1px dashed var(--border);border-radius:8px;min-height:34px;padding:6px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:border-color .15s}
+        .f-slot:hover{border-color:var(--accent)}
+        .f-slot.has{border-style:solid;border-color:var(--accent)}
+        .f-slot .sp{color:var(--text-muted);font-size:11px;flex:1}
+        .f-slot .sv{flex:1;font-size:12px;color:var(--accent2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .f-slot .sc{color:var(--text-muted);cursor:pointer;font-size:15px;line-height:1}
+        .f-slot .sc:hover{color:var(--danger)}
+
+        .agg-sel{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;padding:4px 8px;outline:none;margin-top:6px;width:100%}
+
+        .filter-row{display:flex;gap:4px;align-items:center;margin-bottom:4px}
+        .filter-row select,.filter-row input{background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:4px 6px;outline:none;flex:1}
+        .filter-row select{flex:1.5}
+        .filter-row input{flex:1.2}
+        .filter-row .fr-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0 2px}
+        .filter-row .fr-del:hover{color:var(--danger)}
+
+        .data-prev-toggle{padding:8px 12px;border-top:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-dim);transition:background .15s}
+        .data-prev-toggle:hover{background:rgba(108,92,231,.05)}
+        .data-preview{border-top:1px solid var(--border);overflow:auto;max-height:0;transition:max-height .3s}
+        .data-preview.open{max-height:280px}
+        .data-preview table{width:100%;border-collapse:collapse;font-size:10px}
+        .data-preview th{position:sticky;top:0;background:var(--surface);padding:4px 6px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-dim);font-weight:500;white-space:nowrap}
+        .data-preview td{padding:3px 6px;border-bottom:1px solid rgba(42,45,66,.5);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+
+        .canvas{flex:1;overflow:auto;padding:20px;position:relative;background:var(--bg)}
+        .canvas::-webkit-scrollbar{width:6px;height:6px}
+        .canvas::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+        .canvas-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);text-align:center}
+        .canvas-empty .ce-icon{font-size:56px;margin-bottom:12px;opacity:.3}
+        .canvas-empty h2{font-size:18px;color:var(--text-dim);margin-bottom:6px}
+        .canvas-empty p{font-size:13px}
+
+        .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px}
+
+        .widget{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:wIn .25s ease}
+        @keyframes wIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+        .widget:hover{box-shadow:var(--shadow)}
+        .widget .wh{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        .widget .wt{font-size:13px;font-weight:600}
+        .widget .wa{display:flex;gap:4px}
+        .widget .wa button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px}
+        .widget .wa button:hover{color:var(--text);background:rgba(255,255,255,.05)}
+        .widget .wa button.del:hover{color:var(--danger)}
+        .widget .wb{padding:12px;height:280px;position:relative}
+        .widget .wb canvas{width:100%!important;height:100%!important}
+        .widget .wb table{width:100%;border-collapse:collapse;font-size:12px;overflow:auto;display:block;height:100%}
+        .widget .wb th{position:sticky;top:0;background:var(--card);padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-dim);font-size:11px}
+        .widget .wb td{padding:5px 10px;border-bottom:1px solid var(--border)}
+        .widget .wb tr:hover td{background:rgba(108,92,231,.05)}
+
+        .modal-overlay{position:fixed;inset:0;background:rgba(10,11,16,.85);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+        .modal-overlay.show{display:flex}
+        .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;max-width:400px;width:90%;max-height:70vh;overflow-y:auto}
+        .modal h3{font-size:14px;margin-bottom:12px}
+        .modal .fpl{max-height:260px;overflow-y:auto}
+        .modal .fpi{padding:7px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;font-size:13px}
+        .modal .fpi:hover{background:rgba(108,92,231,.1)}
+
+        .toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-size:12px;color:var(--text);z-index:2000;box-shadow:var(--shadow);animation:tIn .3s ease,tOut .3s ease 2.5s forwards}
+        @keyframes tIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes tOut{from{opacity:1}to{opacity:0}}
+
+        @media(max-width:900px){.sidebar{width:220px}.builder-panel{width:260px}.dash-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <span class="brand">🧱 BI 看板</span>
+    <div class="divider"></div>
+    <span class="dataset-name" id="dsName">未加载数据</span>
+    <div class="spacer"></div>
+    <button class="btn" onclick="toggleBuilder()" title="图表构建器">📊</button>
+    <button class="btn" onclick="toggleSidebar()" title="数据面板">📋</button>
+    <div class="divider"></div>
+    <button class="btn" onclick="exportConfig()">💾 保存配置</button>
+    <button class="btn" onclick="document.getElementById('cfgIn').click()">📂 加载配置</button>
+    <input type="file" id="cfgIn" accept=".json" style="display:none" onchange="handleConfigImport(event)">
+    <button class="btn danger" onclick="clearAll()">🗑️ 清空</button>
+</div>
+
+<div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">📁 数据源</div>
+        <div class="sidebar-scroll">
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileIn').click()">
+                <div class="icon">📤</div>
+                <p>点击或拖拽上传</p>
+                <div class="formats">.xlsx / .xls / .csv</div>
+            </div>
+            <input type="file" id="fileIn" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)">
+
+            <div id="sheetTabs" style="display:none;margin-bottom:12px">
+                <div class="b-label">工作表</div>
+                <div id="sheetTabList" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+            </div>
+
+            <div id="fieldsSection" style="display:none">
+                <div class="field-group"><div class="field-group-title">维度 (分类)</div><div id="dimFields"></div></div>
+                <div class="field-group"><div class="field-group-title">度量 (数值)</div><div id="meaFields"></div></div>
+                <div class="field-group"><div class="field-group-title">日期</div><div id="dateFields"></div></div>
+            </div>
+
+            <div id="previewSection" style="display:none">
+                <div class="data-prev-toggle" onclick="togglePreview()"><span>数据预览 (<span id="rowCount">0</span> 行)</span><span>▼</span></div>
+                <div class="data-preview" id="dataPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Builder -->
+    <div class="builder-panel" id="builder">
+        <div class="builder-header">🎨 图表构建器</div>
+        <div class="builder-scroll">
+            <div class="b-section">
+                <div class="b-label">图表类型</div>
+                <div class="chart-types">
+                    <div class="ct-btn active" data-t="bar" onclick="selType('bar')"><span class="ci">📊</span><span class="cl">柱状图</span></div>
+                    <div class="ct-btn" data-t="line" onclick="selType('line')"><span class="ci">📈</span><span class="cl">折线图</span></div>
+                    <div class="ct-btn" data-t="pie" onclick="selType('pie')"><span class="ci">🥧</span><span class="cl">饼图</span></div>
+                    <div class="ct-btn" data-t="doughnut" onclick="selType('doughnut')"><span class="ci">🍩</span><span class="cl">环形图</span></div>
+                    <div class="ct-btn" data-t="scatter" onclick="selType('scatter')"><span class="ci">⚬</span><span class="cl">散点图</span></div>
+                    <div class="ct-btn" data-t="radar" onclick="selType('radar')"><span class="ci">🕸️</span><span class="cl">雷达图</span></div>
+                    <div class="ct-btn" data-t="polarArea" onclick="selType('polarArea')"><span class="ci">🎯</span><span class="cl">极地区域</span></div>
+                    <div class="ct-btn" data-t="table" onclick="selType('table')"><span class="ci">📋</span><span class="cl">数据表</span></div>
+                </div>
+            </div>
+
+            <div class="b-section">
+                <div class="b-label">X 轴 / 维度</div>
+                <div class="f-slot" id="xSlot" onclick="pickField('xAxis')"><span class="sp">选择维度字段</span></div>
+            </div>
+
+            <div class="b-section">
+                <div class="b-label">Y 轴 / 度量</div>
+                <div class="f-slot" id="ySlot" onclick="pickField('yAxis')"><span class="sp">选择度量字段</span></div>
+                <select class="agg-sel" id="aggSel">
+                    <option value="sum">SUM 求和</option>
+                    <option value="avg">AVG 平均值</option>
+                    <option value="count">COUNT 计数</option>
+                    <option value="min">MIN 最小值</option>
+                    <option value="max">MAX 最大值</option>
+                </select>
+            </div>
+
+            <div class="b-section">
+                <div class="b-label">分组 (可选)</div>
+                <div class="f-slot" id="gSlot" onclick="pickField('groupBy')"><span class="sp">选择分组字段</span></div>
+            </div>
+
+            <div class="b-section">
+                <div class="b-label">筛选 (可选)</div>
+                <div id="filterArea"></div>
+                <button class="btn" onclick="addFilter()" style="width:100%;justify-content:center;margin-top:4px;font-size:11px;padding:6px">+ 添加筛选</button>
+            </div>
+
+            <div class="b-section">
+                <div class="b-label">图表标题</div>
+                <input type="text" id="chartTitle" placeholder="自动生成" style="width:100%;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;outline:none">
+            </div>
+
+            <button class="btn primary" onclick="addChart()" style="width:100%;justify-content:center;padding:10px;font-size:13px;margin-top:8px">➕ 添加到看板</button>
+        </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas" id="canvas">
+        <div class="canvas-empty" id="emptyState">
+            <div class="ce-icon">📊</div>
+            <h2>开始搭建你的数据看板</h2>
+            <p>上传 Excel / CSV → 选择维度 & 度量 → 添加到看板</p>
+        </div>
+        <div class="dash-grid" id="dashGrid" style="display:none"></div>
+    </div>
+</div>
+
+<!-- Field Picker Modal -->
+<div class="modal-overlay" id="fModal">
+    <div class="modal">
+        <h3 id="fModalTitle">选择字段</h3>
+        <div class="fpl" id="fPickList"></div>
+        <div style="text-align:right;margin-top:12px">
+            <button class="btn" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== State =====
+let rawData=[],headers=[],fieldTypes={},currentSheet=null,workbook=null;
+let chartType='bar',cfg={xAxis:null,yAxis:null,groupBy:null,agg:'sum',filters:[]};
+let widgets=[],wId=0,pickTarget=null;
+const COLORS=['#6c5ce7','#a29bfe','#00b894','#fdcb6e','#ff6b6b','#00cec9','#e17055','#74b9ff','#d63031','#0984e3','#e84393','#55efc4','#fab1a0','#81ecec','#ffeaa7','#dfe6e9','#b2bec3','#636e72','#fd79a8','#f39c12'];
+
+// ===== Upload =====
+const ua=document.getElementById('uploadArea');
+ua.addEventListener('dragover',e=>{e.preventDefault();ua.classList.add('dragover')});
+ua.addEventListener('dragleave',()=>ua.classList.remove('dragover'));
+ua.addEventListener('drop',e=>{e.preventDefault();ua.classList.remove('dragover');if(e.dataTransfer.files.length)loadFile(e.dataTransfer.files[0])});
+
+function handleFile(e){if(e.target.files.length)loadFile(e.target.files[0])}
+
+function loadFile(file){
+    const r=new FileReader();
+    r.onload=function(e){
+        try{
+            workbook=XLSX.read(e.target.result,{type:'array',cellDates:true});
+            const sn=workbook.SheetNames;
+            if(sn.length>1){
+                document.getElementById('sheetTabs').style.display='block';
+                const tl=document.getElementById('sheetTabList');tl.innerHTML='';
+                sn.forEach(n=>{
+                    const b=document.createElement('button');b.className='btn';b.style.fontSize='11px';b.style.padding='4px 8px';b.textContent=n;
+                    b.onclick=()=>loadSheet(n);tl.appendChild(b);
+                });
+                loadSheet(sn[0]);
+            }else{loadSheet(sn[0])}
+            ua.innerHTML=`<div class="icon">✅</div><p>${file.name}</p><div class="formats">${rawData.length} 行 × ${headers.length} 列</div>`;
+            toast('✅ 已加载 '+rawData.length+' 行数据');
+        }catch(err){toast('❌ 解析失败: '+err.message)}
+    };
+    r.readAsArrayBuffer(file);
+}
+
+function loadSheet(name){
+    currentSheet=name;
+    rawData=XLSX.utils.sheet_to_json(workbook.Sheets[name],{defval:''});
+    if(!rawData.length){toast('⚠️ 空表');return}
+    headers=Object.keys(rawData[0]);
+    fieldTypes={};
+    headers.forEach(h=>{fieldTypes[h]=detectType(h,rawData)});
+    document.getElementById('dsName').textContent=currentSheet+' · '+rawData.length+' 行 · '+headers.length+' 列';
+    renderFields();renderPreview();
+    document.getElementById('fieldsSection').style.display='block';
+    document.getElementById('previewSection').style.display='block';
+}
+
+function detectType(col,data){
+    let nc=0,dc=0,t=0;
+    data.slice(0,50).forEach(r=>{
+        const v=r[col];if(v===''||v==null||v===undefined)return;t++;
+        if(v instanceof Date){dc++;return}
+        if(typeof v==='number'){nc++;return}
+        if(typeof v==='string'){const n=parseFloat(v.replace(/[,%$￥€£\s]/g,''));if(!isNaN(n)&&n.toString().length<=v.length+2)nc++;else if(/^\d{4}[-/.]\d{1,2}[-/.]/.test(v))dc++}
+    });
+    if(t===0)return'dim';
+    if(dc/t>.5)return'date';
+    if(nc/t>.5)return'mea';
+    return'dim';
+}
+
+function renderFields(){
+    const d=headers.filter(h=>fieldTypes[h]==='dim');
+    const m=headers.filter(h=>fieldTypes[h]==='mea');
+    const dt=headers.filter(h=>fieldTypes[h]==='date');
+    document.getElementById('dimFields').innerHTML=d.map(h=>`<div class="field-item" onclick="quickAdd('${h}')"><div class="fi dim">A</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('meaFields').innerHTML=m.map(h=>`<div class="field-item" onclick="quickAdd('${h}')"><div class="fi mea">Σ</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+    document.getElementById('dateFields').innerHTML=dt.map(h=>`<div class="field-item" onclick="quickAdd('${h}')"><div class="fi dat">📅</div><span class="fn" title="${esc(h)}">${esc(h)}</span></div>`).join('');
+}
+
+function renderPreview(){
+    document.getElementById('rowCount').textContent=rawData.length;
+    let html='<table><thead><tr>';
+    headers.forEach(h=>{html+=`<th>${esc(h)}</th>`});
+    html+='</tr></thead><tbody>';
+    rawData.slice(0,30).forEach(r=>{
+        html+='<tr>';headers.forEach(h=>{html+=`<td title="${esc(String(r[h]))}">${esc(String(r[h]??''))}</td>`});
+        html+='</tr>';
+    });
+    html+='</tbody></table>';
+    document.getElementById('dataPreview').innerHTML=html;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ===== Toggles =====
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed')}
+function toggleBuilder(){document.getElementById('builder').classList.toggle('collapsed')}
+function togglePreview(){document.getElementById('dataPreview').classList.toggle('open')}
+
+// ===== Field Selection =====
+function quickAdd(field){
+    if(fieldTypes[field]==='mea'){
+        cfg.yAxis=field;
+    }else{
+        cfg.xAxis=field;
+    }
+    updateSlots();
+    toast('已选: '+field);
+}
+
+function pickField(target){
+    pickTarget=target;
+    const modal=document.getElementById('fModal');
+    const title=document.getElementById('fModalTitle');
+    const list=document.getElementById('fPickList');
+
+    let fields;
+    if(target==='xAxis'||target==='groupBy'){
+        title.textContent=target==='xAxis'?'选择 X 轴 (维度)':'选择分组字段';
+        fields=headers.filter(h=>fieldTypes[h]!=='mea');
+    }else{
+        title.textContent='选择 Y 轴 (度量)';
+        fields=headers.filter(h=>fieldTypes[h]==='mea');
+    }
+
+    list.innerHTML=fields.map(f=>{
+        const icon=fieldTypes[f]==='mea'?'Σ':fieldTypes[f]==='date'?'📅':'A';
+        return `<div class="fpi" onclick="setField('${f}')"><span class="fi ${fieldTypes[f]==='mea'?'mea':'dim'}" style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:10px">${icon}</span>${esc(f)}</div>`;
+    }).join('');
+    modal.classList.add('show');
+}
+
+function setField(f){
+    if(pickTarget==='xAxis')cfg.xAxis=f;
+    else if(pickTarget==='yAxis')cfg.yAxis=f;
+    else if(pickTarget==='groupBy')cfg.groupBy=f;
+    closeModal();updateSlots();
+}
+
+function closeModal(){document.getElementById('fModal').classList.remove('show')}
+
+function updateSlots(){
+    const x=document.getElementById('xSlot');
+    const y=document.getElementById('ySlot');
+    const g=document.getElementById('gSlot');
+
+    if(cfg.xAxis){x.className='f-slot has';x.innerHTML=`<span class="sv">${esc(cfg.xAxis)}</span><span class="sc" onclick="clearSlot('xAxis')">×</span>`}
+    else{x.className='f-slot';x.innerHTML='<span class="sp">选择维度字段</span>'}
+
+    if(cfg.yAxis){y.className='f-slot has';y.innerHTML=`<span class="sv">${esc(cfg.yAxis)}</span><span class="sc" onclick="clearSlot('yAxis')">×</span>`}
+    else{y.className='f-slot';y.innerHTML='<span class="sp">选择度量字段</span>'}
+
+    if(cfg.groupBy){g.className='f-slot has';g.innerHTML=`<span class="sv">${esc(cfg.groupBy)}</span><span class="sc" onclick="clearSlot('groupBy')">×</span>`}
+    else{g.className='f-slot';g.innerHTML='<span class="sp">选择分组字段</span>'}
+}
+
+function clearSlot(t){
+    if(t==='xAxis')cfg.xAxis=null;
+    else if(t==='yAxis')cfg.yAxis=null;
+    else if(t==='groupBy')cfg.groupBy=null;
+    updateSlots();
+}
+
+function selType(t){
+    chartType=t;
+    document.querySelectorAll('.ct-btn').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+}
+
+// ===== Filters =====
+let filterCount=0;
+function addFilter(){
+    const id=filterCount++;
+    const area=document.getElementById('filterArea');
+    const row=document.createElement('div');row.className='filter-row';row.id='filter-'+id;
+    let opts='<option value="">字段</option>'+headers.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join('');
+    row.innerHTML=`<select class="ff">${opts}</select><select class="fo"><option value="eq">=</option><option value="neq">≠</option><option value="gt">&gt;</option><option value="gte">≥</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="contains">包含</option></select><input class="fv" placeholder="值"><button class="fr-del" onclick="this.parentElement.remove()">×</button>`;
+    area.appendChild(row);
+}
+
+function getFilters(){
+    const filters=[];
+    document.querySelectorAll('.filter-row').forEach(r=>{
+        const field=r.querySelector('.ff').value;
+        const op=r.querySelector('.fo').value;
+        const val=r.querySelector('.fv').value;
+        if(field&&val)filters.push({field,op,val});
+    });
+    return filters;
+}
+
+function applyFilters(data){
+    const filters=getFilters();
+    if(!filters.length)return data;
+    return data.filter(row=>{
+        return filters.every(f=>{
+            const rv=row[f.field];
+            const fv=f.val;
+            switch(f.op){
+                case'eq':return String(rv)===fv;
+                case'neq':return String(rv)!==fv;
+                case'gt':return Number(rv)>Number(fv);
+                case'gte':return Number(rv)>=Number(fv);
+                case'lt':return Number(rv)<Number(fv);
+                case'lte':return Number(rv)<=Number(fv);
+                case'contains':return String(rv).includes(fv);
+                default:return true;
+            }
+        });
+    });
+}
+
+// ===== Aggregation =====
+function aggregate(data,xField,yField,groupField,agg){
+    const filtered=applyFilters(data);
+    const groups={};
+
+    filtered.forEach(row=>{
+        const key=xField?String(row[xField]??'空值'):'';
+        const group=groupField?String(row[groupField]??'空值'):null;
+        const val=Number(row[yField])||0;
+
+        if(!groups[key])groups[key]={};
+        if(!groups[key][group??'_'])groups[key][group??'_']={sum:0,count:0,min:Infinity,max:-Infinity};
+
+        groups[key][group??'_'].sum+=val;
+        groups[key][group??'_'].count++;
+        groups[key][group??'_'].min=Math.min(groups[key][group??'_'].min,val);
+        groups[key][group??'_'].max=Math.max(groups[key][group??'_'].max,val);
+    });
+
+    const labels=Object.keys(groups);
+    const allGroups=[...new Set(Object.values(groups).flatMap(g=>Object.keys(g)))].filter(k=>k!=='_');
+
+    let datasets=[];
+    if(groupField&&allGroups.length>0){
+        allGroups.forEach((g,i)=>{
+            const vals=labels.map(l=>{
+                const gd=groups[l][g];
+                if(!gd)return 0;
+                return agg==='sum'?gd.sum:agg==='avg'?gd.sum/gd.count:agg==='count'?gd.count:agg==='min'?gd.min:agg==='max'?gd.max:gd.sum;
+            });
+            datasets.push({label:g,data:vals,backgroundColor:COLORS[i%COLORS.length],borderColor:COLORS[i%COLORS.length]});
+        });
+    }else{
+        const vals=labels.map(l=>{
+            const gd=groups[l]['_']||{sum:0,count:0,min:0,max:0};
+            return agg==='sum'?gd.sum:agg==='avg'?gd.sum/gd.count:agg==='count'?gd.count:agg==='min'?gd.min:agg==='max'?gd.max:gd.sum;
+        });
+        datasets.push({
+            label:yField,
+            data:vals,
+            backgroundColor:COLORS.slice(0,labels.length),
+            borderColor:COLORS.slice(0,labels.length),
+            borderWidth:2,
+        });
+    }
+
+    return{labels,datasets};
+}
+
+// ===== Add Chart =====
+function addChart(){
+    if(!rawData.length){toast('⚠️ 请先上传数据');return}
+    if(!cfg.xAxis&&!chartType==='scatter'){toast('⚠️ 请选择 X 轴字段');return}
+    if(!cfg.yAxis&&chartType!=='scatter'){toast('⚠️ 请选择 Y 轴字段');return}
+
+    const agg=document.getElementById('aggSel').value;
+    cfg.agg=agg;
+
+    const title=document.getElementById('chartTitle').value||
+        `${agg.toUpperCase()}(${cfg.yAxis}) by ${cfg.xAxis}${cfg.groupBy?' · 分组: '+cfg.groupBy:''}`;
+
+    const result=aggregate(rawData,cfg.xAxis,cfg.yAxis,cfg.groupBy,agg);
+
+    // Create widget
+    const id='w'+(++wId);
+    const grid=document.getElementById('dashGrid');
+    const empty=document.getElementById('emptyState');
+    empty.style.display='none';
+    grid.style.display='grid';
+
+    const isPie=chartType==='pie'||chartType==='doughnut'||chartType==='polarArea';
+    const isRadar=chartType==='radar';
+
+    // Build datasets with proper colors
+    result.datasets.forEach((ds,i)=>{
+        if(chartType==='table')return;
+        ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length];
+        ds.borderColor=isPie?'transparent':COLORS[i%COLORS.length];
+        ds.borderWidth=isPie?0:2;
+        if(chartType==='line'){
+            ds.fill=false;
+            ds.tension=0.3;
+            ds.pointRadius=4;
+            ds.pointHoverRadius=7;
+            ds.backgroundColor=isPie?COLORS.slice(0,result.labels.length):COLORS[i%COLORS.length]+'33';
+        }
+        if(chartType==='bar'){
+            ds.borderRadius=4;
+            if(result.datasets.length<=1){
+                ds.backgroundColor=COLORS.slice(0,result.labels.length);
+                ds.borderColor=COLORS.slice(0,result.labels.length);
+            }
+        }
+    });
+
+    const widget=document.createElement('div');
+    widget.className='widget';widget.id=id;
+
+    if(chartType==='table'){
+        widget.innerHTML=`<div class="wh"><span class="wt">${esc(title)}</span><div class="wa"><button class="del" onclick="removeWidget('${id}')">🗑️</button></div></div><div class="wb"><div style="overflow:auto;max-height:100%"><table><thead><tr><th>${esc(cfg.xAxis)}</th><th>${esc(cfg.yField||cfg.yAxis)} (${agg})</th>${cfg.groupBy?`<th>${esc(cfg.groupBy)}</th>`:''}</tr></thead><tbody>${result.labels.map((l,i)=>result.datasets.map(ds=>`<tr><td>${esc(l)}</td><td>${ds.data[i]}</td>${cfg.groupBy?`<td>${esc(ds.label)}</td>`:''}</tr>`).join('')).join('')}</tbody></table></div></div>`;
+    }else{
+        widget.innerHTML=`<div class="wh"><span class="wt">${esc(title)}</span><div class="wa"><button class="del" onclick="removeWidget('${id}')">🗑️</button></div></div><div class="wb"><canvas id="cv-${id}"></canvas></div>`;
+    }
+
+    grid.appendChild(widget);
+
+    // Render chart
+    if(chartType!=='table'){
+        const ctx=document.getElementById('cv-'+id).getContext('2d');
+        new Chart(ctx,{
+            type:chartType,
+            data:{labels:result.labels,datasets:result.datasets},
+            options:{
+                responsive:true,maintainAspectRatio:false,
+                plugins:{
+                    legend:{
+                        display:result.datasets.length>1,
+                        position:'bottom',
+                        labels:{padding:10,usePointStyle:true,pointStyle:'circle',font:{size:10},color:'#8a8d9e'}
+                    },
+                    tooltip:{backgroundColor:'#1a1d2e',borderColor:'#2a2d42',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#a29bfe',padding:10,cornerRadius:8}
+                },
+                scales:(isPie||isRadar)?{}:{
+                    x:{grid:{display:false},ticks:{color:'#8a8d9e',maxRotation:45,font:{size:10}}},
+                    y:{beginAtZero:true,grid:{color:'#2a2d42'},ticks:{color:'#8a8d9e',font:{size:10}}}
+                }
+            }
+        });
+    }
+
+    // Save widget config
+    widgets.push({id,title,chartType,xAxis:cfg.xAxis,yAxis:cfg.yAxis,groupBy:cfg.groupBy,agg,config:{...cfg}});
+
+    toast('✅ 图表已添加');
+}
+
+function removeWidget(id){
+    const el=document.getElementById(id);
+    if(el)el.remove();
+    widgets=widgets.filter(w=>w.id!==id);
+    if(!widgets.length){
+        document.getElementById('emptyState').style.display='flex';
+        document.getElementById('dashGrid').style.display='none';
+    }
+}
+
+// ===== Config Save/Load =====
+function exportConfig(){
+    if(!widgets.length){toast('⚠️ 看板为空');return}
+    const data={widgets,headers,fieldTypes,sheet:currentSheet,chartType,cfg};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='bi-dashboard-config.json';
+    a.click();
+    toast('✅ 配置已导出');
+}
+
+function importConfig(){document.getElementById('cfgIn').click()}
+
+function handleConfigImport(e){
+    const file=e.target.files[0];if(!file)return;
+    const r=new FileReader();
+    r.onload=function(e){
+        try{
+            const data=JSON.parse(e.target.result);
+            toast('⚠️ 配置已加载，请重新上传数据文件以渲染图表');
+        }catch(err){toast('❌ 配置解析失败')}
+    };
+    r.readAsText(file);
+}
+
+function clearAll(){
+    if(!confirm('确定清空所有图表？'))return;
+    document.getElementById('dashGrid').innerHTML='';
+    document.getElementById('dashGrid').style.display='none';
+    document.getElementById('emptyState').style.display='flex';
+    widgets=[];wId=0;
+    toast('🗑️ 已清空');
+}
+
+// ===== Toast =====
+function toast(msg){
+    const t=document.createElement('div');t.className='toast';t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),3000);
+}
+
+// ===== Init =====
+Chart.defaults.color='#8a8d9e';
+Chart.defaults.borderColor='#2a2d42';
+Chart.defaults.font.family='-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC",sans-serif';
+</script>
+</body>
+</html>
